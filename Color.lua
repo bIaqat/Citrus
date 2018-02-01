@@ -108,6 +108,13 @@ Color = setmetatable({
 			if #hex >= 6 then
 				r = tonumber(hex:sub(1,2),16)
 				g = tonumber(hex:sub(3,4),16)
-				g = tonumber(hex:sub(5,6),16)
+				b = tonumber(hex:sub(5,6),16)
 			elseif #hex >= 3 then
-				r = tonumber(hex:sub(1,1)
+				r = tonumber(hex:sub(1,1):rep(2),16)
+				g = tonumber(hex:sub(2,2):rep(2),16)
+				b = tonumber(hex:sub(3,3):rep(2),16)
+			end
+			return Color3.fromRGB(r,g,b)
+		end;
+		
+				

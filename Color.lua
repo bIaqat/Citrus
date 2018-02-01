@@ -116,5 +116,56 @@ Color = setmetatable({
 			end
 			return Color3.fromRGB(r,g,b)
 		end;
-		
-				
+		toHex = function(color,hash)
+			local r,g,b = Pineapple.Color.fromRGB(color)
+			r = string.format('%02X',r)
+			g = string.format('%02X',g)
+			b = string.format('%02X',b)
+			return (hash and '#' or '')..tostring(r)..tostring(g)..tostring(b)..
+		end;
+		fromString = function(pName)
+			local colors = {
+				Color3.new(253/255, 41/255, 67/255), -- BrickColor.new("Bright red").Color,
+				Color3.new(1/255, 162/255, 255/255), -- BrickColor.new("Bright blue").Color,
+				Color3.new(2/255, 184/255, 87/255), -- BrickColor.new("Earth green").Color,
+				BrickColor.new("Bright violet").Color,
+				BrickColor.new("Bright orange").Color,
+				BrickColor.new("Bright yellow").Color,
+				BrickColor.new("Light reddish violet").Color,
+				BrickColor.new("Brick yellow").Color
+			}
+			local value = 0
+			for index = 1, #pName do
+				local cValue = string.byte(string.sub(pName, index, index))
+				local reverseIndex = #pName - index + 1
+				if #pName%2 == 1 then
+					reverseIndex = reverseIndex - 1
+				end
+				if reverseIndex%4 >= 2 then
+					cValue = -cValue
+				end
+				value = value + cValue
+			end
+			return colors[(value % #colors) + 1]
+		end;
+		toInverse = function(color)
+			local h,s,v = Color.toHSV(color)
+			return Color.fromHSV(h,v,s)
+		end;
+		getObjectsOfColor = function(color,directory)
+			local objs = {}
+			for i,obj in pairs(Pineapple.Instance:instanceOf(directory):GetDescendants())do
+				for prop, val in pairs(Properties.getProperties(object))do
+					if val == color then
+						table.insert(objs,obj)
+					end
+				end
+			end
+			return objs
+		end;		
+		--new insertColor, setColor, eraseColor, deleteColor, getColor functions incoming
+},{
+		Colors = {};
+})
+	
+			

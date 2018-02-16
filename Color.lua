@@ -162,8 +162,51 @@ Color = setmetatable({
 				end
 			end
 			return objs
-		end;		
-		--new insertColor, setColor, eraseColor, deleteColor, getColor functions incoming
+		end;
+		
+		newColor = function(name,col,...)
+			local index = getmetatable(Pineapple.Color).Colors
+			for i,v in next,{...} or {} do
+				index = index[v]
+			end
+			if index[name] and type(index[name]) ~= 'table' then
+				index[name] = {index[name]}
+			end
+			if index[name] then
+				table.insert(index[name],col)
+			else
+				index[name] = col
+			end			
+		end;
+		getColor = function(name,id,...)
+			local index = getmetatable(Pineapple.Color).Colors
+			for i,v in next,{...} or {} do
+				index = index[v]
+			end
+			return index[id or next(index)]
+		end;
+		removeColor = function(name,...)
+			local index = getmetatable(Pineapple.Color).Colors
+			for i,v in next,{...} or {} do
+				index = index[v]
+			end
+			index[name] = nil
+		end;
+		
+		new = function(...)
+			local args = {...}
+			if type(args[1]) == 'string' then
+				if args[1]:sub(1,1) == '#' then
+					return Pineapple.Color.fromHex(args[1])
+				else
+					return Pineapple.Color.getColor(...)
+				end
+			elseif args[4] and args[4] == true then
+				return Pineapple.Color.fromHSV(args[1],args[2],args[3])
+			elseif #args == 3 then
+				return Pineapple.Color.fromRGB(args[1],args[2],args[3])
+			end
+		end;
 },{
 		Colors = {};
 })

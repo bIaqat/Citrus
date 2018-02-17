@@ -4,7 +4,7 @@ Misc = {
 			local args,disregard,tostr,flip = {...}
 			for i,v in pairs(args)do
 				if type(v) == 'boolean' then
-					if not flip then flip = v else tostr = v end
+					if flip == nil then flip = v else tostr = v end
 				elseif type(v) == 'string' then
 					disregar = v
 				end

@@ -164,7 +164,7 @@ Color = setmetatable({
 			return objs
 		end;
 		
-		newColor = function(name,col,...)
+		insertColor = function(name,col,...)
 			local index = getmetatable(Pineapple.Color).Colors
 			for i,v in next,{...} or {} do
 				index = index[v]

@@ -33,4 +33,30 @@ Positioning = {
 	fromScale = function(a,b)
 		return UDim2.new(a,0,b,0)
 	end;
+	tween = function(object,typ,...)
+		local interupt,udim,udim2,time,style,direction,after = true
+		for i,v in pairs({...})do
+			if typeof(v) == 'UDim2' then
+				udim = udim and udim or v
+				udim2 = udim and v or nil
+			elseif type(v) == 'function' then
+				after = v
+			elseif type(v) == 'boolean' then
+				interupt = v
+			elseif type(v) == 'number' then
+				time = v
+			elseif type(v) == 'string' then
+				style = style and style or v
+				direction and style and nil or v
+			end
+		end
+		if udim2 then
+			object:TweenSizeAndPosition(udim2,udim,style or 'Quad',direction or 'Out',time or .3,interupt,after)
+		elseif typ:find'p' then
+			object:TweenPosition(udim,style or 'Quad',direction or 'Out',time or .3,interupt,after)
+		else
+			object:TweenSize(udim,style or 'Quad',direction or 'Out',time or .3,interupt,after)
+		end
+	end;
+					
 }

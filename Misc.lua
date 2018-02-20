@@ -1,6 +1,6 @@
 Misc = {
 	Functions = {
-		tween = function(what,prop,to,...)
+		tweenService = function(what,prop,to,...)
 			local args = {...}
 			local props = {}
 			local tim,style,direction,rep,reverse,delay

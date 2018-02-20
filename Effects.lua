@@ -22,7 +22,7 @@ Effects = {
 			size = size(who.Parent.AbsoluteSize.X >= who.Parent.AbsoluteSize.Y)
 		end
 		Pineapple.Positioning.tweenObject(who,'both',ud(.5,-Size/2,3),ud(size,'o'),speed,'Quad','Out')
-		Pineapple.Misc.Functions.tween(who,typ,1,speed,'Quint','In')
+		Pineapple.Misc.Functions.tweenService(who,typ,1,speed,'Quint','In')
 		coroutine.wrap(function()
 				repeat wait() until who[typ] >= 1
 				who:Destroy()

@@ -18,6 +18,14 @@ Instance = setmetatable({
 				return false
 			end
 		end;
+		IsAClass = function(is)
+			if pcall(function() return Instance.new(is) end) then
+				return true
+			else
+				return false
+			end
+		end;
+				
 		new = function(class,...)
 			local self = Pineapple.Instance
 			local pt = Pineapple.Misc.Table

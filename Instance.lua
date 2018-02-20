@@ -11,6 +11,13 @@ Instance = setmetatable({
 					end;
 				})
 		end;
+		IsA = function(is,a)
+			if pcall(function() return Instance.new(is):IsA(a) end) then
+				return true
+			else 
+				return false
+			end
+		end;
 		new = function(class,...)
 			local self = Pineapple.Instance
 			local pt = Pineapple.Misc.Table

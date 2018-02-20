@@ -154,7 +154,7 @@ Color = setmetatable({
 		end;
 		getInverse = function(color)
 			local h,s,v = Color.toHSV(color)
-			return Color.fromHSV((h + 180) % 360,s, v)
+			return Color.fromHSV((h + 180) % 360, v, s)
 		end;
 		getObjectsOfColor = function(color,directory)
 			local objs = {}

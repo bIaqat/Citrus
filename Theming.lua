@@ -150,36 +150,3 @@ Theming = setmetatable({ --almost 100% positive this is 100% BROKEN
 		Themes = {};
 	}
 )
-
--- PLAY GROUND
-local f = Instance.new("Frame")
---[[
-Theme.new (
-	arg 1: String Name
-	arg 2: Table {String ClassName | String Property | Table [Index String ClassName, Value String Properties] }
-	args... anything but Table; one function
-]]
-
-Theme.new("Primary",{'Name','Text','TextBox',Frame = {'call','Color3'}},'Hello',Color3.new(1,0,0),'GoodBye',rotate,8,3,3)
-
---[[
-Primary = {
-	Values = {'Hello', Color3.new(1,0,0),'Goodbye'}
-	Function = {rotate, 8,3,3}
-	Filter = {TextBox = true, Frame = {'Color3'}, "Name", "Text"}
-	Objects = {}
-]]
-
-
-Theme.insert(Frame,"Primary",2)
---Makes the frame's Color Red
-Theme.insert(Frame,"Primary",1)
---Makes the frame's Color Red,  Name 'Hello'
-Theme.insert(TextBox,"Primary")
---Makes the TextBox's Name 'Hello, Text 'Goodbye'
-Theme.insert(TextLabel,"Primary",1)
---Nothing
-
-Theme.call("Primary") 
---rotates all the frames
-Theme.setFilter({Frame = 'Color3'})

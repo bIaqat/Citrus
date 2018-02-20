@@ -206,30 +206,7 @@ Misc = {
 			return new
 		end;
 	};
-	
-	Metatables = {
-		Find = {
-			__index = function(self,find)
-				return Pineapple.Misc.Table.find(self,find)
-			end;
-			__call = function(self,contains)
-				return Pineapple.Misc.Table.contains(self,contains,1)
-			end;
-		};
-		Search = {
-			__index = function(self,search)
-				Pineapple.Misc.Table.search(self,search)
-			end;
-			__call = function(self,contains)
-				return Pineapple.Misc.Table.contains(self,contains,1)
-			end;
-		};
-		Contains = {
-			__index = function(self,contains)
-				return Pineapple.Misc.Table.contains(self,contains,1)
-			end;
-		}
-	}
+==
 }
 				
 				

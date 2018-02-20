@@ -148,9 +148,13 @@ Color = setmetatable({
 			end
 			return colors[(value % #colors) + 1]
 		end;
-		toInverse = function(color)
+		getReciprocal = function(color)
 			local h,s,v = Color.toHSV(color)
 			return Color.fromHSV(h,v,s)
+		end;
+		getInverse = function(color)
+			local h,s,v = Color.toHSV(color)
+			return Color.fromHSV((h + 180) % 360,s, v)
 		end;
 		getObjectsOfColor = function(color,directory)
 			local objs = {}

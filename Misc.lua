@@ -108,6 +108,13 @@ Misc = {
 	};
 	
 	Table = {
+		pack = function(table,start)
+			local new = {}
+			for i = start or 1, #table do
+				table.insert(new,table[i])
+			end
+			return new
+		end;
 		merge = function(who,what)
 			for i,v in next,who do
 				if what[i] then

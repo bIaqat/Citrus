@@ -11,14 +11,14 @@ Instance = setmetatable({
 					end;
 				})
 		end;
-		IsA = function(is,a)
+		isA = function(is,a)
 			if pcall(function() return Instance.new(is):IsA(a) end) then
 				return true
 			else 
 				return false
 			end
 		end;
-		IsAClass = function(is)
+		isAClass = function(is)
 			if pcall(function() return Instance.new(is) end) then
 				return true
 			else

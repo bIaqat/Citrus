@@ -33,7 +33,7 @@ Positioning = {
 	fromScale = function(a,b)
 		return UDim2.new(a,0,b,0)
 	end;
-	tween = function(object,typ,...)
+	tweenObject = function(object,typ,...)
 		local interupt,udim,udim2,time,style,direction,after = true
 		for i,v in pairs({...})do
 			if typeof(v) == 'UDim2' then

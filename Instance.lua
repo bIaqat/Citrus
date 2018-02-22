@@ -40,12 +40,14 @@ Instance = setmetatable({
 			end
 			new = pt.contains(storage,class)==true and pt.find(storage,class)(unpack(args)) or Instance.new(class)
 			new.Parent = parent
+			Pineapple.Properties.setProperties(new,Pineapple.Settings.getDefault(class) or {})
 			Pineapple.Properties.setProperties(new,properties or {})
 			return new
 		end;
 		newInstance = function(class,parent,props}
 			props = props or type(parent) == 'table' and parent
 			parent = type(parent) == 'table' and nil or parent
+			Pineapple.Properties.setProperties(new,Pineapple.Settings.getDefault(class) or {})
 			return Pineapple.Properties.setProperties(Instance.new(class,parent),props or {})
 		end;
 		newObject = function(class,...)

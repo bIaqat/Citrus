@@ -13,7 +13,7 @@ Settings = setmetatable({
 		end;
 		new = function(list,name,object,index,defaultval)
 			local list = Pineapple.Settings.getList(list)
-			list[name] = {[object] = index, Value = defaultval or object[index], Default = defaultval;
+			list[name] = {Type = '', [object] = index, Value = defaultval or object[index], Default = defaultval;
 				Set = function(self,newval)
 					self.Value = newval
 					local i,v = next(self)
@@ -24,6 +24,11 @@ Settings = setmetatable({
 				end;
 			}
 			return list
+		end;
+		Sync = function(self)
+			for i,v in next, getmetatable(self).Settings do
+				v:Set(v.Value)
+			end
 		end;
 		},{
 		Default = {};

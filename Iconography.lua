@@ -47,4 +47,3 @@ Iconography = setmetatable({
 		Icons = {}
 		}
 	)
-							

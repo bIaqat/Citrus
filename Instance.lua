@@ -44,18 +44,19 @@ Instance = setmetatable({
 			Pineapple.Properties.setProperties(new,properties or {})
 			return new
 		end;
-		newInstance = function(class,parent,props}
+		newInstance = function(class,parent,props)
+			local new = Instance.new(class)
 			props = props or type(parent) == 'table' and parent
 			parent = type(parent) == 'table' and nil or parent
 			Pineapple.Properties.setProperties(new,Pineapple.Settings.getDefault(class) or {})
 			return Pineapple.Properties.setProperties(Instance.new(class,parent),props or {})
 		end;
 		newObject = function(class,...)
-			local in = Pineapple.Instance
+			local ins = Pineapple.Instance
 			local pt = Pineapple.Misc.Table
 			local args,parent,object,properties = {...}
-			if typeof(in.getInstanceOf(args[1])) == 'Instance' then
-				parent = in.getInstanceOf(args[1])
+			if typeof(ins.getInstanceOf(args[1])) == 'Instance' then
+				parent = ins.getInstanceOf(args[1])
 				table.remove(args,1)
 			end
 			if type(args[#args]) == 'table' then
@@ -107,10 +108,10 @@ Instance = setmetatable({
 				local clone = Pineapple.Misc.Table.clone(self)
 				clone[1] = self[1]:Clone()
 				clone[1].Parent = parent
-				getmetatable(in).Objects[clone] = clone[1]
+				getmetatable(ins).Objects[clone] = clone[1]
 				return clone
 			end
-			getmetatable(in).Objects[new] = new[1]
+			getmetatable(ins).Objects[new] = new[1]
 			return new
 		end;
 		getInstanceOf = function(who)
@@ -134,6 +135,3 @@ Instance = setmetatable({
 		Objects = {};
 	}
 )
-			
-			
-		

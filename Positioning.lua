@@ -47,7 +47,7 @@ Positioning = {
 				time = v
 			elseif type(v) == 'string' then
 				style = style and style or v
-				direction and style and nil or v
+				direction = style and nil or v
 			end
 		end
 		if udim2 then

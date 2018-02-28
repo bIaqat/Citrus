@@ -9,30 +9,77 @@ Settings = setmetatable({
 			getmetatable(Pineapple.Settings).Settings[name] = {};
 		end;
 		getList = function(name)
-			return getmetatable(Pineapple.Settings).Settings[name] or {}
+			local settings = getmetatable(Pineapple.Settings).Settings
+			return not name and settings.MAIN or settings[name]
 		end;
-		new = function(list,name,object,index,defaultval)
+		new = function(list,name,object,index,defaultval,...)
 			local list = Pineapple.Settings.getList(list)
-			list[name] = {Type = '', [object] = index, Value = defaultval or object[index], Default = defaultval;
+			local setting = setmetatable({[object] = index, Default = defaultval;
 				Set = function(self,newval)
 					self.Value = newval
-					local i,v = next(self)
-					i[v] = newval
 				end;
 				toDefault = function(self)
-					self:Set(self.Default)
+					self:Set(self.Default or self.Value)
 				end;
-			}
+			},	{
+					Storage = {...};
+					Value = object[index];
+					__index = function(self,a)
+						if a == 'Value' then
+							return getmetatable(self).Value
+						elseif a == 'Storage' then
+							return getmetatable(self).Storage
+						end
+					end;
+					__newindex = function(self,a,new)
+						if a == 'Value' then
+							object[index] = new
+							rawset(getmetatable(self),a,new)
+						elseif a == 'Storage' then
+							rawset(getmetatable(self),a,new)
+						end
+					end;
+				}
+			)
+			if type(object[index]) == 'boolean' then
+				function setting:Toggle()
+					if setting.Value then
+						setting:Set(false)
+					else
+						setting:Set(true)
+					end
+				end
+			end
+			object.GetPropertyChangedSignal(index):connect(function()
+					setting:Set(object[index])
+			end)	
 			return list
 		end;
-		Sync = function(self)
+		get = function(name,list)
+			if list then return Pineapple.Misc.Table.find(list,name) end
 			for i,v in next, getmetatable(self).Settings do
-				v:Set(v.Value)
+				for n, ret in next, v do
+					if n == name then 
+						return ret
+					end
+				end
+			end
+		end;
+		set = function(name,newval,list)
+			Pineapple.Settings.get(name,list):Set(newval)
+		end;
+		Sync = function(self)
+			for _,list in next, getmetatable(self).Settings do
+				for name, setting in next, list do
+					setting:Set(setting.Value)
+				end
 			end
 		end;
 		},{
 		Default = {};
-		Settings = {};
+		Settings = {
+			MAIN = {};
+		};
 	}
 )
   

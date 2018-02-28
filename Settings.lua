@@ -57,7 +57,7 @@ Settings = setmetatable({
 		end;
 		get = function(name,list)
 			if list then return Pineapple.Misc.Table.find(list,name) end
-			for i,v in next, getmetatable(self).Settings do
+			for i,v in next, getmetatable(Pineapple.Settings).Settings do
 				for n, ret in next, v do
 					if n == name then 
 						return ret
@@ -82,4 +82,3 @@ Settings = setmetatable({
 		};
 	}
 )
-  

@@ -22,8 +22,9 @@ Effects = setmetatable({
 			end
 		end;
 		massEffect = function(who,name,...)
+			local args = {...}
 			who.ChildAdded:connect(function(c)
-					Pineapple.Effects.affect(c,name,...)
+					Pineapple.Effects.affect(c,name,args)
 				end)
 		end;
 },
@@ -48,7 +49,7 @@ Effects = setmetatable({
 					size.type = {true,false}
 					size = size(who.Parent.AbsoluteSize.X >= who.Parent.AbsoluteSize.Y)
 				end
-				Pineapple.Positioning.tweenObject(who,'both',ud(.5,-Size/2,3),ud(size,'o'),speed,'Quad','Out')
+				Pineapple.Positioning.tweenObject(who,'both',ud(.5,-size/2,3),ud(size,'o'),speed,'Quad','Out')
 				Pineapple.Misc.Functions.tweenService(who,typ,1,speed,'Quint','In')
 				coroutine.wrap(function()
 						repeat wait() until who[typ] >= 1
@@ -58,4 +59,3 @@ Effects = setmetatable({
 		};
 	}
 )
-

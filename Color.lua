@@ -24,7 +24,7 @@ Color = setmetatable({
 				if not g then
 					g = 1
 				end
-				nc[g] = ope(nc[g],r,sign)
+				nc[g] = op(nc[g],r,sign)
 			else
 				for i,v in pairs(nc)do
 					nc[i] = op(v,args[i],sign)
@@ -75,7 +75,7 @@ Color = setmetatable({
 				if not g then
 					g = 1
 				end
-				nc[g] = ope(nc[g],r,sign)
+				nc[g] = op(nc[g],r,sign)
 			else
 				for i,v in pairs(nc)do
 					nc[i] = op(v,args[i],sign)
@@ -121,7 +121,7 @@ Color = setmetatable({
 			r = string.format('%02X',r)
 			g = string.format('%02X',g)
 			b = string.format('%02X',b)
-			return (hash and '#' or '')..tostring(r)..tostring(g)..tostring(b)..
+			return (hash and '#' or '')..tostring(r)..tostring(g)..tostring(b)
 		end;
 		fromString = function(pName)
 			local colors = {
@@ -159,7 +159,7 @@ Color = setmetatable({
 		getObjectsOfColor = function(color,directory)
 			local objs = {}
 			for i,obj in pairs(Pineapple.Instance:instanceOf(directory):GetDescendants())do
-				for prop, val in pairs(Properties.getProperties(object))do
+				for prop, val in pairs(Properties.getProperties(obj))do
 					if val == color then
 						table.insert(objs,obj)
 					end
@@ -214,5 +214,3 @@ Color = setmetatable({
 },{
 		Colors = {};
 })
-	
-			

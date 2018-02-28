@@ -33,7 +33,7 @@ Theming = setmetatable({ --almost 100% positive this is 100% BROKEN
 					Values = vals or {};
 					Funct = setmetatable({funct or nil,unpack(args)},{
 								__call = function(self,...)
-									for i,v in pairs(newTheme.Objects)do
+									for i,v in pairs(self.Objects)do
 										if ... then
 											self[1](v,...)
 										else
@@ -68,7 +68,7 @@ Theming = setmetatable({ --almost 100% positive this is 100% BROKEN
 						if not hasClass or checks then
 							for _,prop in next,self.Filter do
 								for _,val in next,filv or self.Values do
-									if Pineapple.Properties.hasProperty(obj,prop) and typeof(val) == typeof(obj[prop]) and not Pineapple.Misc.Table.find(used,v) then
+									if Pineapple.Properties.hasProperty(obj,prop) and typeof(val) == typeof(obj[prop]) and not Pineapple.Misc.Table.find(used,val) then
 										obj[prop] = val
 										table.insert(used,val)
 									end
@@ -95,10 +95,10 @@ Theming = setmetatable({ --almost 100% positive this is 100% BROKEN
 		end;
 		insertObjects = function(name,...)
 			local theme = Pineapple.Theming.getTheme(name)
-			for in,ob in next,{...} or {} do
-				if Pineapple.Instance.isAClass(in) then
-					theme.Objects[in] = ob
-					theme(in,ob)
+			for ins,ob in next,{...} or {} do
+				if Pineapple.Instance.isAClass(ins) then
+					theme.Objects[ins] = ob
+					theme(ins,ob)
 				else
 					table.insert(theme.Objects,ob)
 					theme(ob)
@@ -124,10 +124,10 @@ Theming = setmetatable({ --almost 100% positive this is 100% BROKEN
 		end;
 		syncTheme = function(name)
 			local theme = Pineapple.Themes.getTheme(name)
-			for i,v in next,self.Objects do
+			for i,v in next,Pineapple.Theming.Objects do
 				if Pineapple.Instance.isAClass(v) then
 					theme(v)
-				elseif type(v) == 'number'
+				elseif type(v) == 'number' then
 					local sametype = {}
 					local choices = {}
 					for _,val in next, theme.Values do
@@ -149,4 +149,4 @@ Theming = setmetatable({ --almost 100% positive this is 100% BROKEN
 	},{
 		Themes = {};
 	}
-)
+)		

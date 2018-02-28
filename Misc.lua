@@ -26,7 +26,7 @@ Misc = {
 			for i,v in next,prop and type(prop) == 'table' or {prop} do
 				props[Pineapple.Properties[v]] = to and type(to) ~= 'table' or to[i]
 			end
-			return game:GetService('TweenService'):Create(what,TweenInfo.new(tim,style or Enum.EasingStyle.Linear,direction or Enum.EasingDirection.In,rep or 0,reverse or false,delay = 0),props):Play()
+			return game:GetService('TweenService'):Create(what,TweenInfo.new(tim,style or Enum.EasingStyle.Linear,direction or Enum.EasingDirection.In,rep or 0,reverse or false,delay or 0),props):Play()
 		end;
 		stringFilterOut = function(string,starting,ending,...)
 			local args,disregard,tostr,flip = {...}
@@ -34,7 +34,7 @@ Misc = {
 				if type(v) == 'boolean' then
 					if flip == nil then flip = v else tostr = v end
 				elseif type(v) == 'string' then
-					disregar = v
+					disregard = v
 				end
 			end
 			local filter,out = {},{}
@@ -55,7 +55,7 @@ Misc = {
 			return flip and out or filter, flip and filter or out
 		end;
 		switch = function(...)
-		    return sm({type = {},D4 = false,Get = function(self,number)
+		    return setmetatable({type = {},D4 = false,Get = function(self,number)
 			if type(number) ~= 'number' then
 			    for i,v in pairs(self.type)do
 				if v == number then
@@ -133,7 +133,7 @@ Misc = {
 				if type(v) == 'table' then
 					clone[i] = Pineapple.Misc.Table.clone(v)
 					if getmetatable(v) then
-						local metaclone = Pineapple.Misc.Table.clone(getametatable(v))
+						local metaclone = Pineapple.Misc.Table.clone(getmetatable(v))
 						setmetatable(clone[i],metaclone)
 					end
 				else
@@ -144,7 +144,7 @@ Misc = {
 		end;
 		contains = function(tabl,contains,typ)
 			for i,v in next,tabl do
-				if v == contains or (typeof(i) == typeof(contains) and  == contains) then
+				if v == contains or (typeof(i) == typeof(contains) and v == contains) then
 					if typ then
 						return ({true,v,i})[typ]
 					else
@@ -213,9 +213,5 @@ Misc = {
 			return new
 		end;
 	};
-==
+
 }
-				
-				
-				
-				

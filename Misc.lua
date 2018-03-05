@@ -55,39 +55,26 @@ Misc = {
 			return flip and out or filter, flip and filter or out
 		end;
 		switch = function(...)
-		    return setmetatable({type = {},D4 = false,Get = function(self,number)
-			if type(number) ~= 'number' then
-			    for i,v in pairs(self.type)do
-				if v == number then
-				    number = i
-				end
-			    end
-			    if type(number)~= 'number' then
-				number = nil
-			    end
-			end
-			if number == nil then
-			    return self.D4
-			else
-			    return self[number]
-			end
-		    end,...},{
-			__index = function(self,index)
-			    return self:Get(index)
-			end;
-			__newindex = function(self,index,new)
-			    if index == 'Default' then
-				self['D4'] = new
-			    end
-			end;
-			__call = function(self,type,...)
-			    if typeof(self[type]) == 'function' then
-				return self:Get(type)(...)
-			    else
-				return self[type]
-			    end
-			end;
-		    })
+			return setmetatable({filter = {},Default = false,data = {...},
+				Filter = function(self,...)
+					self.filter = {...}
+					return self
+				end;	
+				Get = function(self,what)	
+					local i = what
+					if Citrus.Misc.Table.find(self.data,what) then
+						i = Citrus.Misc.Table.indexOf(self.data,what)
+					end
+					if Citrus.Misc.Table.find(self.filter,what) then
+						i = Citrus.Misc.Table.indexOf(self.filter,what)
+					end
+					return self.data[i]
+				end},{
+					__call = function(self,what,...)
+						local get = self:Get(what)
+						return get and (type(get) ~= 'function' and get or get(...)) or self.Default
+					end;
+				})
 		end;
 		round = function(num)
 			return math.floor(num+.5)
@@ -101,9 +88,7 @@ Misc = {
 			return false
 		end;
 		operation = function(a,b,opa)
-			local op = Citrus.Misc.Functions.switch(a+b,a-b,a*b,a/b,a%b,a^b,a^(1/b),a*b,a^b,a^(1/b))
-			op.type = {'+','-','*','/','%','^','^/','x','pow','rt'}
-			return op(opa)
+			return Citrus.Misc.Functions.switch(a+b,a-b,a*b,a/b,a%b,a^b,a^(1/b),a*b,a^b,a^(1/b)):Filter('+','-','*','/','%','^','^/','x','pow','rt')(opa)
 		end;
 	};
 	Table = {
@@ -185,6 +170,10 @@ Misc = {
 		end;
 		indexOf = function(tabl,val)
 			return Citrus.Misc.Table.contains(tabl,val,3)
+		end;
+		valueOfNext = function(tab,nex)
+			local i,v = next(tab,nex)
+			return v
 		end;
 		find = function(tabl,this)
 			return Citrus.Misc.Table.contains(tabl,this,2)

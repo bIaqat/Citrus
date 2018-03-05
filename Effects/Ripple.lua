@@ -21,13 +21,11 @@ Ripple = function(who,...)
 	siz = siz
 	color = color or Color3.new(0,0,0)							
 	if not siz then
-		local size = Citrus.Misc.Functions.switch(who.Parent.AbsoluteSize.X * 1.5,who.Parent.AbsoluteSize.Y * 1.5)
-		size.type = {true,false}
+		local size = Citrus.Misc.Functions.switch(who.Parent.AbsoluteSize.X * 1.5,who.Parent.AbsoluteSize.Y * 1.5):Filter(true,false)
 		siz = size(who.Parent.AbsoluteSize.X >= who.Parent.AbsoluteSize.Y)
 	end								
-	local op = Citrus.Misc.Functions.switch(-1,0,1)
-	op.type = {'0','.5','1'}
-	local mid = UDim2.new(.5,op(tostring(who.AnchorPoint.X)) * siz/2,.5,op(tostring(who.AnchorPoint.Y)) * siz/2)											
+	local op = Citrus.Misc.Functions.switch(-1,0,1):Filter(0,.5,1)
+	local mid = UDim2.new(.5,op(who.AnchorPoint.X) * siz/2,.5,op(who.AnchorPoint.Y) * siz/2)											
 	from = from or mid
 	prop[typ] = trans
 	prop.pos = from
@@ -39,24 +37,4 @@ Ripple = function(who,...)
 		wait(tim)
 		who:Destroy()
 	end)()
-end;
-
-
---Coiciding Property
-Citrus.Properties.new('Ripple',function(who,...)
-	local trans, speed, color
-	for _,arg in next,{...} do
-		if type(arg) == 'number' then
-			speed = not speed and trans and arg
-			trans = not trans and arg
-		elseif typeof(arg) == 'Color3' then
-			color = arg
-		end
-	end                                                                                                        
-	who.ClipsDescendants = true
-	who.MouseButton1Click:connect(function()
-		local m = game.Players.LocalPlayer:GetMouse()
-		local c = Citrus.Instance.new('Circle',who,{ic = color or Color3.new(0,0,0)})
-		Citrus.Effects.affect(c,'Ripple',speed or .6,trans or .9, color, UDim2.new(0,m.X-c.AbsolutePosition.X,0,m.Y-c.AbsolutePosition.Y))
-	end)
-end)
+end

@@ -171,23 +171,24 @@ Color = setmetatable({
 		insertColor = function(name,col,...)
 			local index = getmetatable(Citrus.Color).Colors
 			for i,v in next,{...} or {} do
+				if not index[v] then
+					index[v] = {}
+				end
 				index = index[v]
-			end
-			if index[name] and type(index[name]) ~= 'table' then
-				index[name] = {index[name]}
 			end
 			if index[name] then
 				table.insert(index[name],col)
 			else
-				index[name] = col
+				index[name] = type(col) == 'table' and col or {col}
 			end			
 		end;
 		getColor = function(name,id,...)
 			local index = getmetatable(Citrus.Color).Colors
-			for i,v in next,{...} or {} do
-				index = index[v]
+			for i,v in next,{type(id) == 'string' and id or nil,...} do
+				index = Citrus.Misc.Table.search(index,v)
 			end
-			return index[id or next(index)]
+			local col = index[name]
+			return col and col[type(id) == 'number' and id or next(col)]
 		end;
 		removeColor = function(name,...)
 			local index = getmetatable(Citrus.Color).Colors

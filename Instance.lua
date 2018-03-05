@@ -12,11 +12,12 @@ Instance = setmetatable({
 				})
 		end;
 		isA = function(is,a)
-			if pcall(function() return Instance.new(is):IsA(a) end) then
-				return true
-			else 
-				return false
+			local self = Citrus.Instance
+			if self.isAClass(is) then
+				is = Instance.new(is)
+				return is:IsA(a)
 			end
+			return false
 		end;
 		isAClass = function(is)
 			if pcall(function() return Instance.new(is) end) then

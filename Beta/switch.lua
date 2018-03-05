@@ -88,12 +88,13 @@ switch = function(...)
 			self.filter = {...}
 			return self
 		end;	
-		Get = function(self,what)	
+		Get = function(self,what)
+			local yes = Citrus.Misc.Functions.exists	
 			local i = what
-			if Citrus.Misc.Table.find(self.data,what) then
+			if yes(Citrus.Misc.Table.find(self.data,what)) then
 				i = Citrus.Misc.Table.indexOf(self.data,what)
 			end
-			if Citrus.Misc.Table.find(self.filter,what) then
+			if yes(Citrus.Misc.Table.find(self.filter,what)) then
 				i = Citrus.Misc.Table.indexOf(self.filter,what)
 			end
 			return self.data[i]
@@ -103,4 +104,4 @@ switch = function(...)
 				return get and (type(get) ~= 'function' and get or get(...)) or self.Default
 			end;
 		})
-end
+end;

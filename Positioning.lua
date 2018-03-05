@@ -52,6 +52,5 @@ Positioning = {
 		else
 			object:TweenSize(udim,direction or 'Out',style or 'Quad',time or .3,interupt,after)
 		end
-	end;
-					
+	end;				
 }

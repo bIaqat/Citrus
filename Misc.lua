@@ -1,13 +1,7 @@
 Misc = {
 	Functions = {
-	Functions = {
-		exists = function(...)
-			for i,v in next,{...}do
-				if v == nil then
-					return false
-				end
-			end
-			return true
+		exists = function(yes)
+			return yes ~= nil and true or false
 		end;
 		tweenService = function(what,prop,to,...)
 			local args = {...}
@@ -70,11 +64,12 @@ Misc = {
 					return self
 				end;	
 				Get = function(self,what)
+					local yes = Citrus.Misc.Functions.exists	
 					local i = what
-					if Citrus.Misc.Functions.exists(Citrus.Misc.Table.find(self.data,what)) then
+					if yes(Citrus.Misc.Table.find(self.data,what)) then
 						i = Citrus.Misc.Table.indexOf(self.data,what)
 					end
-					if Citrus.Misc.Functions.exists(Citrus.Misc.Table.find(self.filter,what)) then
+					if yes(Citrus.Misc.Table.find(self.filter,what)) then
 						i = Citrus.Misc.Table.indexOf(self.filter,what)
 					end
 					return self.data[i]
@@ -145,7 +140,7 @@ Misc = {
 					end
 				end
 			end
-			return false
+			return nil
 		end;
 		toNumeralIndex = function(tabl)
 			local new = {}

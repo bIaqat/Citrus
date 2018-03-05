@@ -1,6 +1,10 @@
 Settings = setmetatable({
 		getDefault = function(classname)
-			return classname and getmetatable(Citrus.Settings).Default[classname] or getmetatable(Citrus.Settings).Default
+			for i,v in next, getmetatable(Citrus.Settings).Default do
+				if Citrus.Instance.isA(classname,i) then
+					return v
+				end
+			end
 		end;
 		setDefault = function(classname,properties)
 			getmetatable(Citrus.Settings).Default[classname] = properties;

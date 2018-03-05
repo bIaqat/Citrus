@@ -87,3 +87,4 @@ Properties = setmetatable({
 		}
 	}
 )
+table.sort(gm(Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);

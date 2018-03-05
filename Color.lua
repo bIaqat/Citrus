@@ -3,11 +3,11 @@ Color = setmetatable({
 			return Color3.fromRGB(r,g,b)
 		end;
 		toRGB = function(color)
-			local r = Pineapple.Misc.Functions.round
+			local r = Citrus.Misc.Functions.round
 			return r(color.r*255),r(color.g*255),r(color.b*255)
 		end;
 		editRGB = function(color,...)
-			local round,op = Pineapple.Misc.Functions.round,Pineapple.Misc.Functions.operation
+			local round,op = Citrus.Misc.Functions.round,Citrus.Misc.Functions.operation
 			local sign,nr,ng,nb,nc
 			local args = {...}
 			if type(args[1]) ~= 'string' then
@@ -18,7 +18,7 @@ Color = setmetatable({
 				nr,ng,nb = args[2],args[3],args[4]
 				args[1],args[2],args[3] = nr,ng,nb
 			end
-			local r,g,b = Pineapple.Color.toRGB(color)
+			local r,g,b = Citrus.Color.toRGB(color)
 			nc = {r,g,b}
 			if not b then
 				if not g then
@@ -35,7 +35,7 @@ Color = setmetatable({
 		setRGB = function(color,...)
 			local args = {...}
 			local nr,ng,nb,nc
-			local r,g,b = Pineapple.Color.toRGB(color)
+			local r,g,b = Citrus.Color.toRGB(color)
 			nc = {r,g,b}
 			if #args < 3 then
 				if not args[2] then
@@ -53,12 +53,12 @@ Color = setmetatable({
 			return Color3.fromHSV(h/360,s/100,v/100)
 		end;
 		toHSV = function(color)
-			local r = Pineapple.Misc.Functions.round
+			local r = Citrus.Misc.Functions.round
 			local h,s,v = Color3.toHSV(color)
 			return r(h*360),r(s*360),r(v*360)
 		end;
 		editHSV = function(color,...)
-			local round,op = Pineapple.Misc.Functions.round,Pineapple.Misc.Functions.operation
+			local round,op = Citrus.Misc.Functions.round,Citrus.Misc.Functions.operation
 			local sign,nr,ng,nb,nc
 			local args = {...}
 			if type(args[1]) ~= 'string' then
@@ -69,7 +69,7 @@ Color = setmetatable({
 				nr,ng,nb = args[2],args[3],args[4]
 				args[1],args[2],args[3] = nr,ng,nb
 			end
-			local r,g,b = Pineapple.Color.toHSV(color)
+			local r,g,b = Citrus.Color.toHSV(color)
 			nc = {r,g,b}
 			if not b then
 				if not g then
@@ -81,12 +81,12 @@ Color = setmetatable({
 					nc[i] = op(v,args[i],sign)
 				end
 			end
-			return Pineapple.Color.fromHSV(unpack(nc))
+			return Citrus.Color.fromHSV(unpack(nc))
 		end;
 		setHSV = function(color,...)
 			local args = {...}
 			local nr,ng,nb,nc
-			local r,g,b = Pineapple.Color.toHSV(color)
+			local r,g,b = Citrus.Color.toHSV(color)
 			nc = {r,g,b}
 			if #args < 3 then
 				if not args[2] then
@@ -98,7 +98,7 @@ Color = setmetatable({
 					nc[i] = args[i]
 				end
 			end
-			return Pineapple.Color.fromHSV(unpack(nc))
+			return Citrus.Color.fromHSV(unpack(nc))
 		end;		
 		fromHex = function(hex)
 			if hex:sub(1,1) == '#' then
@@ -117,7 +117,7 @@ Color = setmetatable({
 			return Color3.fromRGB(r,g,b)
 		end;
 		toHex = function(color,hash)
-			local r,g,b = Pineapple.Color.fromRGB(color)
+			local r,g,b = Citrus.Color.fromRGB(color)
 			r = string.format('%02X',r)
 			g = string.format('%02X',g)
 			b = string.format('%02X',b)
@@ -158,7 +158,7 @@ Color = setmetatable({
 		end;
 		getObjectsOfColor = function(color,directory)
 			local objs = {}
-			for i,obj in pairs(Pineapple.Instance:instanceOf(directory):GetDescendants())do
+			for i,obj in pairs(Citrus.Instance:instanceOf(directory):GetDescendants())do
 				for prop, val in pairs(Properties.getProperties(obj))do
 					if val == color then
 						table.insert(objs,obj)
@@ -169,7 +169,7 @@ Color = setmetatable({
 		end;
 		
 		insertColor = function(name,col,...)
-			local index = getmetatable(Pineapple.Color).Colors
+			local index = getmetatable(Citrus.Color).Colors
 			for i,v in next,{...} or {} do
 				index = index[v]
 			end
@@ -183,14 +183,14 @@ Color = setmetatable({
 			end			
 		end;
 		getColor = function(name,id,...)
-			local index = getmetatable(Pineapple.Color).Colors
+			local index = getmetatable(Citrus.Color).Colors
 			for i,v in next,{...} or {} do
 				index = index[v]
 			end
 			return index[id or next(index)]
 		end;
 		removeColor = function(name,...)
-			local index = getmetatable(Pineapple.Color).Colors
+			local index = getmetatable(Citrus.Color).Colors
 			for i,v in next,{...} or {} do
 				index = index[v]
 			end
@@ -201,14 +201,14 @@ Color = setmetatable({
 			local args = {...}
 			if type(args[1]) == 'string' then
 				if args[1]:sub(1,1) == '#' then
-					return Pineapple.Color.fromHex(args[1])
+					return Citrus.Color.fromHex(args[1])
 				else
-					return Pineapple.Color.getColor(...)
+					return Citrus.Color.getColor(...)
 				end
 			elseif args[4] and args[4] == true then
-				return Pineapple.Color.fromHSV(args[1],args[2],args[3])
+				return Citrus.Color.fromHSV(args[1],args[2],args[3])
 			elseif #args == 3 then
-				return Pineapple.Color.fromRGB(args[1],args[2],args[3])
+				return Citrus.Color.fromRGB(args[1],args[2],args[3])
 			end
 		end;
 },{

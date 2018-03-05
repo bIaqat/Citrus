@@ -1,19 +1,19 @@
 Settings = setmetatable({
 		getDefault = function(classname)
-			return classname and getmetatable(Pineapple.Settings).Default[classname] or getmetatable(Pineapple.Settings).Default
+			return classname and getmetatable(Citrus.Settings).Default[classname] or getmetatable(Citrus.Settings).Default
 		end;
 		setDefault = function(classname,properties)
-			getmetatable(Pineapple.Settings).Default[classname] = properties;
+			getmetatable(Citrus.Settings).Default[classname] = properties;
 		end;
 		newList = function(name)
-			getmetatable(Pineapple.Settings).Settings[name] = {};
+			getmetatable(Citrus.Settings).Settings[name] = {};
 		end;
 		getList = function(name)
-			local settings = getmetatable(Pineapple.Settings).Settings
+			local settings = getmetatable(Citrus.Settings).Settings
 			return not name and settings.MAIN or settings[name]
 		end;
 		new = function(list,name,object,index,defaultval,...)
-			local list = Pineapple.Settings.getList(list)
+			local list = Citrus.Settings.getList(list)
 			local setting = setmetatable({[object] = index, Default = defaultval;
 				Set = function(self,newval)
 					self.Value = newval
@@ -55,9 +55,9 @@ Settings = setmetatable({
 			end)	
 			return list
 		end;
-		get = function(name,list)
-			if list then return Pineapple.Misc.Table.find(list,name) end
-			for i,v in next, getmetatable(Pineapple.Settings).Settings do
+		getSetting = function(name,list)
+			if list then return Citrus.Misc.Table.find(list,name) end
+			for i,v in next, getmetatable(Citrus.Settings).Settings do
 				for n, ret in next, v do
 					if n == name then 
 						return ret
@@ -65,8 +65,8 @@ Settings = setmetatable({
 				end
 			end
 		end;
-		set = function(name,newval,list)
-			Pineapple.Settings.get(name,list):Set(newval)
+		setSetting = function(name,newval,list)
+			Citrus.Settings.get(name,list):Set(newval)
 		end;
 		Sync = function(self)
 			for _,list in next, getmetatable(self).Settings do

@@ -23,8 +23,8 @@ Misc = {
 					reverse = v
 				end
 			end
-			for i,v in next,prop and type(prop) == 'table' or {prop} do
-				props[Pineapple.Properties[v]] = to and type(to) ~= 'table' or to[i]
+			for i,v in next,type(prop) == 'table' and prop or {prop} do
+				props[Citrus.Properties[v]] = type(to) ~= 'table' and to or to[i]
 			end
 			return game:GetService('TweenService'):Create(what,TweenInfo.new(tim,style or Enum.EasingStyle.Linear,direction or Enum.EasingDirection.In,rep or 0,reverse or false,delay or 0),props):Play()
 		end;
@@ -39,7 +39,7 @@ Misc = {
 			end
 			local filter,out = {},{}
 			for i in string:gmatch(starting) do
-				if not Pineapple.Misc.Functions.contains(string:match(starting),type(disregard)=='table' and unpack(disregard) or disregard) then
+				if not Citrus.Misc.Functions.contains(string:match(starting),type(disregard)=='table' and unpack(disregard) or disregard) then
 					local filtered = string:sub(string:find(starting),ending and ({string:find(ending)})[2] or ({string:find(starting)})[2])
 					local o = string:sub(1,(ending and string:find(ending) or string:find(starting))-1)
 					table.insert(filter,filtered~=disregard and filtered or nil)
@@ -101,17 +101,16 @@ Misc = {
 			return false
 		end;
 		operation = function(a,b,opa)
-			local op = Pineapple.Misc.Functions.switch(a+b,a-b,a*b,a/b,a%b,a^b,a^(1/b),a*b,a^b,a^(1/b))
+			local op = Citrus.Misc.Functions.switch(a+b,a-b,a*b,a/b,a%b,a^b,a^(1/b),a*b,a^b,a^(1/b))
 			op.type = {'+','-','*','/','%','^','^/','x','pow','rt'}
 			return op(opa)
 		end;
 	};
-	
 	Table = {
-		pack = function(table,start)
+		pack = function(tabl,start)
 			local new = {}
-			for i = start or 1, #table do
-				table.insert(new,table[i])
+			for i = start or 1, #tabl do
+				table.insert(new,tabl[i])
 			end
 			return new
 		end;
@@ -131,9 +130,9 @@ Misc = {
 			local clone = {}
 			for i,v in next,tab do
 				if type(v) == 'table' then
-					clone[i] = Pineapple.Misc.Table.clone(v)
+					clone[i] = Citrus.Misc.Table.clone(v)
 					if getmetatable(v) then
-						local metaclone = Pineapple.Misc.Table.clone(getmetatable(v))
+						local metaclone = Citrus.Misc.Table.clone(getmetatable(v))
 						setmetatable(clone[i],metaclone)
 					end
 				else
@@ -144,7 +143,7 @@ Misc = {
 		end;
 		contains = function(tabl,contains,typ)
 			for i,v in next,tabl do
-				if v == contains or (typeof(i) == typeof(contains) and v == contains) then
+				if v == contains or (typeof(i) == typeof(contains) and v == contains) or i == contains then
 					if typ then
 						return ({true,v,i})[typ]
 					else
@@ -154,7 +153,7 @@ Misc = {
 			end
 			return false
 		end;
-		toNumberalIndex = function(tabl)
+		toNumeralIndex = function(tabl)
 			local new = {}
 			for index,v in next,tabl do
 				if type(index) ~= 'number' then
@@ -175,7 +174,7 @@ Misc = {
 			return new
 		end;
 		length = function(tab)
-			return #Pineapple.Misc.Table.toNumeralIndex(tab)
+			return #Citrus.Misc.Table.toNumeralIndex(tab)
 		end;
 		reverse = function(tab)
 			local new ={}
@@ -185,21 +184,22 @@ Misc = {
 			return new
 		end;
 		indexOf = function(tabl,val)
-			return Pineapple.Misc.Table.contains(tabl,val,3)
+			return Citrus.Misc.Table.contains(tabl,val,3)
 		end;
 		find = function(tabl,this)
-			return Pineapple.Misc.Table.contains(tabl,this,2)
+			return Citrus.Misc.Table.contains(tabl,this,2)
 		end;
 		search = function(tabl,this)
-			local misc = Pineapple.Misc
+			local misc = Citrus.Misc
 			if misc.Table.find(tabl,this) then
 				return misc.Table.find(tabl,this)
 			end
 			for i,v in next,tabl do
 				if type(i) == 'string' or type(v) == 'string' then
 					local subject = type(i) == 'string' and i or type(v) == 'string' and v
-					local caps = misc.Functions.stringFilterOut(subject,'%u',false,true)
-					if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() then
+					local caps = misc.Functions.stringFilterOut(subject,'%u',nil,false,true)
+					local numc = caps..(subject:match('%d+$') or '')
+					if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
 						return v,i
 					end
 				end
@@ -208,10 +208,9 @@ Misc = {
 		end;
 		anonSetMetatable = function(tabl,set)
 			local old = getmetatable(tabl)
-			local new = Pineapple.Misc.Table.clone(setmetatable(tabl,set))
+			local new = Citrus.Misc.Table.clone(setmetatable(tabl,set))
 			setmetatable(tabl,old)
 			return new
 		end;
 	};
-
 }

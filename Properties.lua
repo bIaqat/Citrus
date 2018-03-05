@@ -1,6 +1,6 @@
 Properties = setmetatable({
 		new = function(name,func,...)
-			local storage = getmetatable(Pineapple.Properties).Custom
+			local storage = getmetatable(Citrus.Properties).Custom
 			storage[name] = setmetatable({func,...},{
 					__call = function(self,...)
 						return self[1](...)
@@ -16,31 +16,31 @@ Properties = setmetatable({
 			})
 		end;
 		hasProperty = function(who,prop) --EDIT LATER FOR CUSTOM OBJECTS
-			if pcall(function() return who[Pineapple.Properties[prop]] end) then
+			if pcall(function() return who[Citrus.Properties[prop]] end) then
 				return true
 			else
 				return false
 			end
 		end;
 		getProperties = function(who)
-			local p = getmetatable(Pineapple.Properties).RobloxAPI
+			local p = getmetatable(Citrus.Properties).RobloxAPI
 			local new = {}
 			for i,v in next,p do
-				if Pineapple.Properties.hasProperty(who,v) then
+				if Citrus.Properties.hasProperty(who,v) then
 					rawset(new,v,who[v])
 				end
 			end
 			return new
 		end;
 		setProperties = function(who,props)
-			local c = getmetatable(Pineapple.Properties).Custom
+			local c = getmetatable(Citrus.Properties).Custom
 			for i,v in next,props do
 				if c[i] then
 					if type(v) ~= 'table' then v = {v} end
 					--custom object check
 					c[i](who,unpack(v))
-				elseif Pineapple.Properties.hasProperty(who,i) then
-					pcall(function() who[Pineapple.Properties[i]] = v end)
+				elseif Citrus.Properties.hasProperty(who,i) then
+					pcall(function() who[Citrus.Properties[i]] = v end)
 				end
 			end
 			return who
@@ -48,7 +48,7 @@ Properties = setmetatable({
 		getObjectOfProperty = function(property,directory)
 			local objects = {}
 			for _,object in next,type(directory) == 'table' and directory or directory:GetDescendants() do
-				if Pineapple.Properties.hasProperty(object,property) then
+				if Citrus.Properties.hasProperty(object,property) then
 					table.insert(objects,object)
 				end
 			end
@@ -57,7 +57,7 @@ Properties = setmetatable({
 					
 	},{
 		__index = function(self,ind)
-			return Pineapple.Misc.Table.search(getmetatable(self).RobloxAPI,ind)
+			return Citrus.Misc.Table.search(getmetatable(self).RobloxAPI,ind)
 		end;
 		Custom = setmetatable({},{
 				__index = function(self,ind)
@@ -77,7 +77,7 @@ Properties = setmetatable({
 			'FieldOfView','Focus','HeadLocked','HeadScale','ViewportSize','HeadColor','HeadColor3','LeftArmColor','LeftArmColor3','LeftLegColor','LeftLegColor3','RightArmColor','RightArmColor3','RightLegColor','RightLegColor3','TorsoColor','TorsoColor3';
 			'BaseTextureId','BodyPart','MeshId','OverlayTextureId','PantsTemplate','ShirtTemplate','Graphic','SkinColor','LoadDefaultChat','CursorIcon','MaxActivationDistance','MaxAngularVelocity','PrimaryAxisOnly','ReactionTorqueEnabled','Responsiveness','RigidityEnabled';
 			'ApplyAtCenterOfMass','MaxVelocity','ReactionForceEnabled','Radius','Restitution','TwistLimitsEnabled','TwistLowerAngle','TwistUpperAngle','UpperAngle','ActuatorType','AngularSpeed','CurrentAngle','LimitsEnabled','LowerAngle','MotorMaxAcceleration','MotorMaxTorque','ServoMaxTorque','TargetAngle';
-			'InverseSquareLaw','Magnitude','CurrentDistance','Thickness','CurrentPosition','LowerLimit','Size','TargetPosition','UpperLimit','Heat','SecondaryColor';
+			'InverseSquareLaw','Magnitude','Thickness','CurrentPosition','LowerLimit','Size','TargetPosition','UpperLimit','Heat','SecondaryColor';
 			'BackgroundColor3','AnchorPoint','BackgroundTransparency','BorderColor3','BorderSizePixel','ClipsDescendants','Draggable','LayoutOrder','NextSelectionDown','NextSelectionLeft','NextSelectionRight','NextSelectionUp','Selectable','SelectionImageObject','SizeConstraint','SizeFromContents','ZIndex';
 			'Style','AutoButtonColor','Modal','Selected','Image','ImageColor3','ImageRectOffset','ImageRectSize','ImageTransparency','IsLoaded','ScaleType','SliceCenter','TextSize','TileSize','Font','Text','TextBounds','TextColor3','TextFits';
 			'TextScaled','TextStrokeColor3','TextStrokeTransparency','TextTransparency','TextWrapped','TextXAlignment','TextYAlignment','Active','AbsoluteWindowSize','BottomImage','CanvasPosition','CanvasSize','HorizontalScrollBarInset','MidImage','ScrollBarThickness','ScrollingEnabled','TopImage','VerticalScrollBarInset';

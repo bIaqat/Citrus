@@ -1,7 +1,7 @@
 Instance = setmetatable({
 		newCustomClass = function(name,funct)
-			local self = Pineapple.Instance
-			local pt = Pineapple.Misc.Table
+			local self = Citrus.Instance
+			local pt = Citrus.Misc.Table
 			getmetatable(self).Classes[name] = setmetatable({funct,Objects = {}},{
 					__call = function(self,...)
 						return self[1](...)
@@ -27,8 +27,8 @@ Instance = setmetatable({
 		end;
 				
 		new = function(class,...)
-			local self = Pineapple.Instance
-			local pt = Pineapple.Misc.Table
+			local self = Citrus.Instance
+			local pt = Citrus.Misc.Table
 			local args,storage,new,parent,properties = {...},getmetatable(self).Classes
 			if typeof(args[1]) == 'Instance' or self.isObject(args[1]) then
 				parent = self.getInstanceOf(args[1])
@@ -38,22 +38,22 @@ Instance = setmetatable({
 				properties = args[#args]
 				table.remove(args,#args)
 			end
-			new = pt.contains(storage,class)==true and pt.find(storage,class)(unpack(args)) or Instance.new(class)
+			new = pt.find(storage,class) and pt.find(storage,class)(unpack(args)) or Instance.new(class)
 			new.Parent = parent
-			Pineapple.Properties.setProperties(new,Pineapple.Settings.getDefault(class) or {})
-			Pineapple.Properties.setProperties(new,properties or {})
+			Citrus.Properties.setProperties(new,Citrus.Settings.getDefault(class) or {})
+			Citrus.Properties.setProperties(new,properties or {})
 			return new
 		end;
 		newInstance = function(class,parent,props)
 			local new = Instance.new(class)
 			props = props or type(parent) == 'table' and parent
 			parent = type(parent) == 'table' and nil or parent
-			Pineapple.Properties.setProperties(new,Pineapple.Settings.getDefault(class) or {})
-			return Pineapple.Properties.setProperties(Instance.new(class,parent),props or {})
+			Citrus.Properties.setProperties(new,Citrus.Settings.getDefault(class) or {})
+			return Citrus.Properties.setProperties(Instance.new(class,parent),props or {})
 		end;
 		newObject = function(class,...)
-			local ins = Pineapple.Instance
-			local pt = Pineapple.Misc.Table
+			local ins = Citrus.Instance
+			local pt = Citrus.Misc.Table
 			local args,parent,object,properties = {...}
 			if typeof(ins.getInstanceOf(args[1])) == 'Instance' then
 				parent = ins.getInstanceOf(args[1])
@@ -80,8 +80,8 @@ Instance = setmetatable({
 							return pt.find(prop.Index,ind)()
 						elseif pt.contains(obj,ind) then
 							return pt.find(obj,ind)
-						elseif Pineapple.Properties.hasProperty(self[1],ind) then
-							return self[1][Pineapple.Properties[ind]]
+						elseif Citrus.Properties.hasProperty(self[1],ind) then
+							return self[1][Citrus.Properties[ind]]
 						end
 					end;
 					__newindex = function(self,ind,new)
@@ -91,8 +91,8 @@ Instance = setmetatable({
 							pt.find(prop.Index,ind)(new)
 						elseif pt.contains(obj,ind) then
 							rawset(obj,ind,new)
-						elseif Pineapple.Properties.hasProperty(self[1],ind) then
-							self[1][Pineapple.Properties[ind]] = new
+						elseif Citrus.Properties.hasProperty(self[1],ind) then
+							self[1][Citrus.Properties[ind]] = new
 						end
 					end;
 				})
@@ -105,7 +105,7 @@ Instance = setmetatable({
 				rawset(prop.NewIndex,name,what)
 			end
 			function new:Clone(parent)
-				local clone = Pineapple.Misc.Table.clone(self)
+				local clone = Citrus.Misc.Table.clone(self)
 				clone[1] = self[1]:Clone()
 				clone[1].Parent = parent
 				getmetatable(ins).Objects[clone] = clone[1]
@@ -115,16 +115,19 @@ Instance = setmetatable({
 			return new
 		end;
 		getInstanceOf = function(who)
-			local self = getmetatable(Pineapple.Instance).Objects
-			return Pineapple.Misc.Table.find(self,who) or typeof(who) == 'Instance' and who
+			local self = getmetatable(Citrus.Instance).Objects
+			return Citrus.Misc.Table.find(self,who) or typeof(who) == 'Instance' and who
 		end;
 		getObjectOf = function(who)
-			local self = getmetatable(Pineapple.Instance).Objects
-			return Pineapple.Misc.Table.IndexOf(self,who) or typeof(who) == 'Instance' and who
+			local self = getmetatable(Citrus.Instance).Objects
+			return Citrus.Misc.Table.indexOf(self,who) or typeof(who) == 'Instance' and who
+		end;
+		isObject = function(who)
+			return Citrus.Instance.getObjectOf(who) and true or false
 		end;
 		getAncestors = function(who)
-			local misc = Pineapple.Misc
-			who = Pineapple.Instance.getInstaceOf(who)
+			local misc = Citrus.Misc
+			who = Citrus.Instance.getInstaceOf(who)
 			local chain = {game,unpack(misc.Functions.stringFilterOut(who:GetFullName(),'%.',nil,'game',true))}
 			chain = misc.Table.reverse(chain)
 			table.remove(chain,1)

@@ -1,7 +1,7 @@
---optional fromMaterial function
 fromMaterial = function(name,i,ac)
-	local id = Citrus.Misc.Functions.switch(1,2,3,4,5,6,7,8,9,10):Filter(50,100,200,300,400,500,600,700,800,900)
-	return Citrus.Color.get(name,id(i or 500),'Material',ac and 'A')
+	local id = Citrus.Misc.Functions.switch(1,2,3,4,5,6,7,8,9,10):Filter(unpack(Citrus.Misc.Functions.switch({50,100,200,300,400,500,600,700,800,900},{100,200,400,700}):Filter(false,true)(ac ~= nil and true or false)))
+	id = id(i or 500)
+	return id and Citrus.Color.getColor(name,id,'Material',ac and 'Accent')
 end;
 
 --Colours

@@ -3,6 +3,7 @@ Color = setmetatable({
 			return Color3.fromRGB(r,g,b)
 		end;
 		toRGB = function(color)
+			if not color then return nil end
 			local r = Citrus.Misc.Functions.round
 			return r(color.r*255),r(color.g*255),r(color.b*255)
 		end;
@@ -53,6 +54,7 @@ Color = setmetatable({
 			return Color3.fromHSV(h/360,s/100,v/100)
 		end;
 		toHSV = function(color)
+			if not color then return nil end
 			local r = Citrus.Misc.Functions.round
 			local h,s,v = Color3.toHSV(color)
 			return r(h*360),r(s*360),r(v*360)
@@ -117,6 +119,7 @@ Color = setmetatable({
 			return Color3.fromRGB(r,g,b)
 		end;
 		toHex = function(color,hash)
+			if not color then return nil end
 			local r,g,b = Citrus.Color.fromRGB(color)
 			r = string.format('%02X',r)
 			g = string.format('%02X',g)

@@ -1,5 +1,14 @@
 Misc = {
 	Functions = {
+	Functions = {
+		exists = function(...)
+			for i,v in next,{...}do
+				if v == nil then
+					return false
+				end
+			end
+			return true
+		end;
 		tweenService = function(what,prop,to,...)
 			local args = {...}
 			local props = {}
@@ -60,12 +69,12 @@ Misc = {
 					self.filter = {...}
 					return self
 				end;	
-				Get = function(self,what)	
+				Get = function(self,what)
 					local i = what
-					if Citrus.Misc.Table.find(self.data,what) then
+					if Citrus.Misc.Functions.exists(Citrus.Misc.Table.find(self.data,what)) then
 						i = Citrus.Misc.Table.indexOf(self.data,what)
 					end
-					if Citrus.Misc.Table.find(self.filter,what) then
+					if Citrus.Misc.Functions.exists(Citrus.Misc.Table.find(self.filter,what)) then
 						i = Citrus.Misc.Table.indexOf(self.filter,what)
 					end
 					return self.data[i]

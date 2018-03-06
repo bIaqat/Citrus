@@ -15,7 +15,7 @@ Properties = setmetatable({
 					end;
 			})
 		end;
-		hasProperty = function(who,prop) --EDIT LATER FOR CUSTOM OBJECTS
+		hasProperty = function(who,prop)
 			if pcall(function() return who[Citrus.Properties[prop]] end) then
 				return true
 			else
@@ -57,7 +57,7 @@ Properties = setmetatable({
 					
 	},{
 		__index = function(self,ind)
-			return Citrus.Misc.Table.search(getmetatable(self).RobloxAPI,ind)
+			return Citrus.Misc.Table.search(getmetatable(self).RobloxAPI,ind) or ind
 		end;
 		Custom = setmetatable({},{
 				__index = function(self,ind)
@@ -68,6 +68,8 @@ Properties = setmetatable({
 					end
 				end});
 		RobloxAPI = {
+			'Shape','Anchored','BackParamA','BackParamB','BackSurface','BackSurfaceInput','BottomParamA','BottomParamB','BottomSurface','BottomSurfaceInput','BrickColor','CFrame','CanCollide','CenterOfMass','CollisionGroupId','Color','CustomPhysicalProperties','FrontParamA','FrontParamB','FrontSurface','FrontSurfaceInput';
+			'LeftParamA','LeftParamB','LeftSurface','LeftSurfaceInput','Locked','Material','Orientation','Reflectance','ResizeIncrement','ResizeableFaces','RightParamA','RightParamB','RightSurface','RightSurfaceInput','RotVelocity','TopParamA','TopParamB','TopSurface','TopSurfaceInput','Velocity';
 			'Archivable','ClassName','Name','Parent','AttachmentForward','AttachmentPoint','AttachmentPos','AttachmentRight','AttachmentUp';
 			'Animation','AnimationId','IsPlaying','Length','Looped','Priority','Speed','TimePosition','WeightCurrent','WeightTarget','Axis','CFrame','Orientation';
 			'Position','Rotation','SeconaryAxis','Visible','WorldAxis','WorldOrientation','WorldPosition','WorldSecondaryAxis','Version','DisplayOrder','ResetOnSpawn','Enabled';
@@ -88,3 +90,4 @@ Properties = setmetatable({
 	}
 )
 table.sort(gm(Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
+

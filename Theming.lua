@@ -26,6 +26,7 @@ Theming = setmetatable({
 			Citrus.Theming.insertObjects(...)
 		end;
 		insertObject = function(name,obj,...)
+			obj = Citrus.Instance.getInstanceOf(obj)
 			Citrus.Theming.getObjects(name)[obj] = {}
 			local ob = Citrus.Theming.getObjects(name)[obj]
 			local args = {...}
@@ -42,6 +43,7 @@ Theming = setmetatable({
 			end
 		end;
 		insertProperty = function(name,obj,prop,index)
+			obj = Citrus.Instance.getInstanceOf(obj)
 			local objs = Citrus.Theming.getObjects(name,obj)
 			objs[prop] = index or 1
 			obj[prop] = Citrus.Theming.getValues(name,index or 1)
@@ -55,7 +57,6 @@ Theming = setmetatable({
 			for i,theme in next, name and {Citrus.Theming.getTheme(name)} or getmetatable(Citrus.Theming).Themes do
 				local val,objs = theme.Values,theme.Objects
 				for obj, data in next, objs do
-					warn(obj)
 					for prop,index in next,data do
 						print(prop,index,unpack(val))
 						obj[prop] = val[index]

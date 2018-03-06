@@ -120,11 +120,11 @@ Color = setmetatable({
 		end;
 		toHex = function(color,hash)
 			if not color then return nil end
-			local r,g,b = Citrus.Color.fromRGB(color)
+			local r,g,b = Citrus.Color.toRGB(color)
 			r = string.format('%02X',r)
 			g = string.format('%02X',g)
 			b = string.format('%02X',b)
-			return (hash and '#' or '')..tostring(r)..tostring(g)..tostring(b)
+			return (not hash and '#' or '')..tostring(r)..tostring(g)..tostring(b)
 		end;
 		fromString = function(pName)
 			local colors = {
@@ -161,7 +161,7 @@ Color = setmetatable({
 		end;
 		getObjectsOfColor = function(color,directory)
 			local objs = {}
-			for i,obj in pairs(Citrus.Instance:instanceOf(directory):GetDescendants())do
+			for i,obj in pairs(Citrus.Instance:getInstanceOf(directory):GetDescendants())do
 				for prop, val in pairs(Properties.getProperties(obj))do
 					if val == color then
 						table.insert(objs,obj)

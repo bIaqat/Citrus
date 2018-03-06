@@ -16,6 +16,7 @@ Properties = setmetatable({
 			})
 		end;
 		hasProperty = function(who,prop)
+			who = Citrus.Instance.getInstanceOf(who)
 			if pcall(function() return who[Citrus.Properties[prop]] end) then
 				return true
 			else
@@ -23,6 +24,7 @@ Properties = setmetatable({
 			end
 		end;
 		getProperties = function(who)
+			who = Citrus.Instance.getInstanceOf(who)
 			local p = getmetatable(Citrus.Properties).RobloxAPI
 			local new = {}
 			for i,v in next,p do
@@ -33,6 +35,7 @@ Properties = setmetatable({
 			return new
 		end;
 		setProperties = function(who,props)
+			who = Citrus.Instance.getInstanceOf(who)
 			local c = getmetatable(Citrus.Properties).Custom
 			for i,v in next,props do
 				if c[i] then
@@ -46,6 +49,7 @@ Properties = setmetatable({
 			return who
 		end;
 		getObjectOfProperty = function(property,directory)
+			directory = Citrus.Instance.getInstanceOf(directory)
 			local objects = {}
 			for _,object in next,type(directory) == 'table' and directory or directory:GetDescendants() do
 				if Citrus.Properties.hasProperty(object,property) then

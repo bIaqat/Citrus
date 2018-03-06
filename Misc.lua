@@ -96,9 +96,9 @@ Misc = {
 		end;
 	};
 	Table = {
-		pack = function(tabl,start)
+		pack = function(tabl,start,en)
 			local new = {}
-			for i = start or 1, #tabl do
+			for i = start or 1, en or #tabl do
 				table.insert(new,tabl[i])
 			end
 			return new
@@ -168,7 +168,7 @@ Misc = {
 		reverse = function(tab)
 			local new ={}
 			for i,v in next,tab do
-				new[#tab+1-1] = v
+				table.insert(new,tab[#tab-i+1])
 			end
 			return new
 		end;

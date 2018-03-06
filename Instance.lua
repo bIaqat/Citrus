@@ -52,87 +52,88 @@ Instance = setmetatable({
 			Citrus.Properties.setProperties(new,Citrus.Settings.getDefault(class) or {})
 			return Citrus.Properties.setProperties(Instance.new(class,parent),props or {})
 		end;
-		newObject = function(class,...)
-			local ins = Citrus.Instance
-			local pt = Citrus.Misc.Table
-			local args,parent,object,properties = {...}
-			if typeof(ins.getInstanceOf(args[1])) == 'Instance' then
-				parent = ins.getInstanceOf(args[1])
-				table.remove(args,1)
+		newObject = function(...)
+			local function insert(who)
+				rawset(getmetatable(Citrus.Instance).Objects,who.Instance,who)
 			end
-			if type(args[#args]) == 'table' then
-				if #args == 1 then
-					object = args[#args]
-					table.remove(args,#args)
-				else
-					properties = args[#args]
-					table.remove(args,#args)
-					object = args
-				end
+			local args,obj,class,parent,props = {...},{}
+			for i,v in next,args do
+				class = type(v) == 'string' and Citrus.Instance.isAClass(v) and v or class
+				parent = typeof(v) == 'Instance' and v or parent
+				obj = type(v) == 'table' and Citrus.Misc.Table.length(obj) == 0 and v or obj
+				props = type(v) == 'table' and Citrus.Misc.Table.length(obj) > 0 and v or props
 			end
-			local new = {Instance.new(class)}
-			setmetatable(new,{
-					Object = object or {};
-					Properties = { Index = {}, NewIndex = {} };
-					__index = function(self,ind)
-						local obj = getmetatable(self).Object
-						local prop = getmetatable(self).Properties
-						if pt.contains(prop.Index,ind) then
-							return pt.find(prop.Index,ind)()
-						elseif pt.contains(obj,ind) then
-							return pt.find(obj,ind)
-						elseif Citrus.Properties.hasProperty(self[1],ind) then
-							return self[1][Citrus.Properties[ind]]
-						end
-					end;
-					__newindex = function(self,ind,new)
-						local obj = getmetatable(self).Object
-						local prop = getmetatable(self).Properties
-						if pt.contains(prop.Index,ind) then
-							pt.find(prop.Index,ind)(new)
-						elseif pt.contains(obj,ind) then
-							rawset(obj,ind,new)
-						elseif Citrus.Properties.hasProperty(self[1],ind) then
-							self[1][Citrus.Properties[ind]] = new
-						end
-					end;
-				})
+			local ins = Citrus.Instance.newInstance(class,parent,props)
+			local new = {Instance = ins,Object = obj}
+			local newmeta = {
+				Properties = {Index = {}, NewIndex = {}};
+				__index = function(self,ind)
+					local pro = getmetatable(self).Properties
+					if Citrus.Misc.Table.contains(pro.Index,ind) then
+						local ret = Citrus.Misc.Table.find(pro.Index,ind)
+						return type(ret) ~= 'function' and ret or ret(self)
+					elseif Citrus.Misc.Table.contains(self.Object,ind) or not Citrus.Properties.hasProperty(self.Instance,ind) then
+						return Citrus.Misc.Table.find(self.Object,ind)
+					elseif Citrus.Properties.hasProperty(self.Instance,ind) then
+						return self.Instance[Citrus.Properties[ind]]
+					end
+				end;
+				__newindex = function(self,ind,new)
+					local pro = getmetatable(self).Properties
+					if Citrus.Misc.Table.contains(pro.NewIndex,ind) then
+						Citrus.Misc.Table.find(pro.NewIndex,ind)(self,new)
+					elseif Citrus.Misc.Table.contains(self.Object,ind) or not Citrus.Properties.hasProperty(self.Instance,ind) then
+						rawset(self.Object,ind,new)
+					elseif Citrus.Properties.hasProperty(self.Instance,ind) then
+						self.Instance[Citrus.Properties[ind]] = new
+					end
+				end;
+				__call = function(self,prop)
+					Citrus.Properties.setProperties(self.Instance,prop)
+				end;
+			}
 			function new:Index(name,what)
-				local prop = getmetatable(self).Properties
-				rawset(prop.Index,name,what)
-			end
+				rawset(getmetatable(self).Properties.Index,name,what)
+			end;
 			function new:NewIndex(name,what)
-				local prop = getmetatable(self).Properties
-				rawset(prop.NewIndex,name,what)
-			end
-			function new:Clone(parent)
+				if type(what) == 'function' then
+					rawset(getmetatable(self).Properties.NewIndex,name,what)
+				end
+			end;
+			function new:Clone(parent,prop)
+				local ins = self.Instance:Clone()
+				ins.Parent = parent
 				local clone = Citrus.Misc.Table.clone(self)
-				clone[1] = self[1]:Clone()
-				clone[1].Parent = parent
-				getmetatable(ins).Objects[clone] = clone[1]
+				clone.Instance = ins
+				insert(clone)
 				return clone
-			end
-			getmetatable(ins).Objects[new] = new[1]
+			end;
+			setmetatable(new,newmeta)
+			insert(new)
 			return new
 		end;
 		getInstanceOf = function(who)
 			local self = getmetatable(Citrus.Instance).Objects
-			return Citrus.Misc.Table.find(self,who) or typeof(who) == 'Instance' and who
+			return Citrus.Misc.Table.indexOf(self,who) or who
 		end;
 		getObjectOf = function(who)
 			local self = getmetatable(Citrus.Instance).Objects
-			return Citrus.Misc.Table.indexOf(self,who) or typeof(who) == 'Instance' and who
+			return Citrus.Misc.Table.find(self,who) or nil
 		end;
 		isObject = function(who)
 			return Citrus.Instance.getObjectOf(who) and true or false
 		end;
 		getAncestors = function(who)
+			local anc = {game}
 			local misc = Citrus.Misc
-			who = Citrus.Instance.getInstaceOf(who)
-			local chain = {game,unpack(misc.Functions.stringFilterOut(who:GetFullName(),'%.',nil,'game',true))}
-			chain = misc.Table.reverse(chain)
-			table.remove(chain,1)
-			return misc.Table.reverse(chain)
+			who = Citrus.Instance.getInstanceOf(who)
+			local chain = misc.Functions.stringFilterOut(who:GetFullName(),'%.','game',nil,true)
+			local ind = game
+			for i,v in next,chain do
+				ind = ind[v]
+				table.insert(anc,ind)
+			end
+			return misc.Table.pack(misc.Table.reverse(anc),2)
 		end;
 	},{
 		Classes = {};

@@ -152,17 +152,17 @@ Color = setmetatable({
 			return colors[(value % #colors) + 1]
 		end;
 		getReciprocal = function(color)
-			local h,s,v = Color.toHSV(color)
-			return Color.fromHSV(h,v,s)
+			local h,s,v = Citrus.Color.toHSV(color)
+			return Citrus.Color.fromHSV(h,v,s)
 		end;
 		getInverse = function(color)
-			local h,s,v = Color.toHSV(color)
-			return Color.fromHSV((h + 180) % 360, v, s)
+			local h,s,v = Citrus.Color.toHSV(color)
+			return Citrus.Color.fromHSV((h + 180) % 360, v, s)
 		end;
 		getObjectsOfColor = function(color,directory)
 			local objs = {}
 			for i,obj in pairs(Citrus.Instance:getInstanceOf(directory):GetDescendants())do
-				for prop, val in pairs(Properties.getProperties(obj))do
+				for prop, val in pairs(Citrus.Properties.getProperties(obj))do
 					if val == color then
 						table.insert(objs,obj)
 					end
@@ -217,4 +217,4 @@ Color = setmetatable({
 		end;
 },{
 		Colors = {};
-})
+});

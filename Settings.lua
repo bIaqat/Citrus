@@ -1,7 +1,7 @@
 Settings = setmetatable({
 		getDefault = function(classname)
 			for i,v in next, getmetatable(Citrus.Settings).Default do
-				if Citrus.Instance.isA(classname,i) then
+				if Citrus.Instance.isA(classname,i) or classname == i then
 					return v
 				end
 			end

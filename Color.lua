@@ -4,11 +4,11 @@ Color = setmetatable({
 		end;
 		toRGB = function(color)
 			if not color then return nil end
-			local r = Citrus.Misc.Functions.round
+			local r = Citrus.Misc.round
 			return r(color.r*255),r(color.g*255),r(color.b*255)
 		end;
 		editRGB = function(color,...)
-			local round,op = Citrus.Misc.Functions.round,Citrus.Misc.Functions.operation
+			local round,op = Citrus.Misc.round,Citrus.Misc.operation
 			local sign,nr,ng,nb,nc
 			local args = {...}
 			if type(args[1]) ~= 'string' then
@@ -55,12 +55,12 @@ Color = setmetatable({
 		end;
 		toHSV = function(color)
 			if not color then return nil end
-			local r = Citrus.Misc.Functions.round
+			local r = Citrus.Misc.round
 			local h,s,v = Color3.toHSV(color)
 			return r(h*360),r(s*360),r(v*360)
 		end;
 		editHSV = function(color,...)
-			local round,op = Citrus.Misc.Functions.round,Citrus.Misc.Functions.operation
+			local round,op = Citrus.Misc.round,Citrus.Misc.operation
 			local sign,nr,ng,nb,nc
 			local args = {...}
 			if type(args[1]) ~= 'string' then
@@ -188,7 +188,7 @@ Color = setmetatable({
 		getColor = function(name,id,...)
 			local index = getmetatable(Citrus.Color).Colors
 			for i,v in next,{type(id) == 'string' and id or nil,...} do
-				index = Citrus.Misc.Table.search(index,v)
+				index = Citrus.Table.search(index,v)
 			end
 			local col = index[name]
 			return col and col[type(id) == 'number' and id or next(col)]

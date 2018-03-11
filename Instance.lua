@@ -1,7 +1,7 @@
 Instance = setmetatable({
 		newCustomClass = function(name,funct)
 			local self = Citrus.Instance
-			local pt = Citrus.Misc.Table
+			local pt = Citrus.Table
 			getmetatable(self).Classes[name] = setmetatable({funct,Objects = {}},{
 					__call = function(self,...)
 						return self[1](...)
@@ -29,9 +29,9 @@ Instance = setmetatable({
 				
 		new = function(class,...)
 			local self = Citrus.Instance
-			local pt = Citrus.Misc.Table
+			local pt = Citrus.Table
 			local args,storage,new,parent,properties = {...},getmetatable(self).Classes
-			if typeof(args[1]) == 'Instance' or self.isObject(args[1]) then
+			if typeof(args[1]) == 'Instance' or self.isAnObject(args[1]) then
 				parent = self.getInstanceOf(args[1])
 				table.remove(args,1)
 			end
@@ -60,8 +60,8 @@ Instance = setmetatable({
 			for i,v in next,args do
 				class = type(v) == 'string' and Citrus.Instance.isAClass(v) and v or class
 				parent = typeof(v) == 'Instance' and v or parent
-				obj = type(v) == 'table' and Citrus.Misc.Table.length(obj) == 0 and v or obj
-				props = type(v) == 'table' and Citrus.Misc.Table.length(obj) > 0 and v or props
+				obj = type(v) == 'table' and Citrus.Table.length(obj) == 0 and v or obj
+				props = type(v) == 'table' and Citrus.Table.length(obj) > 0 and v or props
 			end
 			local ins = Citrus.Instance.newInstance(class,parent,props)
 			local new = {Instance = ins,Object = obj}
@@ -69,20 +69,20 @@ Instance = setmetatable({
 				Properties = {Index = {}, NewIndex = {}};
 				__index = function(self,ind)
 					local pro = getmetatable(self).Properties
-					if Citrus.Misc.Table.contains(pro.Index,ind) then
-						local ret = Citrus.Misc.Table.find(pro.Index,ind)
+					if Citrus.Table.contains(pro.Index,ind) then
+						local ret = Citrus.Table.find(pro.Index,ind)
 						return type(ret) ~= 'function' and ret or ret(self)
-					elseif Citrus.Misc.Table.contains(self.Object,ind) or not Citrus.Properties.hasProperty(self.Instance,ind) then
-						return Citrus.Misc.Table.find(self.Object,ind)
+					elseif Citrus.Table.contains(self.Object,ind) or not Citrus.Properties.hasProperty(self.Instance,ind) then
+						return Citrus.Table.find(self.Object,ind)
 					elseif Citrus.Properties.hasProperty(self.Instance,ind) then
 						return self.Instance[Citrus.Properties[ind]]
 					end
 				end;
 				__newindex = function(self,ind,new)
 					local pro = getmetatable(self).Properties
-					if Citrus.Misc.Table.contains(pro.NewIndex,ind) then
-						Citrus.Misc.Table.find(pro.NewIndex,ind)(self,new)
-					elseif Citrus.Misc.Table.contains(self.Object,ind) or not Citrus.Properties.hasProperty(self.Instance,ind) then
+					if Citrus.Table.contains(pro.NewIndex,ind) then
+						Citrus.Table.find(pro.NewIndex,ind)(self,new)
+					elseif Citrus.Table.contains(self.Object,ind) or not Citrus.Properties.hasProperty(self.Instance,ind) then
 						rawset(self.Object,ind,new)
 					elseif Citrus.Properties.hasProperty(self.Instance,ind) then
 						self.Instance[Citrus.Properties[ind]] = new
@@ -103,7 +103,7 @@ Instance = setmetatable({
 			function new:Clone(parent,prop)
 				local ins = self.Instance:Clone()
 				ins.Parent = parent
-				local clone = Citrus.Misc.Table.clone(self)
+				local clone = Citrus.Table.clone(self)
 				clone.Instance = ins
 				insert(clone)
 				return clone
@@ -114,13 +114,13 @@ Instance = setmetatable({
 		end;
 		getInstanceOf = function(who)
 			local self = getmetatable(Citrus.Instance).Objects
-			return Citrus.Misc.Table.indexOf(self,who) or who
+			return Citrus.Table.indexOf(self,who) or who
 		end;
 		getObjectOf = function(who)
 			local self = getmetatable(Citrus.Instance).Objects
-			return Citrus.Misc.Table.find(self,who) or nil
+			return Citrus.Table.find(self,who) or nil
 		end;
-		isObject = function(who)
+		isAnObject = function(who)
 			return Citrus.Instance.getObjectOf(who) and true or false
 		end;
 		getAncestors = function(who)
@@ -139,4 +139,4 @@ Instance = setmetatable({
 		Classes = {};
 		Objects = {};
 	}
-)
+);

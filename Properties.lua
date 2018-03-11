@@ -61,7 +61,7 @@ Properties = setmetatable({
 					
 	},{
 		__index = function(self,ind)
-			return Citrus.Misc.Table.search(getmetatable(self).RobloxAPI,ind) or ind
+			return Citrus.Table.search(getmetatable(self).RobloxAPI,ind) or ind
 		end;
 		Custom = setmetatable({},{
 				__index = function(self,ind)
@@ -92,6 +92,4 @@ Properties = setmetatable({
 			'AbsoluteContentSize','FillDirection','HorizontalAlignment','SortOrder','VerticalAlignment','Padding','Animated','Circular','CurrentPage','EasingDirection','EasingStyle','GamepadInputEnabled','ScrollWhellInputEnabled','TweenTime','TouchImputEnable','FillEmptySpaceColumns','FillEmptySpaceRows','MajorAxis','PaddingBottom','PaddingLeft','PaddingRight','PaddingTop','Scale'
 		}
 	}
-)
-table.sort(gm(Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
-
+);

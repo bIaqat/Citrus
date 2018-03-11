@@ -38,3 +38,4 @@ Ripple = function(who,...)
 		who:Destroy()
 	end)()
 end
+

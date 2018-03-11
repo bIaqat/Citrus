@@ -67,4 +67,4 @@ Theming = setmetatable({
 	},{
 		Themes = {};
 	}
-)		
+);

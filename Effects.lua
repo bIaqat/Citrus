@@ -5,7 +5,7 @@ Effects = setmetatable({
 			getmetatable(Citrus.Effects).Effects[name] = func
 		end;
 		getEffect = function(name)
-			return Citrus.Misc.Table.search(getmetatable(Citrus.Effects).Effects,name)
+			return Citrus.Table.search(getmetatable(Citrus.Effects).Effects,name)
 		end;
 		affect = function(who,name,...)
 			who = Citrus.Instance.getInstanceOf(who)
@@ -35,4 +35,4 @@ Effects = setmetatable({
 	{
 		Effects  = {};
 	}
-)
+);

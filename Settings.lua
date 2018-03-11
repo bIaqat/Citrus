@@ -54,23 +54,22 @@ Settings = setmetatable({
 					end
 				end
 			end
-			object.GetPropertyChangedSignal(index):connect(function()
-					setting:Set(object[index])
+			object:GetPropertyChangedSignal(index):connect(function()
+				setting:Set(object[index])
 			end)	
+			list[name] = setting
 			return list
 		end;
 		getSetting = function(name,list)
-			if list then return Citrus.Misc.Table.find(list,name) end
-			for i,v in next, getmetatable(Citrus.Settings).Settings do
-				for n, ret in next, v do
-					if n == name then 
-						return ret
-					end
+			if list then return Citrus.Table.find(Citrus.Settings.getList(list),name) end
+			for i,v in next, getmetatable(Citrus.Settings).Settings.MAIN do
+				if i == name then
+					return v
 				end
 			end
 		end;
 		setSetting = function(name,newval,list)
-			Citrus.Settings.get(name,list):Set(newval)
+			Citrus.Settings.getSetting(name,list and list or nil):Set(newval)
 		end;
 		Sync = function(self)
 			for _,list in next, getmetatable(self).Settings do
@@ -85,4 +84,4 @@ Settings = setmetatable({
 			MAIN = {};
 		};
 	}
-)
+);

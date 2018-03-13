@@ -8,7 +8,7 @@ Iconography = setmetatable({
 				icon.Image = img
 				icon.ImageRectOffset = Vector2.new(x*xgrid,y*ygrid)
 				icon.ImageRectSize = Vector2.new(xgrid,ygrid)
-				local namefil = Citrus.Misc.stringFilterOut(names[count] or 'Icon','_',nil,true)
+				local namefil = Citrus.Misc.stringFilterOut(names[count] or 'Icon'..count,'_',nil,true)
 				local name = namefil[#namefil]
 				table.remove(namefil,#namefil)
 				Citrus.Iconography.insertIcon(name,icon,unpack(namefil))

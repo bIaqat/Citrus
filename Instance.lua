@@ -151,15 +151,14 @@ Instance = setmetatable({
 		end;
 		getAncestors = function(who)
 			local anc = {game}
-			local misc = Citrus.Misc
 			who = Citrus.Instance.getInstanceOf(who)
-			local chain = misc.Functions.stringFilterOut(who:GetFullName(),'%.','game',nil,true)
+			local chain = Citrus.Misc.stringFilterOut(who:GetFullName(),'%.','game',nil,true)
 			local ind = game
 			for i,v in next,chain do
 				ind = ind[v]
 				table.insert(anc,ind)
 			end
-			return misc.Table.pack(misc.Table.reverse(anc),2)
+			return Citrus.Table.pack(Citrus.Table.reverse(anc),2)
 		end;
 	},{
 		Classes = {};

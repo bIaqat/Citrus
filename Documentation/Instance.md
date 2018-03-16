@@ -49,7 +49,7 @@ happy.isHappy = false
 print(happy.isHappy, happy.Says)
 ```
 ```
->>: table     Part     Hi     Really red
+>>: [table]happy     Part     Hi     Really red
 >>: true     Hi
 >>: false     Bye
 ```
@@ -77,3 +77,51 @@ Citrus.Instance.new("SparklyPart",workspace)
 Citrus.Instance.new("SparklyPart",workspace,Color3.new(1,0,0))
 ```
 ![Red and Black Part](https://image.prntscr.com/image/wSLEQ2EIQGaIf-UoHUo-RQ.jpeg)
+
+***
+
+## Getters
+
+#### .getObjectOf ([Instance] Instance)
+	Returns the Object Oriented Table of the Instance
+###### Example
+```lua
+local a = Citrus.Instance.newObject("Part",workspace)
+local b = Citrus.Instance.new("Part")
+
+print(a,Citrus.Instance.getObjectOf(a),Citrus.Instance.getObjectOf(workspace.Part))
+print(b,Citrus.Instance.getObjectOf(b))
+```
+```
+>>: [table]a     [table]a     [table]a
+>>: Part    nil
+```
+
+#### .getInstanceOf ([Instance]Instance | [table]Custom Object)
+	Returns the Instance of an Object Oriented Table
+###### Example
+```lua
+local a = Citrus.Instance.newObject("Part",workspace)
+local b = Citrus.Instance.new("Part")
+
+print(a,Citrus.Instance.getInstanceOf(a),Citrus.Instance.getInstanceOf(workspace.Part))
+print(b,Citrus.Instance.getInstanceOf(b))
+```
+```
+>>: [table]a     Part     Part
+>>: Part     Part
+```
+
+#### .getAncestors ([Instance] Instance)
+	Returns a table of an Instance's ancestory chain
+###### Example
+```lua
+for i,v in pairs(Citrus.Instance.getAncestors( Instance.new("Part",workspace.Camera) )) do
+	print(v)
+end
+```
+```
+>>: Camera
+>>: Workspace
+>>: Game
+```

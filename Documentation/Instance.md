@@ -2,7 +2,7 @@
 ## Creating Instances
 
 #### .new ([string] Class Name | Custom Class Name, ...[Instance]Parent | ...Custom Class Arguments | ...[table]Properties)
-Creates an Instance from either Roblox classes or Citrus custom classes; hooks onto default properties
+	Creates an Instance from either Roblox classes or Citrus custom classes; hooks onto default properties
 ###### Examples
 ```lua
 Citrus.Instance.new("Part", Workspace)
@@ -14,7 +14,7 @@ Citrus.Instance.new("CustomClass", Workspace, Color3.new(1,0,0), {Transparency =
 ***
 
 #### .newInstance ([string]ClassName, ...[Instance]Parent | ...[table]Properties)
-Creates a classic Roblox Instance; hooks onto default properties
+	Creates a classic Roblox Instance; hooks onto default properties
 ###### Examples
 ```lua
 Citrus.Instance.newInstance("Part", Workspace)
@@ -27,7 +27,7 @@ Citrus.Instance.newInstance("CustomClass", Workspace, {BrickColor = BrickColor.n
 ***
 
 #### .newObject ([string]ClassName, ...[Instance]Parent | ...[table] Object Properties, Properties)
-Creates a classic Roblox Instance that is methodized to work with Object Oriented Programming
+	Creates a classic Roblox Instance that is methodized to work with Object Oriented Programming
 ###### Example
 ```lua
 local happy = Citrus.Instance.newObject("Part", Workspace, {ImHappy = "Hi"}, {BrickColor = BrickColor.new'Really red'})
@@ -59,7 +59,7 @@ print(happy.isHappy, happy.Says)
 ## Custom Classes
 
 #### .newCustomClass ([string]Name, [function Instance]onCreated(...))
-Creates a Citrus custom class
+	Creates a Citrus custom class
 ###### Example
 ```lua
 Citrus.Instance.newCustomClass("SparklyPart",function(color)

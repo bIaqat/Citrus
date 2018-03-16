@@ -62,7 +62,7 @@
 	Creates a Citrus custom class
 ###### Example
 ```lua
-	Instance.newCustomClass("SparklyPart",function(color)
+	Citrus.Instance.newCustomClass("SparklyPart",function(color)
 		local self = Instance.new("Part")
 		self.Name = "SparklyPart"
 		self.Material = Enum.Material.Neon

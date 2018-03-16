@@ -175,8 +175,8 @@ print(Citrus.Instance.isAnObject(a), Citrus.Instance.isAnObject(b))
 
 ***
 
-#getmetatable(Citrus.Instance)
+# getmetatable(Citrus.Instance)
 ## Meta Storage
 
-* Classes
-* Objects
+#### * Classes
+#### * Objects

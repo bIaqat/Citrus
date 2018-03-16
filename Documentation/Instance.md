@@ -76,4 +76,4 @@
 	Citrus.Instance.new("SparklyPart",workspace)
 	Citrus.Instance.new("SparklyPart",workspace,Color3.new(1,0,0))
 ```
-![Red and Black Part](http://prntscr.com/is9461)
+![Red and Black Part](https://image.prntscr.com/image/wSLEQ2EIQGaIf-UoHUo-RQ.jpeg)

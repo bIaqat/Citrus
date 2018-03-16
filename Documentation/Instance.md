@@ -11,6 +11,8 @@
 	new("CustomClass", Workspace, Color3.new(1,0,0), {Transparency = .4})
 ```
 
+***
+
 #### .newInstance ([string]Class Name, ...[Instance]Parent ...[table]Properties)
 	Creates a classic Roblox Instance; hooks onto default properties
 ###### Examples

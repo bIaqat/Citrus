@@ -38,7 +38,7 @@ Instance = setmetatable({
 			local self = Citrus.Instance
 			local pt = Citrus.Table
 			local args,storage,new,parent,properties = {...},getmetatable(self).Classes
-			if typeof(args[1]) == 'Instance' or self.isObject(args[1]) then
+			if typeof(args[1]) == 'Instance' or self.isAnObject(args[1]) then
 				parent = self.getInstanceOf(args[1])
 				table.remove(args,1)
 			end
@@ -146,7 +146,7 @@ Instance = setmetatable({
 			local self = getmetatable(Citrus.Instance).Objects
 			return Citrus.Table.find(self,who) or nil
 		end;
-		isObject = function(who)
+		isAnObject = function(who)
 			return Citrus.Instance.getObjectOf(who) and true or false
 		end;
 		getAncestors = function(who)
@@ -164,4 +164,3 @@ Instance = setmetatable({
 		Classes = {};
 		Objects = {};
 	}
-);

@@ -1,7 +1,7 @@
 # Citrus.Instance
 ## Creating Instances
 
-#### .new ([string] Class Name | Custom Class Name, ...[Instance]Parent | ...Custom Class Arguments | ...[table]Properties)
+#### .new [Instance] ([string] Class Name | Custom Class Name, ...[Instance]Parent | ...Custom Class Arguments | ...[table]Properties)
 	Creates an Instance from either Roblox classes or Citrus custom classes; hooks onto default properties
 ###### Examples
 ```lua
@@ -13,7 +13,7 @@ Citrus.Instance.new("CustomClass", Workspace, Color3.new(1,0,0), {Transparency =
 
 ***
 
-#### .newInstance ([string]ClassName, ...[Instance]Parent | ...[table]Properties)
+#### .newInstance [Instance] ([string]ClassName, ...[Instance]Parent | ...[table]Properties)
 	Creates a classic Roblox Instance; hooks onto default properties
 ###### Examples
 ```lua
@@ -26,7 +26,7 @@ Citrus.Instance.newInstance("CustomClass", Workspace, {BrickColor = BrickColor.n
 
 ***
 
-#### .newObject ([string]ClassName, ...[Instance]Parent | ...[table] Object Properties, Properties)
+#### .newObject [table] ([string]ClassName, ...[Instance]Parent | ...[table] Object Properties, Properties)
 	Creates a classic Roblox Instance that is methodized to work with Object Oriented Programming
 ###### Example
 ```lua
@@ -82,7 +82,7 @@ Citrus.Instance.new("SparklyPart",workspace,Color3.new(1,0,0))
 
 ## Getters
 
-#### .getObjectOf ([Instance] Instance)
+#### .getObjectOf [table] ([Instance] Instance)
 	Returns the Object Oriented Table of the Instance
 ###### Example
 ```lua
@@ -99,7 +99,7 @@ print(b,Citrus.Instance.getObjectOf(b))
 
 ***
 
-#### .getInstanceOf ([Instance]Instance | [table]Custom Object)
+#### .getInstanceOf [Instance] ([Instance]Instance | [table]Custom Object)
 	Returns the Instance of an Object Oriented Table
 ###### Example
 ```lua
@@ -116,7 +116,7 @@ print(b,Citrus.Instance.getInstanceOf(b))
 
 ***
 
-#### .getAncestors ([Instance] Instance)
+#### .getAncestors [table] ([Instance] Instance)
 	Returns a table of an Instance's ancestory chain
 ###### Example
 ```lua
@@ -129,3 +129,54 @@ end
 >>: Workspace
 >>: Game
 ```
+
+***
+
+## Checkers
+
+#### .isA [boolean] ([string]ClassName, [string]ClassName)
+	Checks if both ClassNames are under the same hierarchy 
+###### Example
+```lua
+print(Citrus.Instance.isA('Part','Instance'))
+print(Citrus.Instance.isA('GuiButton','Part'))
+```
+```
+>>: true
+>>: false
+```
+
+***
+
+#### .isAClass [boolean] ([string]ClassName)
+	Checks if ClassName is a Roblox Class
+###### Example
+```lua
+print(Citrus.Instance.isAClass("Instance"), Citrus.Instance.isAClass("Part"))
+```
+```
+>>: false     true
+```
+
+***
+
+#### .isAnObject [boolean] ([Instance]Instace | [table]Object)
+	Checks if an Instance is an Object Oriented Instance table
+###### Example
+```lua
+local a = Citrus.Instance.new("Part")
+local b = Citrus.Instance.newObject("Part")
+
+print(Citrus.Instance.isAnObject(a), Citrus.Instance.isAnObject(b))
+```
+```
+>>: false     true
+```
+
+***
+
+#getmetatable(Citrus.Instance)
+## Meta Storage
+
+* Classes
+* Objects

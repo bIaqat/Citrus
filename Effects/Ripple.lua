@@ -21,10 +21,10 @@ Ripple = function(who,...)
 	siz = siz
 	color = color or Color3.new(0,0,0)							
 	if not siz then
-		local size = Citrus.Misc.Functions.switch(who.Parent.AbsoluteSize.X * 1.5,who.Parent.AbsoluteSize.Y * 1.5):Filter(true,false)
+		local size = Citrus.Misc.switch(who.Parent.AbsoluteSize.X * 1.5,who.Parent.AbsoluteSize.Y * 1.5):Filter(true,false)
 		siz = size(who.Parent.AbsoluteSize.X >= who.Parent.AbsoluteSize.Y)
 	end								
-	local op = Citrus.Misc.Functions.switch(-1,0,1):Filter(0,.5,1)
+	local op = Citrus.Misc.switch(-1,0,1):Filter(0,.5,1)
 	local mid = UDim2.new(.5,op(who.AnchorPoint.X) * siz/2,.5,op(who.AnchorPoint.Y) * siz/2)											
 	from = from or mid
 	prop[typ] = trans
@@ -32,7 +32,7 @@ Ripple = function(who,...)
 	prop[oof..'Color3'] = color
 	Citrus.Properties.setProperties(who,prop)				
 	Citrus.Positioning.tweenObject(who,'both',mid,UDim2.new(0,siz,0,siz),tim,'Quad','Out')
-	Citrus.Misc.Functions.tweenService(who,typ,1,tim)
+	Citrus.Misc.tweenService(who,typ,1,tim)
 	coroutine.wrap(function()
 		wait(tim)
 		who:Destroy()

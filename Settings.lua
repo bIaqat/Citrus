@@ -1,14 +1,4 @@
 Settings = setmetatable({
-		getDefault = function(classname)
-			for i,v in next, getmetatable(Citrus.Settings).Default do
-				if Citrus.Instance.isA(classname,i) or classname == i then
-					return v
-				end
-			end
-		end;
-		setDefault = function(classname,properties)
-			getmetatable(Citrus.Settings).Default[classname] = properties;
-		end;
 		newList = function(name)
 			getmetatable(Citrus.Settings).Settings[name] = {};
 		end;
@@ -58,7 +48,7 @@ Settings = setmetatable({
 				setting:Set(object[index])
 			end)	
 			list[name] = setting
-			return list
+			return setting
 		end;
 		getSetting = function(name,list)
 			if list then return Citrus.Table.find(Citrus.Settings.getList(list),name) end
@@ -79,7 +69,6 @@ Settings = setmetatable({
 			end
 		end;
 		},{
-		Default = {};
 		Settings = {
 			MAIN = {};
 		};

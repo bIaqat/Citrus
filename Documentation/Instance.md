@@ -177,6 +177,6 @@ print(Citrus.Instance.isAnObject(a), Citrus.Instance.isAnObject(b))
 
 # getmetatable(Citrus.Instance) (Meta Storage)
 * Classes
-	Stores Custom Classes
+	`Stores Custom Classes`
 * Objects
-	Stores Object Oriented Tables and their Instances
+	`Stores Object Oriented Tables and their Instances`

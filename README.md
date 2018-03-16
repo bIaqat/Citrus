@@ -1,5 +1,4 @@
 # Citrus.Instance
-
 	## Creation Features
 	***
 		###### .new ([string] Class Name | Custom Class Name, ...[Instance]Parent ...Custom Class Arguments ...[table]Properties)

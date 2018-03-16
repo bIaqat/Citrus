@@ -59,7 +59,7 @@ print(happy.isHappy, happy.Says)
 ## Custom Classes
 
 #### .newCustomClass ([string]Name, [function Instance]onCreated(...))
-	Creates a Citrus custom class
+	Creates and Stores a new Custom Citrus Class
 ###### Example
 ```lua
 Citrus.Instance.newCustomClass("SparklyPart",function(color)

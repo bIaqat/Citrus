@@ -97,6 +97,8 @@ print(b,Citrus.Instance.getObjectOf(b))
 >>: Part    nil
 ```
 
+***
+
 #### .getInstanceOf ([Instance]Instance | [table]Custom Object)
 	Returns the Instance of an Object Oriented Table
 ###### Example
@@ -111,6 +113,8 @@ print(b,Citrus.Instance.getInstanceOf(b))
 >>: [table]a     Part     Part
 >>: Part     Part
 ```
+
+***
 
 #### .getAncestors ([Instance] Instance)
 	Returns a table of an Instance's ancestory chain

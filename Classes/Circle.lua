@@ -2,11 +2,11 @@
 Citrus.Instance.newCustomClass("Circle",function(siz,typ)
 	local circle
 	if typ then
-		circle = Citrus.Instance.new("ImageButton")
+		circle = Citrus.Instance.newPure("ImageButton")
 	else
-		circle = Citrus.Instance.new("ImageLabel")
+		circle = Citrus.Instance.newPure("ImageLabel")
 	end
-	Citrus.Properties.setProperties(circle,{im = 'rbxassetid://550829430',bt = 1,siz = Citrus.Positioning.new(siz,'o')})
+	Citrus.Properties.setProperties(circle,{im = 'rbxassetid://550829430',bt = 1,siz = Citrus.Positioning.new(siz,2)})
 	return circle
 end)
 

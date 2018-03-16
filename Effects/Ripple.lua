@@ -1,4 +1,4 @@
-Ripple = function(who,...)
+Effects.new("Ripple",function(who,...)
 	local oof = who.ClassName:find'Image' and 'Image' or who.ClassName:find'Text' and 'Text' or 'Background'
 	local typ = ( oof )..'Transparency'	
 	local prop, from, tim, trans, siz, color = {}
@@ -37,5 +37,4 @@ Ripple = function(who,...)
 		wait(tim)
 		who:Destroy()
 	end)()
-end
-
+end)

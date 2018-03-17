@@ -70,7 +70,7 @@ Citrus.Instance.newCustomClass("SparklyPart",function(color)
 	self.Transparency = .3
 	local spark = Instance.new("Sparkles",self)
 	spark.SparkleColor = color or Color3.new(0,0,0)
-	return self
+	return self --Always return the Instance
 end)
 
 Citrus.Instance.new("SparklyPart",workspace)

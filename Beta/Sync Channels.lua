@@ -32,10 +32,15 @@ Sync = setmetatable({
 	end;
 	insertValue = function(name,val,ind)
 		local ch = Citrus.Sync.getChannel(name)
-		ch.Values[ind or #ch.Values + 1] = val
-		return ch
+		ch.Values[ind or #ch.Values + 1] = va.kl
+		return ch]|
+		
 	end;	
-	setValue = function(name,val,ind)
+	setValue = function(name,ind)
+		local ch = Cirus.Sync.getChannel(name)
+		ch.ActiveVal = Citrus.Sync.getValue(name,ind)
+	end;
+	insertValue = function(name,val,ind)
 		local ch = Citrus.Sync.getChannel(name)
 		ch.Values[ind or 0] = val
 		return ch
@@ -43,9 +48,9 @@ Sync = setmetatable({
 	sync = function(self,nam)
 		local t = nam and true or false
 		local ch = nam and Citrus.Sync.getChannel(nam)
-		for i,v in next, ch.Objects or getmetatable(self).Channels do
+		for i,v in next, ch and ch.Objects or getmetatable(self).Channels do
 			if not nam then
-				Citrus.Sync:sync(i)
+				Citrus.Sync:sync(i.Name)
 			else
 				for z,x in next, v do
 					i[x] = ch.ActiveVal
@@ -58,11 +63,87 @@ Sync = setmetatable({
 		local ch = Citrus.Sync.getChannel(name)
 		for obj, props in next, ch.Objects do
 			for index, prop in next, props do
-				Misc.tweenService(obj,prop,ch.ActiveVal,time,...)
+				Citrus.Misc.tweenService(obj,prop,ch.ActiveVal,time,...)
 			end
 		end
 		return ch
 	end
+	call = function(name,...)
+		local ch = Citrus.Sync.getChannel(name)
+		if ch.Type == 'Function' then
+			local args = ... and {...} or ch.Args
+			for i,v in next, ch.Objects do
+				ch.Function(i,unpack(args))
+			end
+		end
+	end;
+	insertKeyFrame = function(name, val, id, index)
+		local ch = Citrus.Sync.getChannel(name)
+		if ch.Type == 'Array' then
+			ch.Values[index or 0][id or #ch.Values[index or 0] + 1] = val
+		end
+	end;
+	removeKeyFrame = function(name,id,index)
+		local ch = Citrus.Sync.getChannel(name)
+		if ch.Type == 'Array' then
+			local bas = ch.Values[index or 0]
+			bas[id] = nil
+			for i = id + 1, #bas do
+				bas[i-1] = bas[i]
+				bas[i] = nil
+			end
+		end
+	end;
+	playFrames = function(name,delay,index,lerp,...)
+		local ch = Citrus.Sync.getChannel(name)
+		if ch.Type == 'Array' then
+			ch.playingState = 'playing'
+			ch.isPlaying = true
+			local bas = ch:Get(index)
+			local ind = Cirus.Table.indexOf(ch.ActiveVal) or 1
+			for i = ind or 1, #bas do
+				if ch.isPlaying then
+					ch.ActiveVal = bas[i]
+					if lerp then
+						Citrus.Sync.lerpSync(name,delay or 1,...)
+					else
+						Citrus.Sync:sync(name)
+					end
+					wait(delay or 1)
+				end
+			end
+			ch.ActiveVal = nil
+			if ch.Looping then
+				if ch.isPlaying then
+					ch:Play(ind,delay,ind,index,lerp,...)
+				end
+			end
+		end
+	end;
+	pauseFrames = function(name)
+		local ch = Citrus.Sync.getChannel(name)
+		if ch.Type == 'Array' then
+			ch.playingState = 'paused'
+			ch.isPlaying = false
+		end
+	end;
+	stopFrames = function(name)
+		local ch = Citrus.Sync.getChannel(name)
+		if ch.Type == 'Array' then
+			ch:Pause()
+			ch.ActiveVal = nil
+		end
+	end;	
+
+	run = function(name,...)	
+		local ch = Citrus.Sync.getChannel(name)
+		if ch.Type == 'Function' then
+			local args = #({...}) > 0 and {...} or ch.Args
+			for i,v in next, ch.Objects do
+				ch.Function(i,unpack(args))
+			end
+		end
+	end;
 	new = function(name, base, ...)
 		local typ = Citrus.Misc.switch("Value","Array","Function"):Filter(0, 'table', 'function')((type(base) == 'table' or type(base) == 'function') and type(base) or 1)
 		local sync = {
@@ -79,13 +160,24 @@ Sync = setmetatable({
 				return Citrus.Sync.removeObject(self.Name,...)
 			end;
 			Set = function(self,...)
+				return Citrus.Sync.insertValue(self.Name,...)
+			end;
+			SetVal = function(self,...)
 				return Citrus.Sync.setValue(self.Name,...)
 			end;
 			Get = function(self,...)
 				return Citrus.Sync.getValue(self.Name,...)
 			end;
+			Sync = function(self,lerp,...)
+				if lerp then
+					return Citrus.Sync.lerpSync(self.Name,...)
+				else
+					return Citrus.Sync:sync(self.Name)
+				end
+			end;
 		}
 		if typ == 'Array' then
+			sync.Looping = false
 			sync.Active = 0
 			sync.isPlaying = false
 			sync.playingState = 'stopped'
@@ -93,10 +185,10 @@ Sync = setmetatable({
 				return Citrus.Sync.playFrames(self.Name,...)
 			end
 			sync.Pause = function(self,...)
-				return Citrus.Sync.pause(self.Name,...)
+				return Citrus.Sync.pauseFrames(self.Name,...)
 			end
 			sync.Stop = function(self,...)
-				return Citrus.Sync.stop(self.Name,...)
+				return Citrus.Sync.stopFrames(self.Name,...)
 			end
 			sync.AddFrame = function(self,...)
 				return Citrus.Sync.insertKeyFrame(self.Name,...)
@@ -115,9 +207,7 @@ Sync = setmetatable({
 			end;
 			sync.setFunction = function(self,fun,...)
 				self.Function = fun
-				if ... then
-					self:setArgs(...)
-				end
+				self:setArgs(...)
 			end;
 		else
 			sync.Toggle = function(self)

@@ -56,15 +56,6 @@ Misc = {
 		out = tostr and table.concat(out) or out
 		return flip and out or filter, flip and filter or out
 	end;
-	dynamicType = function(obj)
-		obj = Citrus.Instance.getInstanceOf(obj)
-		if obj.ClassName:find'Text' then
-			return 'Text'
-		elseif obj.ClassName:find'Image' then
-			return 'Image'
-		end
-		return 'Background'
-	end;
 	switch = function(...)
 		return setmetatable({filter = {},Default = false,data = {...},
 			Filter = function(self,...)

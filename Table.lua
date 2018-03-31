@@ -6,11 +6,17 @@ Table = {
 		end
 		return new
 	end;
-	merge = function(from,to)
-		for i,v in next, from do
-			to[i] = v
+	merge = function(who,what)
+		for i,v in next,who do
+			if what[i] then
+				for a,z in next,v do
+					what[i][a] = z
+				end
+			else
+				what[i] = v
+			end
 		end
-		return to
+		return what
 	end;
 	clone = function(tab)
 		local clone = {}
@@ -80,13 +86,14 @@ Table = {
 		return Citrus.Table.contains(tabl,this,2)
 	end;
 	search = function(tabl,this)
-		if Citrus.Table.find(tabl,this) then
-			return Citrus.Table.find(tabl,this)
+		local misc = Citrus.Misc
+		if misc.Table.find(tabl,this) then
+			return misc.Table.find(tabl,this)
 		end
 		for i,v in next,tabl do
 			if type(i) == 'string' or type(v) == 'string' then
 				local subject = type(i) == 'string' and i or type(v) == 'string' and v
-				local caps = Citrus.Misc.stringFilterOut(subject,'%u',nil,false,true)
+				local caps = misc.Functions.stringFilterOut(subject,'%u',nil,false,true)
 				local numc = caps..(subject:match('%d+$') or '')
 				if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
 					return v,i

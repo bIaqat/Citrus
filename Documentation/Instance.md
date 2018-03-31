@@ -22,7 +22,7 @@ Citrus.Instance.newInstance("Part", {BrickColor = BrickColor.new'Really red'})
 Citrus.Instance.newInstance("CustomClass", Workspace, {BrickColor = BrickColor.new'Really red'})
 ```
 
-*.newPure and .newPureInstance are same as .new and .newInstances except that it purposely avoids default properties*
+*.newPure is same as .new except that it purposely avoids default properties*
 
 ***
 

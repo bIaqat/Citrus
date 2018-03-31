@@ -1,22 +1,24 @@
---Sync Table Remake
-
 Sync = setmetatable({
 	getChannel = function(name)
-		return getmetatable(Citrus.Sync).Channel[name]
+		return getmetatable(Citrus.Sync).Channels[name]
 	end;
 	getObject = function(name)
 		return Citrus.Sync.getChannel(name).Object
 	end;
 	getValue = function(name,ind)
-		return Citrus.Sync.getChannel(name).Value[ind or 0]
+		return Citrus.Sync.getChannel(name).Values[ind or 0]
 	end;
 	insertObject = function(name,obj,prop)
 		local ch = Citrus.Sync.getChannel(name)
+		local prop = Citrus.Properties[prop]
 		if not ch.Objects[obj] then
 			ch.Objects[obj] = {}
 		end
 		if prop and not Citrus.Table.find(ch.Objects[obj],prop) then
 			table.insert(ch.Objects[obj],prop)
+		end
+		if ch.Sync then
+			ch:Sync()
 		end
 		return ch
 	end;
@@ -32,13 +34,13 @@ Sync = setmetatable({
 	end;
 	insertValue = function(name,val,ind)
 		local ch = Citrus.Sync.getChannel(name)
-		ch.Values[ind or #ch.Values + 1] = va.kl
-		return ch]|
-		
+		ch.Values[ind or #ch.Values + 1] = val
+		return ch
 	end;	
 	setValue = function(name,ind)
-		local ch = Cirus.Sync.getChannel(name)
+		local ch = Citrus.Sync.getChannel(name)
 		ch.ActiveVal = Citrus.Sync.getValue(name,ind)
+		return ch
 	end;
 	insertValue = function(name,val,ind)
 		local ch = Citrus.Sync.getChannel(name)
@@ -58,7 +60,7 @@ Sync = setmetatable({
 			end
 		end
 		return ch
-	end
+	end;
 	lerpSync = function(name,time,...)
 		local ch = Citrus.Sync.getChannel(name)
 		for obj, props in next, ch.Objects do
@@ -67,7 +69,7 @@ Sync = setmetatable({
 			end
 		end
 		return ch
-	end
+	end;
 	call = function(name,...)
 		local ch = Citrus.Sync.getChannel(name)
 		if ch.Type == 'Function' then
@@ -100,7 +102,7 @@ Sync = setmetatable({
 			ch.playingState = 'playing'
 			ch.isPlaying = true
 			local bas = ch:Get(index)
-			local ind = Cirus.Table.indexOf(ch.ActiveVal) or 1
+			local ind = Citrus.Table.indexOf(ch.ActiveVal) or 1
 			for i = ind or 1, #bas do
 				if ch.isPlaying then
 					ch.ActiveVal = bas[i]
@@ -145,37 +147,46 @@ Sync = setmetatable({
 		end
 	end;
 	new = function(name, base, ...)
-		local typ = Citrus.Misc.switch("Value","Array","Function"):Filter(0, 'table', 'function')((type(base) == 'table' or type(base) == 'function') and type(base) or 1)
-		local sync = {
+		local typ = Citrus.Misc.switch("Single","Array","Function"):Filter(0, 'table', 'function')((type(base) == 'table' or type(base) == 'function') and type(base) or 1)
+		local sync = setmetatable({
 			ActiveVal = 0;
-			Name = name or '#'..Citrus.Table.length(getmetatable(Citrus.Sync).Channels)
+			Name = name or '#'..Citrus.Table.length(getmetatable(Citrus.Sync).Channels);
 			Values = {[0]=base,...};
 			Objects = {};
 			Type = typ;
-
 			Insert = function(self,...)
 				return Citrus.Sync.insertObject(self.Name,...)
 			end;
 			Remove = function(self,...)
 				return Citrus.Sync.removeObject(self.Name,...)
 			end;
-			Set = function(self,...)
-				return Citrus.Sync.insertValue(self.Name,...)
+			Set = function(self,to,ind)
+				self:SetVal(to,ind)
+				self:SetActive(ind)
+				if self.Sync then
+					self:Sync()
+				end
 			end;
 			SetVal = function(self,...)
+				return Citrus.Sync.insertValue(self.Name,...)
+			end;
+			SetActive = function(self,...)
 				return Citrus.Sync.setValue(self.Name,...)
 			end;
 			Get = function(self,...)
 				return Citrus.Sync.getValue(self.Name,...)
 			end;
-			Sync = function(self,lerp,...)
-				if lerp then
-					return Citrus.Sync.lerpSync(self.Name,...)
-				else
-					return Citrus.Sync:sync(self.Name)
-				end
+		},{
+			__tostring = function(self)
+				return 'Sync '..self.Type..': '..tostring(self.Value)
 			end;
-		}
+			__index = function(self,ind)
+				if ind == 'Value' then
+					return self.ActiveVal
+				end
+			end
+		})
+		getmetatable(Citrus.Sync).Channels[name] = sync;
 		if typ == 'Array' then
 			sync.Looping = false
 			sync.Active = 0
@@ -200,7 +211,7 @@ Sync = setmetatable({
 			sync.Function = base
 			sync.Args = {...}
 			sync.Call = function(self,...)
-				return Citrus.Sync.run(self.Name,...)
+				return Citrus.Sync.call(self.Name,...)
 			end;
 			sync.setArgs = function(self,...)
 				self.Args = {...}
@@ -211,15 +222,22 @@ Sync = setmetatable({
 			end;
 		else
 			sync.Toggle = function(self)
-				if self
+				if #self.Values ==  2 then
+					if self.ActiveVal == self.Values[0] then
+						self:SetVal(1)
+					else
+						set:SetVal(0)
+					end
+				end
+			end;
+			sync:SetActive(0);
 			sync.Sync = function(self,...)
-				return Citrus:sync(self.Name,...)
+				return Citrus.Sync:sync(self.Name,...)
 			end;
 			sync.Lerp = function(self,...)
 				return Citrus.lerpSync(self.Name,...)
 			end;
-		end
-		getmetatable(Citrus.Sync).Channels[name] = sync;
+		end		
 		return sync
 	end
 	},{

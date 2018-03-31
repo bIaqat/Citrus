@@ -1,14 +1,3 @@
---[[
-	
- ██████╗██╗████████╗██████╗ ██╗   ██╗███████╗
-██╔════╝██║╚══██╔══╝██╔══██╗██║   ██║██╔════╝
-██║     ██║   ██║   ██████╔╝██║   ██║███████╗
-██║     ██║   ██║   ██╔══██╗██║   ██║╚════██║
-╚██████╗██║   ██║   ██║  ██║╚██████╔╝███████║
- ╚═════╝╚═╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝
-				by  𝓻𝓸𝓾𝓰𝒆
---]]
-
 local Citrus;
 
 Citrus = {
@@ -40,7 +29,14 @@ Citrus = {
 					return false
 				end
 			end;
-					
+			newPure = function(class,...)
+				local args = {...}
+				if type(args[#args]) ~= 'table' then
+					table.insert(args,{})
+				end
+				table.insert(args[#args],true)
+				return Citrus.Instance.new(class,unpack(args))
+			end;
 			new = function(class,...)
 				local self = Citrus.Instance
 				local pt = Citrus.Table
@@ -55,15 +51,21 @@ Citrus = {
 				end
 				new = pt.find(storage,class) and pt.find(storage,class)(unpack(args)) or Instance.new(class)
 				new.Parent = parent
-				Citrus.Properties.setProperties(new,Citrus.Settings.getDefault(class) or {})
+				local a = next(properties or {})
+				if type(a) ~= 'number' then
+					Citrus.Properties.setPropertiesToDefault(new)
+				else
+					table.remove(properties,a)
+				end		
 				Citrus.Properties.setProperties(new,properties or {})
 				return new
 			end;
 			newInstance = function(class,parent,props)
 				local new = Instance.new(class)
+				local parent = Citrus.Instance.getInstanceOf(parent)
 				props = props or type(parent) == 'table' and parent
-				parent = type(parent) == 'table' and nil or parent
-				Citrus.Properties.setProperties(new,Citrus.Settings.getDefault(class) or {})
+				parent = type(parent) ~= 'table' and parent or nil
+				local a = next(props or {})
 				return Citrus.Properties.setProperties(Instance.new(class,parent),props or {})
 			end;
 			newObject = function(...)
@@ -74,8 +76,8 @@ Citrus = {
 				for i,v in next,args do
 					class = type(v) == 'string' and Citrus.Instance.isAClass(v) and v or class
 					parent = typeof(v) == 'Instance' and v or parent
-					obj = type(v) == 'table' and Citrus.Table.length(obj) == 0 and v or obj
 					props = type(v) == 'table' and Citrus.Table.length(obj) > 0 and v or props
+					obj = type(v) == 'table' and Citrus.Table.length(obj) == 0 and v or obj
 				end
 				local ins = Citrus.Instance.newInstance(class,parent,props)
 				local new = {Instance = ins,Object = obj}
@@ -139,15 +141,14 @@ Citrus = {
 			end;
 			getAncestors = function(who)
 				local anc = {game}
-				local misc = Citrus.Misc
 				who = Citrus.Instance.getInstanceOf(who)
-				local chain = misc.Functions.stringFilterOut(who:GetFullName(),'%.','game',nil,true)
+				local chain = Citrus.Misc.stringFilterOut(who:GetFullName(),'%.','game',nil,true)
 				local ind = game
 				for i,v in next,chain do
 					ind = ind[v]
 					table.insert(anc,ind)
 				end
-				return misc.Table.pack(misc.Table.reverse(anc),2)
+				return Citrus.Table.pack(Citrus.Table.reverse(anc),2)
 			end;
 		},{
 			Classes = {};
@@ -155,6 +156,24 @@ Citrus = {
 		}
 	);
 	Properties = setmetatable({
+			getDefault = function(classname)
+				local def = {}
+				for i,v in next, getmetatable(Citrus.Properties).Default do
+					if Citrus.Instance.isA(classname,i) or classname == i or i == 'GuiText' and classname:find'Text' then
+						table.insert(def,v)
+					end
+				end
+				for i = 2,#def do
+					Citrus.Table.merge(def[i],def[1])
+				end
+				return def[1]
+			end;
+			setDefault = function(classname,properties)
+				getmetatable(Citrus.Properties).Default[classname] = properties;
+			end;
+			setPropertiesToDefault = function(who)
+				Citrus.Properties.setProperties(who,Citrus.Properties.getDefault(who.ClassName) or {})
+			end;
 			new = function(name,func,...)
 				local storage = getmetatable(Citrus.Properties).Custom
 				storage[name] = setmetatable({func,...},{
@@ -162,8 +181,11 @@ Citrus = {
 							return self[1](...)
 						end;
 						__index = function(self,indexed)
+							if #self == 1 then
+								return true
+							end
 							for i = 2,#self do
-								if self[i]:lower() == 'all' or indexed:IsA(self[i]) then
+								if self[i]:lower() == 'all' or indexed:IsA(self[i]) or self[i] == 'GuiText' and indexed.ClassName:find'Text' then
 									return true
 								end
 							end
@@ -194,11 +216,14 @@ Citrus = {
 				who = Citrus.Instance.getInstanceOf(who)
 				local c = getmetatable(Citrus.Properties).Custom
 				for i,v in next,props do
-					if c[i] then
+					if c[i] and c[i][who] then
 						if type(v) ~= 'table' then v = {v} end
 						--custom object check
 						c[i](who,unpack(v))
-					elseif Citrus.Properties.hasProperty(who,i) then
+					elseif Citrus.Properties[i]:find'Color3' and type(v) == 'string' or type(v) == 'table' then
+						v = type(v) == 'table' and v or {v}
+						Citrus.Theming.insertObject(v[1],who,i,unpack(Citrus.Table.pack(v,2) or {}))
+					elseif Citrus.Properties.hasProperty(who,i)  then
 						pcall(function() who[Citrus.Properties[i]] = v end)
 					end
 				end
@@ -219,6 +244,7 @@ Citrus = {
 			__index = function(self,ind)
 				return Citrus.Table.search(getmetatable(self).RobloxAPI,ind) or ind
 			end;
+			Default = {};
 			Custom = setmetatable({},{
 					__index = function(self,ind)
 						for i,v in next,self do
@@ -228,7 +254,7 @@ Citrus = {
 						end
 					end});
 			RobloxAPI = {
-				'Shape','Anchored','BackParamA','BackParamB','BackSurface','BackSurfaceInput','BottomParamA','BottomParamB','BottomSurface','BottomSurfaceInput','BrickColor','CFrame','CanCollide','CenterOfMass','CollisionGroupId','Color','CustomPhysicalProperties','FrontParamA','FrontParamB','FrontSurface','FrontSurfaceInput';
+				'Shape','Anchored','BackSurfaceInput','BottomParamA','BottomParamB','BottomSurface','BottomSurfaceInput','BrickColor','CFrame','CanCollide','CenterOfMass','CollisionGroupId','Color','CustomPhysicalProperties','FrontParamA','FrontParamB','FrontSurface','FrontSurfaceInput';
 				'LeftParamA','LeftParamB','LeftSurface','LeftSurfaceInput','Locked','Material','Orientation','Reflectance','ResizeIncrement','ResizeableFaces','RightParamA','RightParamB','RightSurface','RightSurfaceInput','RotVelocity','TopParamA','TopParamB','TopSurface','TopSurfaceInput','Velocity';
 				'Archivable','ClassName','Name','Parent','AttachmentForward','AttachmentPoint','AttachmentPos','AttachmentRight','AttachmentUp';
 				'Animation','AnimationId','IsPlaying','Length','Looped','Priority','Speed','TimePosition','WeightCurrent','WeightTarget','Axis','CFrame','Orientation';
@@ -585,7 +611,6 @@ Citrus = {
 					local val,objs = theme.Values,theme.Objects
 					for obj, data in next, objs do
 						for prop,index in next,data do
-							print(prop,index,unpack(val))
 							obj[prop] = val[index]
 						end
 					end
@@ -634,138 +659,141 @@ Citrus = {
 		}
 	);
 	Iconography = setmetatable({
-		new = function(img,xlen,ylen,xgrid,ygrid,names)
-			if not names then names = ygrid ygrid = xgrid end
-			local count = 1
-			for y = 0, ylen-1,1 do
-				for x = 0,xlen-1,1 do
-					local icon = Instance.new("ImageLabel")
-					icon.Image = img
-					icon.ImageRectOffset = Vector2.new(x*xgrid,y*ygrid)
-					icon.ImageRectSize = Vector2.new(xgrid,ygrid)
-					local namefil = Citrus.Misc.stringFilterOut(names[count] or 'Icon','_',nil,true)
-					local name = namefil[#namefil]
-					table.remove(namefil,#namefil)
-					Citrus.Iconography.insertIcon(name,icon,unpack(namefil))
-					count = count + 1
-				end
-			end
-		end;			
-		insertIcon = function(name,icon,...)
-			local index = getmetatable(Citrus.Iconography).Icons
-			for i,v in next,{...} or {} do
-				v = v:sub(1,1):upper()..v:sub(2)
-				index = index[v]
-			end
-			if index[name] and type(index[name]) ~= 'table' then
-				index[name] = {index[name]}
-			end
-			if index[name] then
-				table.insert(index[name],icon)
-			else
-				index[name] = icon
-			end			
-		end;		
-		getIcon = function(...)
-			local index = getmetatable(Citrus.Iconography).Icons
-			for i,v in next,{...} or {} do
-				v = v:sub(1,1):upper()..v:sub(2)
-				index = index[v]
-			end
-			return index
-		end;		
-		
-		},{
-		Icons = {}
-		}
-	);
-	Settings = setmetatable({
-			getDefault = function(classname)
-				for i,v in next, getmetatable(Citrus.Settings).Default do
-					if Citrus.Instance.isA(classname,i) or classname == i then
-						return v
+			new = function(img,xlen,ylen,xgrid,ygrid,names)
+				if not names then names = ygrid ygrid = xgrid end
+				local count = 1
+				for y = 0, ylen-1,1 do
+					for x = 0,xlen-1,1 do
+						local icon = Instance.new("ImageLabel")
+						icon.Image = img
+						icon.ImageRectOffset = Vector2.new(x*xgrid,y*ygrid)
+						icon.ImageRectSize = Vector2.new(xgrid,ygrid)
+						local namefil = Citrus.Misc.stringFilterOut(names[count] or 'Icon','_',nil,true)
+						local name = namefil[#namefil]
+						table.remove(namefil,#namefil)
+						Citrus.Iconography.insertIcon(name,icon,unpack(namefil))
+						count = count + 1
 					end
 				end
-			end;
-			setDefault = function(classname,properties)
-				getmetatable(Citrus.Settings).Default[classname] = properties;
-			end;
-			newList = function(name)
-				getmetatable(Citrus.Settings).Settings[name] = {};
-			end;
-			getList = function(name)
-				local settings = getmetatable(Citrus.Settings).Settings
-				return not name and settings.MAIN or settings[name]
-			end;
-			new = function(list,name,object,index,defaultval,...)
-				local list = Citrus.Settings.getList(list)
-				local setting = setmetatable({[object] = index, Default = defaultval;
-					Set = function(self,newval)
-						self.Value = newval
-					end;
-					toDefault = function(self)
-						self:Set(self.Default or self.Value)
-					end;
-				},	{
-						Storage = {...};
-						Value = object[index];
-						__index = function(self,a)
-							if a == 'Value' then
-								return getmetatable(self).Value
-							elseif a == 'Storage' then
-								return getmetatable(self).Storage
-							end
-						end;
-						__newindex = function(self,a,new)
-							if a == 'Value' then
-								object[index] = new
-								rawset(getmetatable(self),a,new)
-							elseif a == 'Storage' then
-								rawset(getmetatable(self),a,new)
-							end
-						end;
-					}
-				)
-				if type(object[index]) == 'boolean' then
-					function setting:Toggle()
-						if setting.Value then
-							setting:Set(false)
-						else
-							setting:Set(true)
-						end
-					end
+			end;			
+			insertIcon = function(name,icon,...)
+				local index = getmetatable(Citrus.Iconography).Icons
+				for i,v in next,{...} or {} do
+					v = v:sub(1,1):upper()..v:sub(2)
+					index = index[v]
 				end
-				object:GetPropertyChangedSignal(index):connect(function()
-					setting:Set(object[index])
-				end)	
-				list[name] = setting
-				return list
-			end;
-			getSetting = function(name,list)
-				if list then return Citrus.Table.find(Citrus.Settings.getList(list),name) end
-				for i,v in next, getmetatable(Citrus.Settings).Settings.MAIN do
-					if i == name then
-						return v
-					end
+				if index[name] and type(index[name]) ~= 'table' then
+					index[name] = {index[name]}
 				end
-			end;
-			setSetting = function(name,newval,list)
-				Citrus.Settings.getSetting(name,list and list or nil):Set(newval)
-			end;
-			Sync = function(self)
-				for _,list in next, getmetatable(self).Settings do
-					for name, setting in next, list do
-						setting:Set(setting.Value)
-					end
+				if index[name] then
+					table.insert(index[name],icon)
+				else
+					index[name] = icon
+				end			
+			end;		
+			getIcon = function(...)
+				local index = getmetatable(Citrus.Iconography).Icons
+				for i,v in next,{...} or {} do
+					v = v:sub(1,1):upper()..v:sub(2)
+					index = index[v]
 				end
-			end;
+				return index
+			end;		
+			
 			},{
-			Default = {};
-			Settings = {
-				MAIN = {};
-			};
-		}
-	);
+			Icons = {}
+			}
+		);
+	Settings = setmetatable({
+		getDefault = function(classname)
+			for i,v in next, getmetatable(Citrus.Settings).Default do
+				if Citrus.Instance.isA(classname,i) or classname == i then
+					return v
+				end
+			end
+		end;
+		setDefault = function(classname,properties)
+			getmetatable(Citrus.Settings).Default[classname] = properties;
+		end;
+		newList = function(name)
+			getmetatable(Citrus.Settings).Settings[name] = {};
+		end;
+		getList = function(name)
+			local settings = getmetatable(Citrus.Settings).Settings
+			return not name and settings.MAIN or settings[name]
+		end;
+		new = function(list,name,object,index,defaultval,...)
+			local list = Citrus.Settings.getList(list)
+			local setting = setmetatable({[object] = index, Default = defaultval;
+				Set = function(self,newval)
+					self.Value = newval
+				end;
+				toDefault = function(self)
+					self:Set(self.Default or self.Value)
+				end;
+			},	{
+					Storage = {...};
+					Value = defaultval or object[index];
+					__tostring = function(self)
+						return ''..getmetatable(self).Value
+					end;
+					__index = function(self,a)
+						if a == 'Value' then
+							return getmetatable(self).Value
+						elseif a == 'Storage' then
+							return getmetatable(self).Storage
+						end
+					end;
+					__newindex = function(self,a,new)
+						if a == 'Value' then
+							object[index] = new
+							rawset(getmetatable(self),a,new)
+						elseif a == 'Storage' then
+							rawset(getmetatable(self),a,new)
+						end
+					end;
+				}
+			)
+			if type(object[index]) == 'boolean' then
+				function setting:Toggle()
+					if setting.Value then
+						setting:Set(false)
+					else
+						setting:Set(true)
+					end
+				end
+			end
+			object:GetPropertyChangedSignal(index):connect(function()
+				setting:Set(object[index])
+			end)	
+			list[name] = setting
+			return setting
+		end;
+		getSetting = function(name,list)
+			if list then return Citrus.Table.find(Citrus.Settings.getList(list),name) end
+			for i,v in next, getmetatable(Citrus.Settings).Settings.MAIN do
+				if i == name then
+					return v
+				end
+			end
+		end;
+		setSetting = function(name,newval,list)
+			Citrus.Settings.getSetting(name,list and list or nil):Set(newval)
+		end;
+		Sync = function(self)
+			for _,list in next, getmetatable(self).Settings do
+				for name, setting in next, list do
+					print(setting,123)
+					setting:Set(setting.Value)
+				end
+			end
+		end;
+		},{
+		Default = {};
+		Settings = {
+			MAIN = {};
+		};
+	});
 	Table = {
 		pack = function(tabl,start,en)
 			local new = {}
@@ -774,17 +802,11 @@ Citrus = {
 			end
 			return new
 		end;
-		merge = function(who,what)
-			for i,v in next,who do
-				if what[i] then
-					for a,z in next,v do
-						what[i][a] = z
-					end
-				else
-					what[i] = v
-				end
+		merge = function(from,to)
+			for i,v in next, from do
+				to[i] = v
 			end
-			return what
+			return to
 		end;
 		clone = function(tab)
 			local clone = {}
@@ -798,6 +820,10 @@ Citrus = {
 				else
 					clone[i] = v
 				end
+			end
+			if getmetatable(tab) then
+				local metaclone = getmetatable(tab)
+				setmetatable(clone,metaclone)
 			end
 			return clone
 		end;
@@ -854,14 +880,13 @@ Citrus = {
 			return Citrus.Table.contains(tabl,this,2)
 		end;
 		search = function(tabl,this)
-			local misc = Citrus.Misc
-			if misc.Table.find(tabl,this) then
-				return misc.Table.find(tabl,this)
+			if Citrus.Table.find(tabl,this) then
+				return Citrus.Table.find(tabl,this)
 			end
 			for i,v in next,tabl do
 				if type(i) == 'string' or type(v) == 'string' then
 					local subject = type(i) == 'string' and i or type(v) == 'string' and v
-					local caps = misc.Functions.stringFilterOut(subject,'%u',nil,false,true)
+					local caps = Citrus.Misc.stringFilterOut(subject,'%u',nil,false,true)
 					local numc = caps..(subject:match('%d+$') or '')
 					if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
 						return v,i
@@ -934,6 +959,15 @@ Citrus = {
 			filter = tostr and table.concat(filter) or filter
 			out = tostr and table.concat(out) or out
 			return flip and out or filter, flip and filter or out
+		end;
+		dynamicType = function(obj)
+			obj = Citrus.Instance.getInstanceOf(obj)
+			if obj.ClassName:find'Text' then
+				return 'Text'
+			elseif obj.ClassName:find'Image' then
+				return 'Image'
+			end
+			return 'Background'
 		end;
 		switch = function(...)
 			return setmetatable({filter = {},Default = false,data = {...},

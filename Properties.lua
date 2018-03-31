@@ -1,4 +1,22 @@
 Properties = setmetatable({
+	getDefault = function(classname)
+		local def = {}
+		for i,v in next, getmetatable(Citrus.Properties).Default do
+			if Citrus.Instance.isA(classname,i) or classname == i or i == 'GuiText' and classname:find'Text' then
+				table.insert(def,v)
+			end
+		end
+		for i = 2,#def do
+			Citrus.Table.merge(def[i],def[1])
+		end
+		return def[1]
+	end;
+	setDefault = function(classname,properties)
+		getmetatable(Citrus.Properties).Default[classname] = properties;
+	end;
+	setPropertiesToDefault = function(who)
+		Citrus.Properties.setProperties(who,Citrus.Properties.getDefault(who.ClassName) or {})
+	end;
 	new = function(name,func,...)
 		local storage = getmetatable(Citrus.Properties).Custom
 		storage[name] = setmetatable({func,...},{
@@ -6,8 +24,11 @@ Properties = setmetatable({
 					return self[1](...)
 				end;
 				__index = function(self,indexed)
+					if #self == 1 then
+						return true
+					end
 					for i = 2,#self do
-						if self[i]:lower() == 'all' or indexed:IsA(self[i]) then
+						if self[i]:lower() == 'all' or indexed:IsA(self[i]) or self[i] == 'GuiText' and indexed.ClassName:find'Text' then
 							return true
 						end
 					end
@@ -38,11 +59,14 @@ Properties = setmetatable({
 		who = Citrus.Instance.getInstanceOf(who)
 		local c = getmetatable(Citrus.Properties).Custom
 		for i,v in next,props do
-			if c[i] then
+			if c[i] and c[i][who] then
 				if type(v) ~= 'table' then v = {v} end
 				--custom object check
 				c[i](who,unpack(v))
-			elseif Citrus.Properties.hasProperty(who,i) then
+			elseif Citrus.Properties[i]:find'Color3' and type(v) == 'string' or type(v) == 'table' then
+				v = type(v) == 'table' and v or {v}
+				Citrus.Theming.insertObject(v[1],who,i,unpack(Citrus.Table.pack(v,2) or {}))
+			elseif Citrus.Properties.hasProperty(who,i)  then
 				pcall(function() who[Citrus.Properties[i]] = v end)
 			end
 		end
@@ -63,6 +87,7 @@ Properties = setmetatable({
 	__index = function(self,ind)
 		return Citrus.Table.search(getmetatable(self).RobloxAPI,ind) or ind
 	end;
+	Default = {};
 	Custom = setmetatable({},{
 			__index = function(self,ind)
 				for i,v in next,self do
@@ -72,7 +97,7 @@ Properties = setmetatable({
 				end
 			end});
 	RobloxAPI = {
-		'Shape','Anchored','BackParamA','BackParamB','BackSurface','BackSurfaceInput','BottomParamA','BottomParamB','BottomSurface','BottomSurfaceInput','BrickColor','CFrame','CanCollide','CenterOfMass','CollisionGroupId','Color','CustomPhysicalProperties','FrontParamA','FrontParamB','FrontSurface','FrontSurfaceInput';
+		'Shape','Anchored','BackSurfaceInput','BottomParamA','BottomParamB','BottomSurface','BottomSurfaceInput','BrickColor','CFrame','CanCollide','CenterOfMass','CollisionGroupId','Color','CustomPhysicalProperties','FrontParamA','FrontParamB','FrontSurface','FrontSurfaceInput';
 		'LeftParamA','LeftParamB','LeftSurface','LeftSurfaceInput','Locked','Material','Orientation','Reflectance','ResizeIncrement','ResizeableFaces','RightParamA','RightParamB','RightSurface','RightSurfaceInput','RotVelocity','TopParamA','TopParamB','TopSurface','TopSurfaceInput','Velocity';
 		'Archivable','ClassName','Name','Parent','AttachmentForward','AttachmentPoint','AttachmentPos','AttachmentRight','AttachmentUp';
 		'Animation','AnimationId','IsPlaying','Length','Looped','Priority','Speed','TimePosition','WeightCurrent','WeightTarget','Axis','CFrame','Orientation';

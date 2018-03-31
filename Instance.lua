@@ -26,7 +26,14 @@ Instance = setmetatable({
 			return false
 		end
 	end;
-			
+	newPure = function(class,...)
+		local args = {...}
+		if type(args[#args]) ~= 'table' then
+			table.insert(args,{})
+		end
+		table.insert(args[#args],true)
+		return Citrus.Instance.new(class,unpack(args))
+	end;
 	new = function(class,...)
 		local self = Citrus.Instance
 		local pt = Citrus.Table
@@ -41,15 +48,21 @@ Instance = setmetatable({
 		end
 		new = pt.find(storage,class) and pt.find(storage,class)(unpack(args)) or Instance.new(class)
 		new.Parent = parent
-		Citrus.Properties.setProperties(new,Citrus.Settings.getDefault(class) or {})
+		local a = next(properties or {})
+		if type(a) ~= 'number' then
+			Citrus.Properties.setPropertiesToDefault(new)
+		else
+			table.remove(properties,a)
+		end		
 		Citrus.Properties.setProperties(new,properties or {})
 		return new
 	end;
 	newInstance = function(class,parent,props)
 		local new = Instance.new(class)
+		local parent = Citrus.Instance.getInstanceOf(parent)
 		props = props or type(parent) == 'table' and parent
-		parent = type(parent) == 'table' and nil or parent
-		Citrus.Properties.setProperties(new,Citrus.Settings.getDefault(class) or {})
+		parent = type(parent) ~= 'table' and parent or nil
+		local a = next(props or {})
 		return Citrus.Properties.setProperties(Instance.new(class,parent),props or {})
 	end;
 	newObject = function(...)
@@ -60,8 +73,8 @@ Instance = setmetatable({
 		for i,v in next,args do
 			class = type(v) == 'string' and Citrus.Instance.isAClass(v) and v or class
 			parent = typeof(v) == 'Instance' and v or parent
-			obj = type(v) == 'table' and Citrus.Table.length(obj) == 0 and v or obj
 			props = type(v) == 'table' and Citrus.Table.length(obj) > 0 and v or props
+			obj = type(v) == 'table' and Citrus.Table.length(obj) == 0 and v or obj
 		end
 		local ins = Citrus.Instance.newInstance(class,parent,props)
 		local new = {Instance = ins,Object = obj}
@@ -125,15 +138,14 @@ Instance = setmetatable({
 	end;
 	getAncestors = function(who)
 		local anc = {game}
-		local misc = Citrus.Misc
 		who = Citrus.Instance.getInstanceOf(who)
-		local chain = misc.Functions.stringFilterOut(who:GetFullName(),'%.','game',nil,true)
+		local chain = Citrus.Misc.stringFilterOut(who:GetFullName(),'%.','game',nil,true)
 		local ind = game
 		for i,v in next,chain do
 			ind = ind[v]
 			table.insert(anc,ind)
 		end
-		return misc.Table.pack(misc.Table.reverse(anc),2)
+		return Citrus.Table.pack(Citrus.Table.reverse(anc),2)
 	end;
 },{
 	Classes = {};

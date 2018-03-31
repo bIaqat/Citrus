@@ -58,7 +58,6 @@ Theming = setmetatable({
 			local val,objs = theme.Values,theme.Objects
 			for obj, data in next, objs do
 				for prop,index in next,data do
-					print(prop,index,unpack(val))
 					obj[prop] = val[index]
 				end
 			end

@@ -1,5 +1,14 @@
 Settings = setmetatable({
-
+	getDefault = function(classname)
+		for i,v in next, getmetatable(Citrus.Settings).Default do
+			if Citrus.Instance.isA(classname,i) or classname == i then
+				return v
+			end
+		end
+	end;
+	setDefault = function(classname,properties)
+		getmetatable(Citrus.Settings).Default[classname] = properties;
+	end;
 	newList = function(name)
 		getmetatable(Citrus.Settings).Settings[name] = {};
 	end;
@@ -18,7 +27,10 @@ Settings = setmetatable({
 			end;
 		},	{
 				Storage = {...};
-				Value = object[index];
+				Value = defaultval or object[index];
+				__tostring = function(self)
+					return ''..getmetatable(self).Value
+				end;
 				__index = function(self,a)
 					if a == 'Value' then
 						return getmetatable(self).Value
@@ -65,11 +77,13 @@ Settings = setmetatable({
 	Sync = function(self)
 		for _,list in next, getmetatable(self).Settings do
 			for name, setting in next, list do
+				print(setting,123)
 				setting:Set(setting.Value)
 			end
 		end
 	end;
 	},{
+	Default = {};
 	Settings = {
 		MAIN = {};
 	};

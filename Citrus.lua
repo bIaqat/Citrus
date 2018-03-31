@@ -975,6 +975,3 @@ Citrus = {
 	};
 }
 table.sort(getmetatable(Citrus.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
-
-Citrus.Settings.new(nil,'Test',game.Players.LocalPlayer.Character.Humanoid,'WalkSpeed',50)
-Citrus.Settings:Sync()

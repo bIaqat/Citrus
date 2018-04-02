@@ -37,10 +37,13 @@ Iconography = setmetatable({
 			v = v:sub(1,1):upper()..v:sub(2)
 			index = index[v]
 		end
-		return index
+		return index:Clone()
 	end;		
-	
-	},{
+	getIconData = function(...)
+		local i = Citrus.Iconography.getIcon(...)
+		return {Image = i.Image, ImageRectSize = i.ImageRectSize, ImageRectOffset = i.ImageRectOffset}
+	end;
+},{
 	Icons = {}
 	}
 );

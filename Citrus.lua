@@ -1009,3 +1009,31 @@ Citrus = {
 	};
 }
 table.sort(getmetatable(Citrus.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
+local Create, Properties, Position, Color, Theming, Effects, Icon, Settings, Table, Misc = Citrus.Instance, Citrus.Properties, Citrus.Positioning, Citrus.Color, Citrus.Theming, Citrus.Effects, Citrus.Iconography, Citrus.Settings, Citrus.Table, Citrus.Misc
+local newClass = Create.newCustomClass
+local create,create2,create3,newObject,newInstance, new = Create.new, Create.newObject, Create.newInstance, Create.newObject, Create.newInstance, Create.newInstance
+local cPure = Create.newPure
+local obj,ins,getInstance,getObject,isObject,getParents = Create.getObjectOf,Create.getInstanceOf,Create.getInstanceOf, Create.getObjectOf, Create.isObject, Create.getAncestors
+local newProperty = Properties.new
+local has, get, set = Properties.hasProperty, Properties.getProperties, Properties.setProperties
+local setdef, getdef, todef = Properties.setDefault, Properties.getDefault, Properties.setPropertiesToDefault
+local ud, udim, v2, frompos, tweenObj = Position.new, Position.toUDim, Position.toVector2, Position.fromPosition, Position.tweenObject
+local newColor, getColor = Color.insertColor, Color.getColor
+local col, rgb, hsv, hex = Color.new, Color.fromRGB, Color.fromHSV, Color.fromHex
+local affect, affectch, affectdesc, massEffect = Effects.affect, Effects.affectChildren, Effects.affectDescendants, Effects.massAffect
+local icons, getIcon = getmetatable(Icon).Icons, Icon.getIcon
+local Set, newSet, getSet, newList, getList = Settings.setSetting, Settings.new, Settings.getSetting, Settings.newList, Settings.getList
+local switch, round, op, yes, tween, filter = Misc.switch, Misc.round, Misc.operation, Misc.exists, Misc.tweenService, Misc.stringFilterOut
+local Theme = {
+	set = Theming.setTheme;
+	get = Theming.getValues;
+	new = Theming.new;
+	to = Theming.insertObject;
+}
+
+--Colours
+fromMaterial = function(name,i,ac)
+	local id = Citrus.Misc.switch(1,2,3,4,5,6,7,8,9,10):Filter(unpack(Citrus.Misc.switch({50,100,200,300,400,500,600,700,800,900},{100,200,400,700}):Filter(false,true)(Citrus.Misc.exists(ac))))
+	id = id(i or 500)
+	return id and Citrus.Color.getColor(name,id,'Material',ac and 'Accent')
+end;

@@ -21,8 +21,8 @@ Citrus = {
 				end
 				return false
 			end;
-			isAClass = function(is)
-				if pcall(function() return Instance.new(is) end) then
+			isAClass = function(is,custom)
+				if pcall(function() return Instance.new(is) end) or custom and getmetatable(Citrus.Instance).Classes[is] then
 					return true
 				else
 					return false
@@ -700,7 +700,7 @@ Citrus = {
 				v = v:sub(1,1):upper()..v:sub(2)
 				index = index[v]
 			end
-			local icon = Citrus.Table.search(index,name)
+			local icon = Citrus.Table.search(index,name,true)
 			return icon:Clone()
 		end;		
 		getIconData = function(...)
@@ -886,7 +886,7 @@ Citrus = {
 		find = function(tabl,this)
 			return Citrus.Table.contains(tabl,this,2)
 		end;
-		search = function(tabl,this)
+		search = function(tabl,this,extra)
 			local likely = {}
 			if Citrus.Table.find(tabl,this) then
 				return Citrus.Table.find(tabl,this)
@@ -897,6 +897,9 @@ Citrus = {
 					local caps = Citrus.Misc.stringFilterOut(subject,'%u',nil,false,true)
 					local numc = caps..(subject:match('%d+$') or '')
 					if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
+						if not extra then
+							return v, i
+						end
 						table.insert(likely,subject)
 					end
 				end
@@ -914,6 +917,9 @@ Citrus = {
 		end;
 	};
 	Misc = {
+		destroyIn = function(who,seconds)
+			game:GetService("Debris"):AddItem(who,seconds)
+		end;
 		exists = function(yes)
 			return yes ~= nil and true or false
 		end;
@@ -1019,6 +1025,8 @@ Citrus = {
 		end;
 	};
 }
+table.sort(getmetatable(Citrus.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
+
 
 --Variables
 local Create, Properties, Position, Color, Theming, Effects, Icon, Settings, Table, Misc = Citrus.Instance, Citrus.Properties, Citrus.Positioning, Citrus.Color, Citrus.Theming, Citrus.Effects, Citrus.Iconography, Citrus.Settings, Citrus.Table, Citrus.Misc

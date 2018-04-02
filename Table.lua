@@ -83,7 +83,7 @@ Table = {
 	find = function(tabl,this)
 		return Citrus.Table.contains(tabl,this,2)
 	end;
-	search = function(tabl,this)
+	search = function(tabl,this,extra)
 		local likely = {}
 		if Citrus.Table.find(tabl,this) then
 			return Citrus.Table.find(tabl,this)
@@ -94,6 +94,9 @@ Table = {
 				local caps = Citrus.Misc.stringFilterOut(subject,'%u',nil,false,true)
 				local numc = caps..(subject:match('%d+$') or '')
 				if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
+					if not extra then
+						return v, i
+					end
 					table.insert(likely,subject)
 				end
 			end

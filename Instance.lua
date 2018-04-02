@@ -19,8 +19,8 @@ Instance = setmetatable({
 		end
 		return false
 	end;
-	isAClass = function(is)
-		if pcall(function() return Instance.new(is) end) then
+	isAClass = function(is,custom)
+		if pcall(function() return Instance.new(is) end) or custom and getmetatable(Citrus.Instance).Classes[is] then
 			return true
 		else
 			return false

@@ -1,5 +1,4 @@
 local Citrus;
-
 Citrus = {
 	Instance = setmetatable({
 			newCustomClass = function(name,funct)
@@ -659,51 +658,59 @@ Citrus = {
 		}
 	);
 	Iconography = setmetatable({
-			new = function(img,xlen,ylen,xgrid,ygrid,names)
-				if not names then names = ygrid ygrid = xgrid end
-				local count = 1
-				for y = 0, ylen-1,1 do
-					for x = 0,xlen-1,1 do
-						local icon = Instance.new("ImageLabel")
-						icon.Image = img
-						icon.ImageRectOffset = Vector2.new(x*xgrid,y*ygrid)
-						icon.ImageRectSize = Vector2.new(xgrid,ygrid)
-						local namefil = Citrus.Misc.stringFilterOut(names[count] or 'Icon','_',nil,true)
-						local name = namefil[#namefil]
-						table.remove(namefil,#namefil)
-						Citrus.Iconography.insertIcon(name,icon,unpack(namefil))
-						count = count + 1
-					end
+		insertIconList = function(img,xlen,ylen,xgrid,ygrid,names)
+			if not names then names = ygrid ygrid = xgrid end
+			local count = 1
+			for y = 0, ylen-1,1 do
+				for x = 0,xlen-1,1 do
+					local icon = Instance.new("ImageLabel")
+					icon.BackgroundTransparency = 1
+					icon.Image = img
+					icon.ImageRectOffset = Vector2.new(x*xgrid,y*ygrid)
+					icon.ImageRectSize = Vector2.new(xgrid,ygrid)
+					local namefil = Citrus.Misc.stringFilterOut(names[count] or 'Icon','_',nil,true)
+					local name = namefil[#namefil]
+					table.remove(namefil,#namefil)
+					Citrus.Iconography.insertIcon(name,icon,unpack(namefil))
+					count = count + 1
 				end
-			end;			
-			insertIcon = function(name,icon,...)
-				local index = getmetatable(Citrus.Iconography).Icons
-				for i,v in next,{...} or {} do
-					v = v:sub(1,1):upper()..v:sub(2)
-					index = index[v]
+			end
+		end;			
+		insertIcon = function(name,icon,...)
+			local index = getmetatable(Citrus.Iconography).Icons
+			for i,v in next,{...} or {} do
+				v = v:sub(1,1):upper()..v:sub(2)
+				if not index[v] then
+					index[v] = {}
 				end
-				if index[name] and type(index[name]) ~= 'table' then
-					index[name] = {index[name]}
-				end
-				if index[name] then
-					table.insert(index[name],icon)
-				else
-					index[name] = icon
-				end			
-			end;		
-			getIcon = function(...)
-				local index = getmetatable(Citrus.Iconography).Icons
-				for i,v in next,{...} or {} do
-					v = v:sub(1,1):upper()..v:sub(2)
-					index = index[v]
-				end
-				return index
-			end;		
-			
-			},{
-			Icons = {}
-			}
-		);
+				index = index[v]
+			end
+			if index[name] and type(index[name]) ~= 'table' then
+				index[name] = {index[name]}
+			end
+			if index[name] then
+				table.insert(index[name],icon)
+			else
+				index[name] = icon
+			end			
+		end;		
+		new = function(name,...)
+			local index = getmetatable(Citrus.Iconography).Icons
+			for i,v in next,{...} or {} do
+				v = v:sub(1,1):upper()..v:sub(2)
+				index = index[v]
+			end
+			local icon = Citrus.Table.search(index,name)
+			return icon:Clone()
+		end;		
+		getIconData = function(...)
+			local i = Citrus.Iconography.new(...)
+			return {Image = i.Image, ImageRectSize = i.ImageRectSize, ImageRectOffset = i.ImageRectOffset}
+		end;
+	},{
+		Icons = {}
+		}
+	);
 	Settings = setmetatable({
 		getDefault = function(classname)
 			for i,v in next, getmetatable(Citrus.Settings).Default do
@@ -880,6 +887,7 @@ Citrus = {
 			return Citrus.Table.contains(tabl,this,2)
 		end;
 		search = function(tabl,this)
+			local likely = {}
 			if Citrus.Table.find(tabl,this) then
 				return Citrus.Table.find(tabl,this)
 			end
@@ -889,11 +897,14 @@ Citrus = {
 					local caps = Citrus.Misc.stringFilterOut(subject,'%u',nil,false,true)
 					local numc = caps..(subject:match('%d+$') or '')
 					if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
-						return v,i
+						table.insert(likely,subject)
 					end
 				end
 			end
-			return false
+			table.sort(likely,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
+			local resin = Citrus.Table.indexOf(tabl,likely[1])
+			local firstresult = tabl[resin]
+			return firstresult and firstresult or false, firstresult and Citrus.Table.indexOf(tabl,firstresult), likely
 		end;
 		anonSetMetatable = function(tabl,set)
 			local old = getmetatable(tabl)
@@ -1008,7 +1019,8 @@ Citrus = {
 		end;
 	};
 }
-table.sort(getmetatable(Citrus.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
+
+--Variables
 local Create, Properties, Position, Color, Theming, Effects, Icon, Settings, Table, Misc = Citrus.Instance, Citrus.Properties, Citrus.Positioning, Citrus.Color, Citrus.Theming, Citrus.Effects, Citrus.Iconography, Citrus.Settings, Citrus.Table, Citrus.Misc
 local newClass = Create.newCustomClass
 local create,create2,create3,newObject,newInstance, new = Create.new, Create.newObject, Create.newInstance, Create.newObject, Create.newInstance, Create.newInstance

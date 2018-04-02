@@ -1,4 +1,7 @@
 Misc = {
+	destroyIn = function(who,seconds)
+		game:GetService("Debris"):AddItem(who,seconds)
+	end;
 	exists = function(yes)
 		return yes ~= nil and true or false
 	end;

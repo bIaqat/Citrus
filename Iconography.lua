@@ -41,7 +41,7 @@ Iconography = setmetatable({
 			v = v:sub(1,1):upper()..v:sub(2)
 			index = index[v]
 		end
-		local icon = Citrus.Table.search(index,name)
+		local icon = Citrus.Table.search(index,name,true)
 		return icon:Clone()
 	end;		
 	getIconData = function(...)

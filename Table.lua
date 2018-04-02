@@ -84,6 +84,7 @@ Table = {
 		return Citrus.Table.contains(tabl,this,2)
 	end;
 	search = function(tabl,this)
+		local likely = {}
 		if Citrus.Table.find(tabl,this) then
 			return Citrus.Table.find(tabl,this)
 		end
@@ -93,11 +94,14 @@ Table = {
 				local caps = Citrus.Misc.stringFilterOut(subject,'%u',nil,false,true)
 				local numc = caps..(subject:match('%d+$') or '')
 				if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
-					return v,i
+					table.insert(likely,subject)
 				end
 			end
 		end
-		return false
+		table.sort(likely,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
+		local resin = Citrus.Table.indexOf(tabl,likely[1])
+		local firstresult = tabl[resin]
+		return firstresult and firstresult or false, firstresult and Citrus.Table.indexOf(tabl,firstresult), likely
 	end;
 	anonSetMetatable = function(tabl,set)
 		local old = getmetatable(tabl)

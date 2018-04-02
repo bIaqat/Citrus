@@ -8,7 +8,7 @@ local appleGlyphsPart1 = {
 	'iOS11_Filter', 'iOS11_Folder', 'iOS11_Flash Light', 'iOS11_Facebook', 'iOS11_Face ID', 'iOS11_File', 'iOS11_Exit', 'iOS11_Duplicate', 'iOS11_Worldwide Location', 'iOS11_Error';
 	'iOS11_Dashboard', 'iOS11_Following', 'iOS11_For You', 'iOS11_Gallery', 'iOS11_Geo Fence', 'iOS11_Globe', 'iOS11_Genuis', 'iOS11_Game Controller', 'iOS11_Contacts', 'iOS11_Globe Earth';
 	'iOS11_Gift', 'iOS11_Hand Cursor', 'iOS11_Graduation Cap', 'iOS11_Health Data', 'iOS11_Happy', 'iOS11_Health Sources', 'iOS11_Handshake', 'iOS11_Help', 'iOS11_Heart', 'iOS11_High Battery';
-	'iOS11_Instagram'iOS11_ , 'iOS11_Invisible', 'iOS11_Investment', 'iOS11_Image File', 'iOS11_Idea', 'iOS11_Info', 'iOS11_Home Automation', 'iOS11_Home', 'iOS11_High Priority', 'iOS11_iPhone';
+	'iOS11_Instagram', 'iOS11_Invisible', 'iOS11_Investment', 'iOS11_Image File', 'iOS11_Idea', 'iOS11_Info', 'iOS11_Home Automation', 'iOS11_Home', 'iOS11_High Priority', 'iOS11_iPhone';
 }
 
 local appleGlyphsPart2 = {
@@ -25,5 +25,5 @@ local appleGlyphsPart2 = {
 }
 
 
-Citrus.Iconography.new('rbxassetid://1574419350',10, 10, 90, 90, appleGlyphsPart1)
-Citrus.Iconography.new('rbxassetid://1573947013',10, 10, 90, 90, appleGlyphsPart2)
+Citrus.Iconography.insertIconList('rbxassetid://1574419350',10, 10, 90, 90, appleGlyphsPart1)
+Citrus.Iconography.insertIconList('rbxassetid://1573947013',10, 10, 90, 90, appleGlyphsPart2)

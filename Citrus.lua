@@ -887,8 +887,18 @@ Citrus = {
 			return Citrus.Table.contains(tabl,this,2)
 		end;
 		search = function(tabl,this,extra)
+			if not getmetatable(tabl) then setmetatable(tabl,{}) end
+			local meta = getmetatable(tabl)
+			if not meta['0US3D'] then
+				meta['0US3D'] = {}
+			end
+			local used = meta['0US3D']
 			local likely = {}
+			if Citrus.Table.find(used,this) then
+				return unpack(Citrus.Table.find(used,this))
+			end		
 			if Citrus.Table.find(tabl,this) then
+				used[this] = {Citrus.Table.find(tabl,this)}
 				return Citrus.Table.find(tabl,this)
 			end
 			for i,v in next,tabl do
@@ -898,6 +908,7 @@ Citrus = {
 					local numc = caps..(subject:match('%d+$') or '')
 					if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
 						if not extra then
+							used[this] = {v, i}
 							return v, i
 						end
 						table.insert(likely,subject)
@@ -907,6 +918,7 @@ Citrus = {
 			table.sort(likely,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
 			local resin = Citrus.Table.indexOf(tabl,likely[1])
 			local firstresult = tabl[resin]
+			used[this] = {firstresult and firstresult or false, firstresult and Citrus.Table.indexOf(tabl,firstresult), likely}
 			return firstresult and firstresult or false, firstresult and Citrus.Table.indexOf(tabl,firstresult), likely
 		end;
 		anonSetMetatable = function(tabl,set)

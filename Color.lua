@@ -57,7 +57,7 @@ Color = setmetatable({
 		if not color then return nil end
 		local r = Citrus.Misc.round
 		local h,s,v = Color3.toHSV(color)
-		return r(h*360),r(s*360),r(v*360)
+		return r(h*360),r(s*100),r(v*100)
 	end;
 	editHSV = function(color,...)
 		local round,op = Citrus.Misc.round,Citrus.Misc.operation
@@ -169,7 +169,8 @@ Color = setmetatable({
 			end
 		end
 		return objs
-	end;	
+	end;
+	
 	insertColor = function(name,col,...)
 		local index = getmetatable(Citrus.Color).Colors
 		local subs = {}

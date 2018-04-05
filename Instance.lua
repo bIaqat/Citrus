@@ -1,5 +1,5 @@
 Instance = setmetatable({
-	newCustomClass = function(name,funct)
+	newClass = function(name,funct)
 		local self = Citrus.Instance
 		local pt = Citrus.Table
 		getmetatable(self).Classes[name] = setmetatable({funct,Objects = {}},{
@@ -150,5 +150,4 @@ Instance = setmetatable({
 },{
 	Classes = {};
 	Objects = {};
-}
-);
+});

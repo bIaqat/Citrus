@@ -1,7 +1,7 @@
 local Citrus;
-Citrus = {
+Citrus = setmetatable({
 	Instance = setmetatable({
-			newCustomClass = function(name,funct)
+			newClass = function(name,funct)
 				local self = Citrus.Instance
 				local pt = Citrus.Table
 				getmetatable(self).Classes[name] = setmetatable({funct,Objects = {}},{
@@ -389,7 +389,7 @@ Citrus = {
 				if not color then return nil end
 				local r = Citrus.Misc.round
 				local h,s,v = Color3.toHSV(color)
-				return r(h*360),r(s*360),r(v*360)
+				return r(h*360),r(s*100),r(v*100)
 			end;
 			editHSV = function(color,...)
 				local round,op = Citrus.Misc.round,Citrus.Misc.operation
@@ -505,17 +505,31 @@ Citrus = {
 			
 			insertColor = function(name,col,...)
 				local index = getmetatable(Citrus.Color).Colors
+				local subs = {}
 				for i,v in next,{...} or {} do
 					if not index[v] then
 						index[v] = {}
 					end
 					index = index[v]
 				end
+				for i,v in next, type(col) == 'table' and col or {} do
+					if type(v) == 'table' then
+						rawset(subs,i,v)
+						if type(i) == 'number' then
+							table.remove(col,i)
+						else
+							col[i] = nil
+						end
+					end
+				end
 				if index[name] then
-					table.insert(index[name],col)
+					Citrus.Table.insert(index[name],col)
 				else
 					index[name] = type(col) == 'table' and col or {col}
-				end			
+				end		
+				for i,v in next,subs do
+					Citrus.Color.insertColor(name,v,unpack({...}),i)
+				end	
 			end;
 			getColor = function(name,id,...)
 				local index = getmetatable(Citrus.Color).Colors
@@ -802,6 +816,15 @@ Citrus = {
 		};
 	});
 	Table = {
+		insert = function(tabl,...)
+			for i,v in pairs(...) do 
+				if type(v) == 'table' then
+					Citrus.Table.insert(tabl,v)
+				else
+					rawset(tabl,i,v)
+				end
+			end
+		end;
 		pack = function(tabl,start,en)
 			local new = {}
 			for i = start or 1, en or #tabl do
@@ -1036,7 +1059,15 @@ Citrus = {
 			return Citrus.Misc.switch(a+b,a-b,a*b,a/b,a%b,a^b,a^(1/b),a*b,a^b,a^(1/b)):Filter('+','-','*','/','%','^','^/','x','pow','rt')(opa)
 		end;
 	};
-}
+},{
+	__index = function(self,nam)
+		for i,v in next, self do
+			if self.Table.contains(v,nam) then
+				return self.Table.find(v,nam)
+			end
+		end
+	end
+})
 table.sort(getmetatable(Citrus.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
 
 

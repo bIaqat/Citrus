@@ -1,8 +1,7 @@
-Citrus.Instance.newCustomClass("RoundedFrame",function(round)
+Citrus.Instance.newClass("RoundedFrame",function(round)
 	round = round or 15;
 	local ud,v2 = Citrus.Positioning.new, Citrus.Positioning.toVector2
-	local Class = {
-		
+	local Class = {	
 		Round = round;
 		setRound = function(self,new,d)
 			local ud = Citrus.Positioning.new
@@ -10,9 +9,11 @@ Citrus.Instance.newCustomClass("RoundedFrame",function(round)
 			for i,v in next, d and d:GetChildren() or self.Rounded:GetChildren() do
 				if Citrus.Instance.isAnObject(v) then
 					Citrus.Instance.getObjectOf(v).Radius = new/2					
-				elseif v:IsA('GuiObject') and v.Name ~= 'Border' then
+				elseif v:IsA('GuiObject') and v.Name ~= 'Border' and v.Name ~= 'Main' then
 					local si = Citrus.Misc.switch(ud(1,-new*2,0,new), ud(0,new,1,-new*2)):Filter(1,0)(v.Size.X.Scale)
 					v.Size = si
+				elseif v.Name == 'Main' then
+					v.Size = ud(1,-new*2,3)
 				end
 			end
 			if not d then self:setRound(new,self.Rounded.Border) end
@@ -40,7 +41,7 @@ Citrus.Instance.newCustomClass("RoundedFrame",function(round)
 		setBorder = function(self,new)
 			if new > 0 and self.Transparency <= 0 then
 				self.Rounded.Border.Visible = true
-				self.Rounded.Border.Size = ud(1,new*2,3)
+				self.Rounded.Border.Size = ud(1,new,3)
 			else
 				self.Rounded.Border.Visible = false
 				self.Rounded.Border.Size = ud(1,0,3)
@@ -76,19 +77,25 @@ Citrus.Instance.newCustomClass("RoundedFrame",function(round)
 		local fram = Citrus.Instance.newInstance("Frame",rounded,{siz = stuff[i%2 == 0 and 2 or 1], pos = stuff[2+i], ap = stuff[6+i], bsp = 0, nam = stuff[10+i], bac = Color3.new(.2,.2,.2)})
 	end
 	
-	local border = Citrus.Properties.setProperties(rounded:Clone(),{vis = false,nam = "Border",par = rounded, ap = v2(.5), pos = ud(.5), siz = ud(1)})
+	local border = Citrus.Instance.newInstance('Frame',{siz = ud(1),trans = 1,vis = false,nam = "Border",par = rounded, ap = v2(.5), pos = ud(.5), siz = ud(1)})
 	
 	for i,v in next,rounded:GetChildren() do
 		if v.Name ~= 'Border' then
+			local b = (Citrus.Instance.getObjectOf(v) or v):Clone()
 			local c = (Citrus.Instance.getObjectOf(v) or v):Clone()
 			v:Destroy()
 			c.Parent = rounded
+			b.Parent = border
 		end
 	end
 	
 	Citrus.Instance.newInstance("Frame",rounded,{nam = "Main", ap = v2(.5), siz = ud(1,-round*2,3), pos = ud(.5),bsp = 0; bac = Color3.new(.2,.2,.2)})
 	
 	local new = Citrus.Instance.newObject("Frame",Class,{trans = 1})
+	Citrus.Instance.newInstance("IntValue",rounded,{nam = 'Round'}).Changed:connect(function(a)
+		new.Round = a
+	end)
+	
 	new:NewIndex("Round",function(self,n)
 		self:setRound(n)
 	end)

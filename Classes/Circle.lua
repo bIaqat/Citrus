@@ -1,5 +1,5 @@
 --non custom instance
-Citrus.Instance.newCustomClass("Circle",function(siz,typ)
+Citrus.Instance.newClass("Circle",function(siz,typ)
 	local circle
 	if typ then
 		circle = Citrus.Instance.newPure("ImageButton")
@@ -11,10 +11,9 @@ Citrus.Instance.newCustomClass("Circle",function(siz,typ)
 end)
 
 --custom instance
-Citrus.Instance.newCustomClass("Circle",function(diam,typ)
+Citrus.Instance.newClass("Circle",function(rad,typ)
 	local circle
-	diam = diam or 50
-	local obj = {Radius = diam/2,ClassName = 'Circle',GetAncestors = function(self)
+	local obj = {Radius = rad or 0,ClassName = 'Circle',GetAncestors = function(self)
 		return Citrus.Instance.getAncestors(self)
 	end}
 	if typ then
@@ -26,12 +25,7 @@ Citrus.Instance.newCustomClass("Circle",function(diam,typ)
 		self.Size = Citrus.Positioning.new(new*2,2)
 		self.Object.Radius = new
 	end);
-	circle:Index('Color',function(self)
-		return self.ImageColor3;
-	end)
-	circle:NewIndex('Color',function(self,new)
-		self.ImageColor3 = new;
-	end)
-	circle{im = 'rbxassetid://1487012691',bt = 1,siz = Citrus.Positioning.new(diam,'o')}
+	circle.Radius = rad or 0
+	circle{im = 'rbxassetid://1487012691',bt = 1, ic = Color3.new(.2,.2,.2)}
 	return circle
 end)

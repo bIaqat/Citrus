@@ -1,4 +1,7 @@
 Misc = {
+	getArgument = function(num,...)
+		return ({...})[num]
+	end;
 	destroyIn = function(who,seconds)
 		game:GetService("Debris"):AddItem(who,seconds)
 	end;
@@ -45,14 +48,14 @@ Misc = {
 		local filter,out = {},{}
 		for i in string:gmatch(starting) do
 			if not Citrus.Misc.contains(string:match(starting),type(disregard)=='table' and unpack(disregard) or disregard) then
-				local filtered = string:sub(string:find(starting),ending and ({string:find(ending)})[2] or ({string:find(starting)})[2])
+				local filtered = string:sub(string:find(starting),ending and Citrus.getArgument(2,string:find(ending)) or Citrus.getArgument(2,string:find(starting))
 				local o = string:sub(1,(ending and string:find(ending) or string:find(starting))-1)
 				table.insert(filter,filtered~=disregard and filtered or nil)
 				table.insert(out,o~=disregard and o or nil)
 			else
 				table.insert(out,string:sub(1,string:find(starting))~=disregard and string:sub(1,string:find(starting)) or nil)
 			end
-			string = string:sub((ending and ({string:find(ending)})[2] or ({string:find(starting)})[2]) + 1)
+			string = string:sub((ending and Citrus.getArgument(2,string:find(ending)) or Citrus.getArgument(2,string:find(starting))) + 1)
 		end
 		table.insert(out,string)
 		filter = tostr and table.concat(filter) or filter

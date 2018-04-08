@@ -114,16 +114,20 @@ Instance = setmetatable({
 			end
 		end;
 		function new:Clone(parent,prop)
-			local ins = self.Instance:Clone()
-			ins.Parent = parent
-			local clone = Citrus.Table.clone(self)
-			clone.Instance = ins
-			insert(clone)
-			return clone
+			return Citrus.cloneObject(self,parent,prop)
 		end;
 		setmetatable(new,newmeta)
 		insert(new)
 		return new
+	end;
+	cloneObject = function(obj,parent,prop)
+		local ins = obj.Instance:Clone()
+		ins.Parent = parent
+		local clone = Citrus.Table.clone(obj)
+		clone.Instance = ins
+		Citrus.setProperties(clone.Instance, prop and prop or {})
+		rawset(getmetatable(Citrus.Instance).Objects,obj.Instance,obj)
+		return clone
 	end;
 	getInstanceOf = function(who)
 		local self = getmetatable(Citrus.Instance).Objects

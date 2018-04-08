@@ -39,7 +39,7 @@ Properties = setmetatable({
 	hasProperty = function(who,prop)
 		who = Citrus.Instance.getInstanceOf(who)
 		if pcall(function() return who[Citrus.Properties[prop]] end) then
-			return true
+			return true, who[Citrus.Properties[prop]]
 		else
 			return false
 		end

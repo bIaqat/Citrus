@@ -40,14 +40,10 @@ Table = {
 		end
 		return clone
 	end;
-	contains = function(tabl,contains,typ)
+	contains = function(tabl,contains)
 		for i,v in next,tabl do
 			if v == contains or (typeof(i) == typeof(contains) and v == contains) or i == contains then
-				if typ then
-					return ({true,v,i})[typ]
-				else
-					return true,v,i
-				end
+				return true,v,i
 			end
 		end
 		return nil
@@ -83,14 +79,14 @@ Table = {
 		return new
 	end;
 	indexOf = function(tabl,val)
-		return Citrus.Table.contains(tabl,val,3)
+		return Citrus.getArgument(3,Citrus.Table.contains(tabl,val))
 	end;
 	valueOfNext = function(tab,nex)
 		local i,v = next(tab,nex)
 		return v
 	end;
 	find = function(tabl,this)
-		return Citrus.Table.contains(tabl,this,2)
+		return Citrus.getArgument(2,Citrus.Table.contains(tabl,val))
 	end;
 	search = function(tabl,this,extra)
 		if not getmetatable(tabl) then setmetatable(tabl,{}) end

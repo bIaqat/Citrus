@@ -95,7 +95,7 @@ Instance = setmetatable({
 				local pro = getmetatable(self).Properties
 				if Citrus.Table.contains(pro.NewIndex,ind) then
 					Citrus.Table.find(pro.NewIndex,ind)(self,new)
-				elseif Citrus.Table.contains(self.Object,ind) or not Citrus.Properties.hasProperty(self.Instance,ind) then
+				elseif Citrus.Table.contains(self.Object,ind) or not Citrus.Properties.hasProperty(self.Instance,ind) or type(new) == 'function' then
 					rawset(self.Object,ind,new)
 				elseif Citrus.Properties.hasProperty(self.Instance,ind) then
 					self.Instance[Citrus.Properties[ind]] = new
@@ -126,7 +126,7 @@ Instance = setmetatable({
 		local clone = Citrus.Table.clone(obj)
 		clone.Instance = ins
 		Citrus.setProperties(clone.Instance, prop and prop or {})
-		rawset(getmetatable(Citrus.Instance).Objects,obj.Instance,obj)
+		rawset(getmetatable(Citrus.Instance).Objects,clone.Instance,clone)
 		return clone
 	end;
 	getInstanceOf = function(who)

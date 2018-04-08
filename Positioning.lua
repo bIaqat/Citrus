@@ -29,6 +29,7 @@ Positioning = {
 		return UDim2.new(a,0,b,0)
 	end;
 	tweenObject = function(object,typ,...)
+		object = Citrus.Instance.getInstanceOf(object)
 		local interupt,udim,udim2,time,style,direction,after = true
 		for i,v in pairs({...})do
 			if typeof(v) == 'UDim2' then

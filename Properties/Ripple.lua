@@ -2,7 +2,7 @@ Citrus.Properties.new("Ripple",function(button,...)
 	local args = {...}
 	button.AutoButtonColor = false
 	button.ClipsDescendants = true
-	button.MouseButton1Click:connect(function(mx,my)
+	button.MouseButton1Down:connect(function(mx,my)
 		local circle
 		local props = {Parent = button,AnchorPoint = Vector2.new(.5,.5), Transparency = 1, Name = 'Circle', Position = UDim2.new(0, mx-button.AbsolutePosition.X, -.5, my-button.AbsolutePosition.Y)}
 		if Citrus.Instance.isAClass("Circle",true) then
@@ -26,7 +26,6 @@ Citrus.Properties.new("Ripple",function(button,...)
 		Citrus.Misc.tweenService(who,'ImageTransparency',1,timer,'Sine','Out')
 	end)
 end, 'GuiButton')
-
 
 --For Ripple Effect
 Citrus.Properties.new("Ripple",function(button,...)

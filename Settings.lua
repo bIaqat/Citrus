@@ -77,7 +77,6 @@ Settings = setmetatable({
 	Sync = function(self)
 		for _,list in next, getmetatable(self).Settings do
 			for name, setting in next, list do
-				print(setting,123)
 				setting:Set(setting.Value)
 			end
 		end
@@ -87,5 +86,4 @@ Settings = setmetatable({
 	Settings = {
 		MAIN = {};
 	};
-}
-);
+});

@@ -86,7 +86,7 @@ Table = {
 		return v
 	end;
 	find = function(tabl,this)
-		return Citrus.getArgument(2,Citrus.Table.contains(tabl,val))
+		return Citrus.getArgument(2,Citrus.Table.contains(tabl,this))
 	end;
 	search = function(tabl,this,extra)
 		if not getmetatable(tabl) then setmetatable(tabl,{}) end

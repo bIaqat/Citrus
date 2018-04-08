@@ -59,15 +59,28 @@ Properties = setmetatable({
 		who = Citrus.Instance.getInstanceOf(who)
 		local c = getmetatable(Citrus.Properties).Custom
 		for i,v in next,props do
-			if c[i] and c[i][who] then
-				if type(v) ~= 'table' then v = {v} end
-				--custom object check
-				c[i](who,unpack(v))
-			elseif Citrus.Properties[i]:find'Color3' and type(v) == 'string' or type(v) == 'table' then
-				v = type(v) == 'table' and v or {v}
-				Citrus.Theming.insertObject(v[1],who,i,unpack(Citrus.Table.pack(v,2) or {}))
-			elseif Citrus.Properties.hasProperty(who,i)  then
-				pcall(function() who[Citrus.Properties[i]] = v end)
+			if type(i) == 'string' then
+				local custom,cargs, normal
+				if c[i] and c[i][who] then
+					cargs = v
+					if type(cargs) ~= 'table' then cargs = {cargs} end
+					--custom object check
+					--c[i](who,unpack(v))
+					custom = c(i)
+				end
+				if Citrus.Properties[i]:find'Color3' and type(v) == 'string' or type(v) == 'table' then
+					v = type(v) == 'table' and v or {v}
+					Citrus.Theming.insertObject(v[1],who,i,unpack(Citrus.Table.pack(v,2) or {}))
+				elseif Citrus.Properties.hasProperty(who,i)  then
+					normal = Citrus.Properties[i]
+					if custom and custom <= normal then
+						c[i](who,unpack(cargs))
+					else
+						pcall(function() who[normal] = v end)
+					end
+				elseif custom then
+					c[i](who,unpack(cargs))
+				end
 			end
 		end
 		return who
@@ -89,12 +102,16 @@ Properties = setmetatable({
 	end;
 	Default = {};
 	Custom = setmetatable({},{
-			__index = function(self,ind)
+			__call = function(self,ind,take)
 				for i,v in next,self do
-					if i:sub(1,#ind):lower() == ind then
-						return v
+					if i:sub(1,#ind):lower() == ind:lower() then
+						return take and v or i
 					end
-				end
+				end			
+				return false			
+			end;
+			__index = function(self,ind)
+				return self(ind,true)
 			end});
 	RobloxAPI = {
 		'Shape','Anchored','BackSurfaceInput','BottomParamA','BottomParamB','BottomSurface','BottomSurfaceInput','BrickColor','CFrame','CanCollide','CenterOfMass','CollisionGroupId','Color','CustomPhysicalProperties','FrontParamA','FrontParamB','FrontSurface','FrontSurfaceInput';

@@ -1,7 +1,7 @@
 Citrus.Instance.newClass("RoundedFrame",function(round)
 	round = round or 15;
 	local ud,v2 = Citrus.Positioning.new, Citrus.Positioning.toVector2
-	local Class = {	
+	local Class = {
 		Round = round;
 		setRound = function(self,new,d)
 			if self.Object.Round ~= new then
@@ -64,13 +64,13 @@ Citrus.Instance.newClass("RoundedFrame",function(round)
 			self:PropertyChanged('BackgroundColor3','setColor')
 			self:PropertyChanged('BackgroundTransparency','setTransparency')	
 			self:PropertyChanged('BorderColor3','setBorderColor')
-			self:PropertyChanged('BorderSizePixel','setBorder')		
-			self.Instance.Rounded.Round.Changed:connect(function(a)
-				new.Round = a
+			self:PropertyChanged('BorderSizePixel','setBorder')	
+			self.RoundValue.Value = self.Round	
+			self.RoundValue.Changed:connect(function(a)
+				self.Round = a
 			end)
 		end
 	}
-
 	local rounded = Citrus.Instance.newInstance('Frame',{siz = ud(1),trans = 1,nam = 'Rounded'})
 	
 	for i = 1,4 do
@@ -100,10 +100,19 @@ Citrus.Instance.newClass("RoundedFrame",function(round)
 	Citrus.Instance.newInstance("Frame",rounded,{nam = "Main", ap = v2(.5), siz = ud(1,-round*2,3), pos = ud(.5),bsp = 0; bac = Color3.new(.2,.2,.2)})
 	
 	local new = Citrus.Instance.newObject("Frame",Class,{trans = 1})
-	Citrus.Instance.newInstance("IntValue",rounded,{nam = 'Round'}).Changed
+	new.RoundValue = Citrus.Instance.newInstance("IntValue",rounded,{nam = 'Round'})
 
+	new.TweenSize = function(self,...)	
+		return self.Instance:TweenSize(...)
+	end
+	new.TweenPosition = function(self,...)
+		return self.Instance:TweenPosition(...)
+	end
+	new.TweenSizeAndPosition = function(self,...)
+		return self.Instance:TweenSizeAndPosition(...)
+	end
 	new.TweenRound = function(self,round,direction,style,timer)
-		Citrus.tweenService(self.Instance.Rounded.Round, 'Value', timer, style, direction)
+		Citrus.tweenService(self.RoundValue, 'Value', round, timer, style, direction)
 	end
 	new.TweenRoundAndSize = function(self,round,size,direction,style,timer)
 		self:TweenRound(round,direction,style,timer)
@@ -117,8 +126,7 @@ Citrus.Instance.newClass("RoundedFrame",function(round)
 		self:TweenRound(round,direction,style,timer)
 		self:TweenSizeAndPosition(size,pos,direction,style,timer,true)
 	end
-	new.RoundValue = intround;
-
+	 
 	new:NewIndex("Round",function(self,n)
 		self:setRound(n)
 	end)

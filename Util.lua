@@ -71,7 +71,7 @@ table.sort(getmetatable(Spice.Properties).RobloxAPI,function(a,b) if #a == #b th
 	]]
 		for i,v in next,main do
 			if type(i) == 'string' and type(v) == 'table' then
-				citrus = citrus..string.gsub(string.gsub(''..Spice.Util.gitFile(typ,i),'\n','\n\t'),'Citrus','Spice')
+				citrus = citrus..string.gsub(''..Spice.Util.gitFile(typ,i),'\n','\n\t')
 			end
 		end
 		return citrus..rest

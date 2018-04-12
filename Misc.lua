@@ -1,4 +1,18 @@
 Misc = {
+	searchAPI = function(link,typ)
+		local tab = {}
+		link = game.HttpService:UrlEncode(link:sub(link:find'catalog/json?'+13,#link))
+		local proxy = 'https://www.classy-studios.com/APIs/Proxy.php?Subdomain=search&Dir=catalog/json?'
+		if typ then
+			link = game:GetService'HttpService':JSONDecode(game:GetService'HttpService':GetAsync(proxy..link))
+		else
+			link = game:GetService'HttpService':JSONDecode(game:HttpGetAsync(proxy..link))
+		end
+		for i,v in pairs(link)do
+			tab[v.Name] = v
+		end
+		return tab
+	end;
 	getArgument = function(num,...)
 		return ({...})[num]
 	end;

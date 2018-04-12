@@ -1188,5 +1188,3 @@ Citrus = setmetatable({
 	end
 })
 table.sort(getmetatable(Citrus.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
-
-return Citrus

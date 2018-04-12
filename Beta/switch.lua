@@ -36,24 +36,24 @@ switch = function(...)
 		end;
 ]]
 --[[ workflow i want
-local switch = switch(100,400,300,'apple')
+local switch = Switch(100,400,300,'apple')
 switch(2) --same as a table switch[2]
-	>> 400
+	-->> 400
 switch(4)
-	>>'apple'
+	-->>'apple'
 
 switch.set(400,200,300)
 switch(400)
-	>> 100
+	-->> 100
 switch(300)
-	>> 300
-}
+	-->> 300
 
-switch.set('a',true,false,'b')
+
+switch:Set('a',true,false,'b')
 switch(false)
-	>>300
+	-->>300
 switch'b'
-	>>'apple'
+	-->>'apple'
 ]]
 
 switch = function(...)
@@ -61,6 +61,9 @@ switch = function(...)
 	function data:Filter(...)
 		self.filter = {...}
 		return self
+	end;
+	function data:Set(...)
+		data.data = {...}
 	end;
 	function data:Get(what)
 		local i = what

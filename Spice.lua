@@ -1,11 +1,32 @@
 local Spice
 Spice = setmetatable({
 	Misc = {
+		runTimer = function()
+			return setmetatable({time = 0,running = false},{
+				__call = function(self,start)
+					local gettime
+					if start or not self.running then
+						self.running = true
+						coroutine.wrap(function()
+							while self.running and wait(.01) do
+								self.time = self.time + .01
+							end
+						end)()
+						return true
+					else
+						self.running = false
+						gettime = self.time
+						self.time = 0
+					end
+					return gettime or self.time
+				end
+			})
+		end;
 		searchAPI = function(link,typ)
 			local tab = {}
-			link = game.HttpService:UrlEncode(link:sub(link:find'catalog/json?'+13,#link))
+			link = game.HttpService:UrlEncode(link:sub(link:find'?'+1,#link))
 			local proxy = 'https://www.classy-studios.com/APIs/Proxy.php?Subdomain=search&Dir=catalog/json?'
-			if typ then
+			if not typ then
 				link = game:GetService'HttpService':JSONDecode(game:GetService'HttpService':GetAsync(proxy..link))
 			else
 				link = game:GetService'HttpService':JSONDecode(game:HttpGetAsync(proxy..link))
@@ -159,7 +180,7 @@ Spice = setmetatable({
 					end;
 			});
 			sound.Sound.Parent = workspace
-			wait()
+			repeat wait() until sound.Sound.TimeLength ~= 0
 			sound.Length = sound.Sound.TimeLength
 			sound.Sound.Parent = nil
 			getmetatable(Spice.Audio).Sounds[name] = sound;

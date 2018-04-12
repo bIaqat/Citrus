@@ -31,7 +31,7 @@ Audio = setmetatable({
 				end;
 		});
 		sound.Sound.Parent = workspace
-		wait()
+		repeat wait() until sound.Sound.TimeLength ~= 0
 		sound.Length = sound.Sound.TimeLength
 		sound.Sound.Parent = nil
 		getmetatable(Spice.Audio).Sounds[name] = sound;

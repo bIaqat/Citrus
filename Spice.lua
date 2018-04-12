@@ -278,7 +278,6 @@ Spice = setmetatable({
 		}
 	);
 	Color = setmetatable({
-		testAutoUpdate = 'hello';
 		fromRGB = function(r,g,b)
 			return Color3.fromRGB(r,g,b)
 		end;
@@ -928,23 +927,23 @@ Spice = setmetatable({
 		getSpiceCompressed = function(upd,typ)
 			local main = not upd and Spice or Spice.Util.AutoUpdate()
 			local citrus = [[local Spice
-Spice = setmetatable({
+	Spice = setmetatable({
 		]]
 			
 		local rest = [[
-},{
-	__index = function(self,nam)
-		if rawget(self,nam) then
-			return rawget(self,nam)
-		end
-		for i,v in next, self do
-			if rawget(v,nam) then
-				return rawget(v,nam)
+		},{
+		__index = function(self,nam)
+			if rawget(self,nam) then
+				return rawget(self,nam)
+			end
+			for i,v in next, self do
+				if rawget(v,nam) then
+					return rawget(v,nam)
+				end
 			end
 		end
-	end
-})
-table.sort(getmetatable(Spice.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
+	})
+	table.sort(getmetatable(Spice.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
 		]]
 			for i,v in next,main do
 				if type(i) == 'string' and type(v) == 'table' then
@@ -953,7 +952,7 @@ table.sort(getmetatable(Spice.Properties).RobloxAPI,function(a,b) if #a == #b th
 			end
 			return citrus..rest
 		end;
-	}
+	};
 	Settings = setmetatable({
 		getDefault = function(classname)
 			for i,v in next, getmetatable(Spice.Settings).Default do

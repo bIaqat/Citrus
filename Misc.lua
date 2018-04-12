@@ -17,13 +17,13 @@ Misc = {
 		return ({...})[num]
 	end;
 	destroyIn = function(who,seconds)
-		game:GetService("Debris"):AddItem(Citrus.Instance.getInstanceOf(who),seconds)
+		game:GetService("Debris"):AddItem(Spice.Instance.getInstanceOf(who),seconds)
 	end;
 	exists = function(yes)
 		return yes ~= nil and true or false
 	end;
 	tweenService = function(what,prop,to,...)
-		what = Citrus.getInstanceOf(what)
+		what = Spice.getInstanceOf(what)
 		local args = {...}
 		local props = {}
 		local tim,style,direction,rep,reverse,delay
@@ -47,7 +47,7 @@ Misc = {
 			end
 		end
 		for i,v in next,type(prop) == 'table' and prop or {prop} do
-			props[Citrus.Properties[v]] = type(to) ~= 'table' and to or to[i]
+			props[Spice.Properties[v]] = type(to) ~= 'table' and to or to[i]
 		end
 		return game:GetService('TweenService'):Create(what,TweenInfo.new(tim,style or Enum.EasingStyle.Linear,direction or Enum.EasingDirection.In,rep or 0,reverse or false,delay or 0),props):Play()
 	end;
@@ -62,15 +62,15 @@ Misc = {
 		end
 		local filter,out = {},{}
 		for i in string:gmatch(starting) do
-			if not Citrus.Misc.contains(string:match(starting),type(disregard)=='table' and unpack(disregard) or disregard) then
-				local filtered = string:sub(string:find(starting),ending and Citrus.getArgument(2,string:find(ending)) or Citrus.getArgument(2,string:find(starting)))
+			if not Spice.Misc.contains(string:match(starting),type(disregard)=='table' and unpack(disregard) or disregard) then
+				local filtered = string:sub(string:find(starting),ending and Spice.getArgument(2,string:find(ending)) or Spice.getArgument(2,string:find(starting)))
 				local o = string:sub(1,(ending and string:find(ending) or string:find(starting))-1)
 				table.insert(filter,filtered~=disregard and filtered or nil)
 				table.insert(out,o~=disregard and o or nil)
 			else
 				table.insert(out,string:sub(1,string:find(starting))~=disregard and string:sub(1,string:find(starting)) or nil)
 			end
-			string = string:sub((ending and Citrus.getArgument(2,string:find(ending)) or Citrus.getArgument(2,string:find(starting))) + 1)
+			string = string:sub((ending and Spice.getArgument(2,string:find(ending)) or Spice.getArgument(2,string:find(starting))) + 1)
 		end
 		table.insert(out,string)
 		filter = tostr and table.concat(filter) or filter
@@ -78,7 +78,7 @@ Misc = {
 		return flip and out or filter, flip and filter or out
 	end;
 	dynamicType = function(obj)
-		obj = Citrus.Instance.getInstanceOf(obj)
+		obj = Spice.Instance.getInstanceOf(obj)
 		if obj.ClassName:find'Text' then
 			return 'Text'
 		elseif obj.ClassName:find'Image' then
@@ -93,13 +93,13 @@ Misc = {
 				return self
 			end;	
 			Get = function(self,what)
-				local yes = Citrus.Misc.exists	
+				local yes = Spice.Misc.exists	
 				local i = what
-				if yes(Citrus.Table.find(self.data,what)) then
-					i = Citrus.Table.indexOf(self.data,what)
+				if yes(Spice.Table.find(self.data,what)) then
+					i = Spice.Table.indexOf(self.data,what)
 				end
-				if yes(Citrus.Table.find(self.filter,what)) then
-					i = Citrus.Table.indexOf(self.filter,what)
+				if yes(Spice.Table.find(self.filter,what)) then
+					i = Spice.Table.indexOf(self.filter,what)
 				end
 				return self.data[i]
 			end},{
@@ -121,6 +121,6 @@ Misc = {
 		return false
 	end;
 	operation = function(a,b,opa)
-		return Citrus.Misc.switch(a+b,a-b,a*b,a/b,a%b,a^b,a^(1/b),a*b,a^b,a^(1/b)):Filter('+','-','*','/','%','^','^/','x','pow','rt')(opa)
+		return Spice.Misc.switch(a+b,a-b,a*b,a/b,a%b,a^b,a^(1/b),a*b,a^b,a^(1/b)):Filter('+','-','*','/','%','^','^/','x','pow','rt')(opa)
 	end;
 };

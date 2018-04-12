@@ -1,23 +1,23 @@
 Settings = setmetatable({
 	getDefault = function(classname)
-		for i,v in next, getmetatable(Citrus.Settings).Default do
-			if Citrus.Instance.isA(classname,i) or classname == i then
+		for i,v in next, getmetatable(Spice.Settings).Default do
+			if Spice.Instance.isA(classname,i) or classname == i then
 				return v
 			end
 		end
 	end;
 	setDefault = function(classname,properties)
-		getmetatable(Citrus.Settings).Default[classname] = properties;
+		getmetatable(Spice.Settings).Default[classname] = properties;
 	end;
 	newList = function(name)
-		getmetatable(Citrus.Settings).Settings[name] = {};
+		getmetatable(Spice.Settings).Settings[name] = {};
 	end;
 	getList = function(name)
-		local settings = getmetatable(Citrus.Settings).Settings
+		local settings = getmetatable(Spice.Settings).Settings
 		return not name and settings.MAIN or settings[name]
 	end;
 	new = function(list,name,object,index,defaultval,...)
-		local list = Citrus.Settings.getList(list)
+		local list = Spice.Settings.getList(list)
 		local setting = setmetatable({[object] = index, Default = defaultval;
 			Set = function(self,newval)
 				self.Value = newval
@@ -64,15 +64,15 @@ Settings = setmetatable({
 		return setting
 	end;
 	getSetting = function(name,list)
-		if list then return Citrus.Table.find(Citrus.Settings.getList(list),name) end
-		for i,v in next, getmetatable(Citrus.Settings).Settings.MAIN do
+		if list then return Spice.Table.find(Spice.Settings.getList(list),name) end
+		for i,v in next, getmetatable(Spice.Settings).Settings.MAIN do
 			if i == name then
 				return v
 			end
 		end
 	end;
 	setSetting = function(name,newval,list)
-		Citrus.Settings.getSetting(name,list and list or nil):Set(newval)
+		Spice.Settings.getSetting(name,list and list or nil):Set(newval)
 	end;
 	Sync = function(self)
 		for _,list in next, getmetatable(self).Settings do

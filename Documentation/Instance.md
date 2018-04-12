@@ -1,14 +1,14 @@
-# Citrus.Instance
+# Spice.Instance
 ## Creating Instances
 
 #### .new [Instance] ([string] Class Name | Custom Class Name, ...[Instance]Parent | ...Custom Class Arguments | ...[table]Properties)
-	Creates an Instance from either Roblox classes or Citrus custom classes; hooks onto default properties
+	Creates an Instance from either Roblox classes or Spice custom classes; hooks onto default properties
 ###### Examples
 ```lua
-Citrus.Instance.new("Part", Workspace)
-Citrus.Instance.new("CustomClass", Workspace, Color3.new(1,0,0))
-Citrus.Instance.new("Part", {BrickColor = BrickColor.new'Really red'})
-Citrus.Instance.new("CustomClass", Workspace, Color3.new(1,0,0), {Transparency = .4})
+Spice.Instance.new("Part", Workspace)
+Spice.Instance.new("CustomClass", Workspace, Color3.new(1,0,0))
+Spice.Instance.new("Part", {BrickColor = BrickColor.new'Really red'})
+Spice.Instance.new("CustomClass", Workspace, Color3.new(1,0,0), {Transparency = .4})
 ```
 
 ***
@@ -17,9 +17,9 @@ Citrus.Instance.new("CustomClass", Workspace, Color3.new(1,0,0), {Transparency =
 	Creates a classic Roblox Instance; hooks onto default properties
 ###### Examples
 ```lua
-Citrus.Instance.newInstance("Part", Workspace)
-Citrus.Instance.newInstance("Part", {BrickColor = BrickColor.new'Really red'})
-Citrus.Instance.newInstance("CustomClass", Workspace, {BrickColor = BrickColor.new'Really red'})
+Spice.Instance.newInstance("Part", Workspace)
+Spice.Instance.newInstance("Part", {BrickColor = BrickColor.new'Really red'})
+Spice.Instance.newInstance("CustomClass", Workspace, {BrickColor = BrickColor.new'Really red'})
 ```
 
 *.newPure is same as .new except that it purposely avoids default properties*
@@ -30,7 +30,7 @@ Citrus.Instance.newInstance("CustomClass", Workspace, {BrickColor = BrickColor.n
 	Creates a classic Roblox Instance that is methodized to work with Object Oriented Programming
 ###### Example
 ```lua
-local happy = Citrus.Instance.newObject("Part", Workspace, {ImHappy = "Hi"}, {BrickColor = BrickColor.new'Really red'})
+local happy = Spice.Instance.newObject("Part", Workspace, {ImHappy = "Hi"}, {BrickColor = BrickColor.new'Really red'})
 print(happy, happy.Name, happy.ImHappy, happy.BrickColor)
 
 happy:Index('isHappy',function(self) return self.ImHappy == 'Hi' and true or false end)
@@ -59,10 +59,10 @@ print(happy.isHappy, happy.Says)
 ## Custom Classes
 
 #### .newCustomClass ([string]Name, [function Instance]onCreated(...))
-	Creates and Stores a new Custom Citrus Class
+	Creates and Stores a new Custom Spice Class
 ###### Example
 ```lua
-Citrus.Instance.newCustomClass("SparklyPart",function(color)
+Spice.Instance.newCustomClass("SparklyPart",function(color)
 	local self = Instance.new("Part")
 	self.Name = "SparklyPart"
 	self.Material = Enum.Material.Neon
@@ -73,8 +73,8 @@ Citrus.Instance.newCustomClass("SparklyPart",function(color)
 	return self --Always return the Instance
 end)
 
-Citrus.Instance.new("SparklyPart",workspace)
-Citrus.Instance.new("SparklyPart",workspace,Color3.new(1,0,0))
+Spice.Instance.new("SparklyPart",workspace)
+Spice.Instance.new("SparklyPart",workspace,Color3.new(1,0,0))
 ```
 ![Red and Black Part](https://image.prntscr.com/image/wSLEQ2EIQGaIf-UoHUo-RQ.jpeg)
 
@@ -86,11 +86,11 @@ Citrus.Instance.new("SparklyPart",workspace,Color3.new(1,0,0))
 	Returns the Object Oriented Table of the Instance
 ###### Example
 ```lua
-local a = Citrus.Instance.newObject("Part",workspace)
-local b = Citrus.Instance.new("Part")
+local a = Spice.Instance.newObject("Part",workspace)
+local b = Spice.Instance.new("Part")
 
-print(a,Citrus.Instance.getObjectOf(a),Citrus.Instance.getObjectOf(workspace.Part))
-print(b,Citrus.Instance.getObjectOf(b))
+print(a,Spice.Instance.getObjectOf(a),Spice.Instance.getObjectOf(workspace.Part))
+print(b,Spice.Instance.getObjectOf(b))
 ```
 ```
 >>: [table]a     [table]a     [table]a
@@ -103,11 +103,11 @@ print(b,Citrus.Instance.getObjectOf(b))
 	Returns the Instance of an Object Oriented Table
 ###### Example
 ```lua
-local a = Citrus.Instance.newObject("Part",workspace)
-local b = Citrus.Instance.new("Part")
+local a = Spice.Instance.newObject("Part",workspace)
+local b = Spice.Instance.new("Part")
 
-print(a,Citrus.Instance.getInstanceOf(a),Citrus.Instance.getInstanceOf(workspace.Part))
-print(b,Citrus.Instance.getInstanceOf(b))
+print(a,Spice.Instance.getInstanceOf(a),Spice.Instance.getInstanceOf(workspace.Part))
+print(b,Spice.Instance.getInstanceOf(b))
 ```
 ```
 >>: [table]a     Part     Part
@@ -120,7 +120,7 @@ print(b,Citrus.Instance.getInstanceOf(b))
 	Returns a table of an Instance's ancestory chain
 ###### Example
 ```lua
-for i,v in pairs(Citrus.Instance.getAncestors( Instance.new("Part",workspace.Camera) )) do
+for i,v in pairs(Spice.Instance.getAncestors( Instance.new("Part",workspace.Camera) )) do
 	print(v)
 end
 ```
@@ -138,8 +138,8 @@ end
 	Checks if both ClassNames are under the same hierarchy 
 ###### Example
 ```lua
-print(Citrus.Instance.isA('Part','Instance'))
-print(Citrus.Instance.isA('GuiButton','Part'))
+print(Spice.Instance.isA('Part','Instance'))
+print(Spice.Instance.isA('GuiButton','Part'))
 ```
 ```
 >>: true
@@ -152,7 +152,7 @@ print(Citrus.Instance.isA('GuiButton','Part'))
 	Checks if ClassName is a Roblox Class
 ###### Example
 ```lua
-print(Citrus.Instance.isAClass("Instance"), Citrus.Instance.isAClass("Part"))
+print(Spice.Instance.isAClass("Instance"), Spice.Instance.isAClass("Part"))
 ```
 ```
 >>: false     true
@@ -164,10 +164,10 @@ print(Citrus.Instance.isAClass("Instance"), Citrus.Instance.isAClass("Part"))
 	Checks if an Instance is an Object Oriented Instance table
 ###### Example
 ```lua
-local a = Citrus.Instance.new("Part")
-local b = Citrus.Instance.newObject("Part")
+local a = Spice.Instance.new("Part")
+local b = Spice.Instance.newObject("Part")
 
-print(Citrus.Instance.isAnObject(a), Citrus.Instance.isAnObject(b))
+print(Spice.Instance.isAnObject(a), Spice.Instance.isAnObject(b))
 ```
 ```
 >>: false     true
@@ -175,7 +175,7 @@ print(Citrus.Instance.isAnObject(a), Citrus.Instance.isAnObject(b))
 
 ***
 
-# getmetatable(Citrus.Instance) (Meta Storage)
+# getmetatable(Spice.Instance) (Meta Storage)
 * Classes
 	`Stores Custom Classes`
 * Objects

@@ -67,11 +67,11 @@ switch = function(...)
 	end;
 	function data:Get(what)
 		local i = what
-		if Citrus.Misc.Table.find(self.data,what) then
-			i = Citrus.Misc.Table.indexOf(self.data,what)
+		if Spice.Misc.Table.find(self.data,what) then
+			i = Spice.Misc.Table.indexOf(self.data,what)
 		end
-		if Citrus.Misc.Table.find(self.filter,what) then
-			i = Citrus.Misc.Table.indexOf(self.filter,what)
+		if Spice.Misc.Table.find(self.filter,what) then
+			i = Spice.Misc.Table.indexOf(self.filter,what)
 		end
 		return self.data[i]
 	end;
@@ -92,13 +92,13 @@ switch = function(...)
 			return self
 		end;	
 		Get = function(self,what)
-			local yes = Citrus.Misc.Functions.exists	
+			local yes = Spice.Misc.Functions.exists	
 			local i = what
-			if yes(Citrus.Misc.Table.find(self.data,what)) then
-				i = Citrus.Misc.Table.indexOf(self.data,what)
+			if yes(Spice.Misc.Table.find(self.data,what)) then
+				i = Spice.Misc.Table.indexOf(self.data,what)
 			end
-			if yes(Citrus.Misc.Table.find(self.filter,what)) then
-				i = Citrus.Misc.Table.indexOf(self.filter,what)
+			if yes(Spice.Misc.Table.find(self.filter,what)) then
+				i = Spice.Misc.Table.indexOf(self.filter,what)
 			end
 			return self.data[i]
 		end},{

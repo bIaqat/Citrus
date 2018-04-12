@@ -25,5 +25,5 @@ local appleGlyphsPart2 = {
 }
 
 
-Citrus.Iconography.insertIconList('rbxassetid://1574419350',10, 10, 90, 90, appleGlyphsPart1)
-Citrus.Iconography.insertIconList('rbxassetid://1573947013',10, 10, 90, 90, appleGlyphsPart2)
+Spice.Iconography.insertIconList('rbxassetid://1574419350',10, 10, 90, 90, appleGlyphsPart1)
+Spice.Iconography.insertIconList('rbxassetid://1573947013',10, 10, 90, 90, appleGlyphsPart2)

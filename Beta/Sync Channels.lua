@@ -1,20 +1,20 @@
 Sync = setmetatable({
 	getChannel = function(name)
-		return getmetatable(Citrus.Sync).Channels[name]
+		return getmetatable(Spice.Sync).Channels[name]
 	end;
 	getObject = function(name)
-		return Citrus.Sync.getChannel(name).Object
+		return Spice.Sync.getChannel(name).Object
 	end;
 	getValue = function(name,ind)
-		return Citrus.Sync.getChannel(name).Values[ind or 0]
+		return Spice.Sync.getChannel(name).Values[ind or 0]
 	end;
 	insertObject = function(name,obj,prop)
-		local ch = Citrus.Sync.getChannel(name)
-		local prop = Citrus.Properties[prop]
+		local ch = Spice.Sync.getChannel(name)
+		local prop = Spice.Properties[prop]
 		if not ch.Objects[obj] then
 			ch.Objects[obj] = {}
 		end
-		if prop and not Citrus.Table.find(ch.Objects[obj],prop) then
+		if prop and not Spice.Table.find(ch.Objects[obj],prop) then
 			table.insert(ch.Objects[obj],prop)
 		end
 		if ch.Sync then
@@ -23,36 +23,36 @@ Sync = setmetatable({
 		return ch
 	end;
 	removeObject = function(name,obj,prop)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		if not prop then
 			ch.Object[obj] = nil
 		else
 			local ob = ch.Object[obj]
-			ob[Citrus.Table.indexOf(ob,prop) or 0] = nil
+			ob[Spice.Table.indexOf(ob,prop) or 0] = nil
 		end
 		return ch
 	end;
 	insertValue = function(name,val,ind)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		ch.Values[ind or #ch.Values + 1] = val
 		return ch
 	end;	
 	setValue = function(name,ind)
-		local ch = Citrus.Sync.getChannel(name)
-		ch.ActiveVal = Citrus.Sync.getValue(name,ind)
+		local ch = Spice.Sync.getChannel(name)
+		ch.ActiveVal = Spice.Sync.getValue(name,ind)
 		return ch
 	end;
 	insertValue = function(name,val,ind)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		ch.Values[ind or 0] = val
 		return ch
 	end;
 	sync = function(self,nam)
 		local t = nam and true or false
-		local ch = nam and Citrus.Sync.getChannel(nam)
+		local ch = nam and Spice.Sync.getChannel(nam)
 		for i,v in next, ch and ch.Objects or getmetatable(self).Channels do
 			if not nam then
-				Citrus.Sync:sync(i.Name)
+				Spice.Sync:sync(i.Name)
 			else
 				for z,x in next, v do
 					i[x] = ch.ActiveVal
@@ -62,16 +62,16 @@ Sync = setmetatable({
 		return ch
 	end;
 	lerpSync = function(name,time,...)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		for obj, props in next, ch.Objects do
 			for index, prop in next, props do
-				Citrus.Misc.tweenService(obj,prop,ch.ActiveVal,time,...)
+				Spice.Misc.tweenService(obj,prop,ch.ActiveVal,time,...)
 			end
 		end
 		return ch
 	end;
 	call = function(name,...)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		if ch.Type == 'Function' then
 			local args = ... and {...} or ch.Args
 			for i,v in next, ch.Objects do
@@ -80,13 +80,13 @@ Sync = setmetatable({
 		end
 	end;
 	insertKeyFrame = function(name, val, id, index)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		if ch.Type == 'Array' then
 			ch.Values[index or 0][id or #ch.Values[index or 0] + 1] = val
 		end
 	end;
 	removeKeyFrame = function(name,id,index)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		if ch.Type == 'Array' then
 			local bas = ch.Values[index or 0]
 			bas[id] = nil
@@ -97,19 +97,19 @@ Sync = setmetatable({
 		end
 	end;
 	playFrames = function(name,delay,index,lerp,...)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		if ch.Type == 'Array' then
 			ch.playingState = 'playing'
 			ch.isPlaying = true
 			local bas = ch:Get(index)
-			local ind = Citrus.Table.indexOf(ch.ActiveVal) or 1
+			local ind = Spice.Table.indexOf(ch.ActiveVal) or 1
 			for i = ind or 1, #bas do
 				if ch.isPlaying then
 					ch.ActiveVal = bas[i]
 					if lerp then
-						Citrus.Sync.lerpSync(name,delay or 1,...)
+						Spice.Sync.lerpSync(name,delay or 1,...)
 					else
-						Citrus.Sync:sync(name)
+						Spice.Sync:sync(name)
 					end
 					wait(delay or 1)
 				end
@@ -123,14 +123,14 @@ Sync = setmetatable({
 		end
 	end;
 	pauseFrames = function(name)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		if ch.Type == 'Array' then
 			ch.playingState = 'paused'
 			ch.isPlaying = false
 		end
 	end;
 	stopFrames = function(name)
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		if ch.Type == 'Array' then
 			ch:Pause()
 			ch.ActiveVal = nil
@@ -138,7 +138,7 @@ Sync = setmetatable({
 	end;	
 
 	run = function(name,...)	
-		local ch = Citrus.Sync.getChannel(name)
+		local ch = Spice.Sync.getChannel(name)
 		if ch.Type == 'Function' then
 			local args = #({...}) > 0 and {...} or ch.Args
 			for i,v in next, ch.Objects do
@@ -147,18 +147,18 @@ Sync = setmetatable({
 		end
 	end;
 	new = function(name, base, ...)
-		local typ = Citrus.Misc.switch("Single","Array","Function"):Filter(0, 'table', 'function')((type(base) == 'table' or type(base) == 'function') and type(base) or 1)
+		local typ = Spice.Misc.switch("Single","Array","Function"):Filter(0, 'table', 'function')((type(base) == 'table' or type(base) == 'function') and type(base) or 1)
 		local sync = setmetatable({
 			ActiveVal = 0;
-			Name = name or '#'..Citrus.Table.length(getmetatable(Citrus.Sync).Channels);
+			Name = name or '#'..Spice.Table.length(getmetatable(Spice.Sync).Channels);
 			Values = {[0]=base,...};
 			Objects = {};
 			Type = typ;
 			Insert = function(self,...)
-				return Citrus.Sync.insertObject(self.Name,...)
+				return Spice.Sync.insertObject(self.Name,...)
 			end;
 			Remove = function(self,...)
-				return Citrus.Sync.removeObject(self.Name,...)
+				return Spice.Sync.removeObject(self.Name,...)
 			end;
 			Set = function(self,to,ind)
 				self:SetVal(to,ind)
@@ -168,13 +168,13 @@ Sync = setmetatable({
 				end
 			end;
 			SetVal = function(self,...)
-				return Citrus.Sync.insertValue(self.Name,...)
+				return Spice.Sync.insertValue(self.Name,...)
 			end;
 			SetActive = function(self,...)
-				return Citrus.Sync.setValue(self.Name,...)
+				return Spice.Sync.setValue(self.Name,...)
 			end;
 			Get = function(self,...)
-				return Citrus.Sync.getValue(self.Name,...)
+				return Spice.Sync.getValue(self.Name,...)
 			end;
 		},{
 			__tostring = function(self)
@@ -186,32 +186,32 @@ Sync = setmetatable({
 				end
 			end
 		})
-		getmetatable(Citrus.Sync).Channels[name] = sync;
+		getmetatable(Spice.Sync).Channels[name] = sync;
 		if typ == 'Array' then
 			sync.Looping = false
 			sync.Active = 0
 			sync.isPlaying = false
 			sync.playingState = 'stopped'
 			sync.Play = function(self,...)
-				return Citrus.Sync.playFrames(self.Name,...)
+				return Spice.Sync.playFrames(self.Name,...)
 			end
 			sync.Pause = function(self,...)
-				return Citrus.Sync.pauseFrames(self.Name,...)
+				return Spice.Sync.pauseFrames(self.Name,...)
 			end
 			sync.Stop = function(self,...)
-				return Citrus.Sync.stopFrames(self.Name,...)
+				return Spice.Sync.stopFrames(self.Name,...)
 			end
 			sync.AddFrame = function(self,...)
-				return Citrus.Sync.insertKeyFrame(self.Name,...)
+				return Spice.Sync.insertKeyFrame(self.Name,...)
 			end;
 			sync.RemoveFrame = function(self,...)
-				return Citrus.Sync.removeKeyFrame(self.Name,...)
+				return Spice.Sync.removeKeyFrame(self.Name,...)
 			end;
 		elseif typ == 'Function' then
 			sync.Function = base
 			sync.Args = {...}
 			sync.Call = function(self,...)
-				return Citrus.Sync.call(self.Name,...)
+				return Spice.Sync.call(self.Name,...)
 			end;
 			sync.setArgs = function(self,...)
 				self.Args = {...}
@@ -232,10 +232,10 @@ Sync = setmetatable({
 			end;
 			sync:SetActive(0);
 			sync.Sync = function(self,...)
-				return Citrus.Sync:sync(self.Name,...)
+				return Spice.Sync:sync(self.Name,...)
 			end;
 			sync.Lerp = function(self,...)
-				return Citrus.lerpSync(self.Name,...)
+				return Spice.lerpSync(self.Name,...)
 			end;
 		end		
 		return sync

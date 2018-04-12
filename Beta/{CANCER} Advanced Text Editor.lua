@@ -72,14 +72,14 @@ end
 ]]
 	getTextSize = function(text)
 		if type(text) == 'string' then
-			text = Citrus.Instance.new("TextLabel",{Text = text})
+			text = Spice.Instance.new("TextLabel",{Text = text})
 		end
 		return game:GetService("TextService"):GetTextSize(text.Text,text.TextSize,text.Font,text.AbsoluteSize)
 	end;
 
 	newFilter = function(command,...)
 		local fil = '<'
-		if not Citrus.Misc.switch('b','i','bold','italic','size','color','rgb','hsv')(command) then
+		if not Spice.Misc.switch('b','i','bold','italic','size','color','rgb','hsv')(command) then
 			return error'Not a valid command'
 		end
 		fil = fil..command..' '..
@@ -101,7 +101,7 @@ end
 	end;
 
 	runCommand = function(name,...)
-		if not Citrus.Misc.switch('b','i','bold','italic','size','color','rgb','hsv')(command) then
+		if not Spice.Misc.switch('b','i','bold','italic','size','color','rgb','hsv')(command) then
 			return error'Not a valid command'
 		end
 		name = name:lower():sub(1,1)
@@ -109,8 +109,8 @@ end
 
 
 	unFilter = function(text)
-		local fo = Citrus.Misc.stringFilterOut
-		local pack = Citrus.Table.pack
+		local fo = Spice.Misc.stringFilterOut
+		local pack = Spice.Table.pack
 		local ret = {}
 		local filters = fo(text,'%(',')',false)
 
@@ -140,7 +140,7 @@ end
 	applySyntax = function(object,filter)
 		if not filter then filter = object.Text end
 
-		local sections = Citrus.Misc.stringFilterOut(filter,'[',']')
+		local sections = Spice.Misc.stringFilterOut(filter,'[',']')
 
 
 

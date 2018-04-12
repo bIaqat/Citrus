@@ -1,24 +1,24 @@
 Properties = setmetatable({
 	getDefault = function(classname)
 		local def = {}
-		for i,v in next, getmetatable(Citrus.Properties).Default do
-			if Citrus.Instance.isA(classname,i) or classname == i or i == 'GuiText' and classname:find'Text' then
+		for i,v in next, getmetatable(Spice.Properties).Default do
+			if Spice.Instance.isA(classname,i) or classname == i or i == 'GuiText' and classname:find'Text' then
 				table.insert(def,v)
 			end
 		end
 		for i = 2,#def do
-			Citrus.Table.merge(def[i],def[1])
+			Spice.Table.merge(def[i],def[1])
 		end
 		return def[1]
 	end;
 	setDefault = function(classname,properties)
-		getmetatable(Citrus.Properties).Default[classname] = properties;
+		getmetatable(Spice.Properties).Default[classname] = properties;
 	end;
 	setPropertiesToDefault = function(who)
-		Citrus.Properties.setProperties(who,Citrus.Properties.getDefault(who.ClassName) or {})
+		Spice.Properties.setProperties(who,Spice.Properties.getDefault(who.ClassName) or {})
 	end;
 	new = function(name,func,...)
-		local storage = getmetatable(Citrus.Properties).Custom
+		local storage = getmetatable(Spice.Properties).Custom
 		storage[name] = setmetatable({func,...},{
 				__call = function(self,...)
 					return self[1](...)
@@ -37,27 +37,27 @@ Properties = setmetatable({
 		})
 	end;
 	hasProperty = function(who,prop)
-		who = Citrus.Instance.getInstanceOf(who)
-		if pcall(function() return who[Citrus.Properties[prop]] end) then
-			return true, who[Citrus.Properties[prop]]
+		who = Spice.Instance.getInstanceOf(who)
+		if pcall(function() return who[Spice.Properties[prop]] end) then
+			return true, who[Spice.Properties[prop]]
 		else
 			return false
 		end
 	end;
 	getProperties = function(who)
-		who = Citrus.Instance.getInstanceOf(who)
-		local p = getmetatable(Citrus.Properties).RobloxAPI
+		who = Spice.Instance.getInstanceOf(who)
+		local p = getmetatable(Spice.Properties).RobloxAPI
 		local new = {}
 		for i,v in next,p do
-			if Citrus.Properties.hasProperty(who,v) then
+			if Spice.Properties.hasProperty(who,v) then
 				rawset(new,v,who[v])
 			end
 		end
 		return new
 	end;
 	setProperties = function(who,props)
-		who = Citrus.Instance.getInstanceOf(who)
-		local c = getmetatable(Citrus.Properties).Custom
+		who = Spice.Instance.getInstanceOf(who)
+		local c = getmetatable(Spice.Properties).Custom
 		for i,v in next,props do
 			if type(i) == 'string' then
 				local custom,cargs, normal
@@ -68,11 +68,11 @@ Properties = setmetatable({
 					--c[i](who,unpack(v))
 					custom = c(i)
 				end
-				if Citrus.Properties[i]:find'Color3' and type(v) == 'string' or type(v) == 'table' then
+				if Spice.Properties[i]:find'Color3' and type(v) == 'string' or type(v) == 'table' then
 					v = type(v) == 'table' and v or {v}
-					Citrus.Theming.insertObject(v[1],who,i,unpack(Citrus.Table.pack(v,2) or {}))
-				elseif Citrus.Properties.hasProperty(who,i)  then
-					normal = Citrus.Properties[i]
+					Spice.Theming.insertObject(v[1],who,i,unpack(Spice.Table.pack(v,2) or {}))
+				elseif Spice.Properties.hasProperty(who,i)  then
+					normal = Spice.Properties[i]
 					if custom and custom <= normal then
 						c[i](who,unpack(cargs))
 					else
@@ -86,10 +86,10 @@ Properties = setmetatable({
 		return who
 	end;
 	getObjectOfProperty = function(property,directory)
-		directory = Citrus.Instance.getInstanceOf(directory)
+		directory = Spice.Instance.getInstanceOf(directory)
 		local objects = {}
 		for _,object in next,type(directory) == 'table' and directory or directory:GetDescendants() do
-			if Citrus.Properties.hasProperty(object,property) then
+			if Spice.Properties.hasProperty(object,property) then
 				table.insert(objects,object)
 			end
 		end
@@ -98,7 +98,7 @@ Properties = setmetatable({
 				
 },{
 	__index = function(self,ind)
-		return Citrus.Table.search(getmetatable(self).RobloxAPI,ind) or ind
+		return Spice.Table.search(getmetatable(self).RobloxAPI,ind) or ind
 	end;
 	Default = {};
 	Custom = setmetatable({},{

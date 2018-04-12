@@ -1,66 +1,66 @@
-local hsv,hex = Citrus.fromHSV, Citrus.fromHex
+local hsv,hex = Spice.fromHSV, Spice.fromHex
 
-Citrus.Color.insertColor('Red',{
+Spice.Color.insertColor('Red',{
 	[-1] = hsv(358,65,100);
 	[0] = hsv(358,71,100);
 	[1] = hsv(358,76,93);
 	[2] = hsv(357,83,82);
 })
-Citrus.Color.insertColor('Red',{
+Spice.Color.insertColor('Red',{
 	[-1] = hsv(359,30,100);
 	[0] = hsv(359,47,100);
 	[1] = hsv(358,59,100);
 	[2] = hsv(358,50,91)
 },'Light')
-Citrus.Color.insertColor('Peach',{
+Spice.Color.insertColor('Peach',{
 	[-1] = hsv(3,65,100);
 	[0] = hsv(3,71,100);
 	[1] = hsv(2,76,93);
 	[2] = hsv(3,83,82);
 })
-Citrus.Color.insertColor('Peach',{
+Spice.Color.insertColor('Peach',{
 		[-1] = hsv(3,30,100);
 		[0] = hsv(4,47,100);
 		[1] = hsv(3,59,100);
 		[2] = hsv(4,50,91)
 },'Light')
-Citrus.Color.insertColor('Orange',{
+Spice.Color.insertColor('Orange',{
 	[-1] = hsv(13,65,100);
 	[0] = hsv(13,71,100);
 	[1] = hsv(13,76,93);
 	[2] = hsv(12,83,82);
 })
-Citrus.Color.insertColor('Orange',{
+Spice.Color.insertColor('Orange',{
 		[-1] = hsv(14,30,100);
 		[0] = hsv(13,47,100);
 		[1] = hsv(13,59,100);
 		[2] = hsv(14,50,91)
 },'Light')
-Citrus.Color.insertColor('Yellow',{
+Spice.Color.insertColor('Yellow',{
 	[-1] = hsv(41,65,100);
 	[0] = hsv(41,71,100);
 	[1] = hsv(41,76,93);
 	[2] = hsv(40,83,82);
 })
-Citrus.Color.insertColor('Yellow',{
+Spice.Color.insertColor('Yellow',{
 		[-1] = hsv(42,30,100);
 		[0] = hsv(41,47,100);
 		[1] = hsv(40,59,100);
 		[2] = hsv(42,50,91)
 },'Light')
-Citrus.Color.insertColor('Lime',{
+Spice.Color.insertColor('Lime',{
 	[-1] = hex'AFEF51';
 	[0] = hex'A4E542';
 	[1] = hex'94D82F';
 	[2] = hex'80C41B';
 })
-Citrus.Color.insertColor('Lime',{
+Spice.Color.insertColor('Lime',{
 		[-1] = hex'DEFFB2';
 		[0] = hex'CDFF87';
 		[1] = hex'BFF76C';
 		[2] = hex'B7EA75';
 },'Light')
-Citrus.Color.insertColor('Green',{
+Spice.Color.insertColor('Green',{
 	[-1] = hsv(121,66,93);
 	[0] = hsv(121,71,89);
 	[1] = hsv(121,78,84);
@@ -72,7 +72,7 @@ Citrus.Color.insertColor('Green',{
 		[2] = hsv(123,50,91)
 	};
 })
-Citrus.Color.insertColor('Teal',{
+Spice.Color.insertColor('Teal',{
 	Light = {
 		[-1] = hex'B8FEF6';
 		[0] = hex'90FEF1';
@@ -84,7 +84,7 @@ Citrus.Color.insertColor('Teal',{
 	[1] = hex'3ED8C4';
 	[2] = hex'2CC6B1';			
 })
-Citrus.Color.insertColor('Cyan',{
+Spice.Color.insertColor('Cyan',{
 	Light = {
 		[-1] = hex'B8FAFE';
 		[0] = hex'90F9FE';
@@ -96,7 +96,7 @@ Citrus.Color.insertColor('Cyan',{
 	[1] = hex'3ED2D8';
 	[2] = hex'2CC1C6';
 })
-Citrus.Color.insertColor('Blue',{
+Spice.Color.insertColor('Blue',{
 	Light = {
 		[2] = hsv(210,50,92);
 		[-1] = hsv(209,30,100);
@@ -108,7 +108,7 @@ Citrus.Color.insertColor('Blue',{
 	[1] = hsv(207,76,93);
 	[2] = hsv(208,83,82);
 })
-Citrus.Color.insertColor('Naval coacoa',{
+Spice.Color.insertColor('Naval coacoa',{
 	Light = {
 		[-1] = hsv(230,19,90);
 		[0] = hsv(230,32,86);
@@ -120,7 +120,7 @@ Citrus.Color.insertColor('Naval coacoa',{
 	[1] = hsv(230,58,72);
 	[2] = hsv(230,64,62);
 })
-Citrus.Color.insertColor('Indigo',{
+Spice.Color.insertColor('Indigo',{
 	Light = {
 			[-1] = hsv(244,30,100);
 			[0] = hsv(244,47,100);
@@ -132,7 +132,7 @@ Citrus.Color.insertColor('Indigo',{
 		[1] = hsv(242,76,93);
 		[2] = hsv(243,83,82);
 })
-Citrus.Color.insertColor('Purple',{
+Spice.Color.insertColor('Purple',{
 	Light = {
 		[-1] = hsv(261,30,100);
 		[0] = hsv(261,47,100);
@@ -144,7 +144,7 @@ Citrus.Color.insertColor('Purple',{
 	[1] = hsv(259,76,93);
 	[2] = hsv(260,83,82);
 })
-Citrus.Color.insertColor('Pink',{
+Spice.Color.insertColor('Pink',{
 	Light = {
 		[-1] = hsv(326,24,100);
 		[0] = hsv(326,38,100);
@@ -156,7 +156,7 @@ Citrus.Color.insertColor('Pink',{
 	[1] = hsv(324,61,94);
 	[2] = hsv(325,65,85);
 })
-Citrus.Color.insertColor('Amaranth',{
+Spice.Color.insertColor('Amaranth',{
 	Light = {
 		[-1] = hsv(345,28,100);
 		[0] = hsv(345,44,100);
@@ -168,7 +168,7 @@ Citrus.Color.insertColor('Amaranth',{
 	[1] = hsv(344,72,94);
 	[2] = hsv(344,77,83);	
 })
-Citrus.Color.insertColor('Grey',{
+Spice.Color.insertColor('Grey',{
 	Light = {
 		[-1] = hsv(0,0,98);
 		[0] = hsv(0,0,96);
@@ -192,7 +192,7 @@ Citrus.Color.insertColor('Grey',{
 	[1] = hsv(217,12,24);
 	[2] = hsv(220,12,18);
 })
-Citrus.Color.insertColor('Brown',{
+Spice.Color.insertColor('Brown',{
 	Light = {
 		[-1] = hex'7B6C67';
 		[0] = hex'745D56';

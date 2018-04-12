@@ -9,16 +9,16 @@ Iconography = setmetatable({
 				icon.Image = img
 				icon.ImageRectOffset = Vector2.new(x*xgrid,y*ygrid)
 				icon.ImageRectSize = Vector2.new(xgrid,ygrid)
-				local namefil = Citrus.Misc.stringFilterOut(names[count] or 'Icon','_',nil,true)
+				local namefil = Spice.Misc.stringFilterOut(names[count] or 'Icon','_',nil,true)
 				local name = namefil[#namefil]
 				table.remove(namefil,#namefil)
-				Citrus.Iconography.insertIcon(name,icon,unpack(namefil))
+				Spice.Iconography.insertIcon(name,icon,unpack(namefil))
 				count = count + 1
 			end
 		end
 	end;			
 	insertIcon = function(name,icon,...)
-		local index = getmetatable(Citrus.Iconography).Icons
+		local index = getmetatable(Spice.Iconography).Icons
 		for i,v in next,{...} or {} do
 			v = v:sub(1,1):upper()..v:sub(2)
 			if not index[v] then
@@ -36,16 +36,16 @@ Iconography = setmetatable({
 		end			
 	end;		
 	new = function(name,...)
-		local index = getmetatable(Citrus.Iconography).Icons
+		local index = getmetatable(Spice.Iconography).Icons
 		for i,v in next,{...} or {} do
 			v = v:sub(1,1):upper()..v:sub(2)
 			index = index[v]
 		end
-		local icon = Citrus.Table.search(index,name,true)
+		local icon = Spice.Table.search(index,name,true)
 		return icon:Clone()
 	end;		
 	getIconData = function(...)
-		local i = Citrus.Iconography.new(...)
+		local i = Spice.Iconography.new(...)
 		return {Image = i.Image, ImageRectSize = i.ImageRectSize, ImageRectOffset = i.ImageRectOffset}
 	end;
 },{

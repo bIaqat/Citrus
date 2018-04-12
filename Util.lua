@@ -4,7 +4,7 @@ Util = {
 		local file
 		pcall( function()
 			if not name then
-				file = Spice.Util.gitFile(typ,'Citrus')
+				file = Spice.Util.gitFile(typ,'Spice')
 			elseif name:lower() == 'all' then
 				for i,v in next, Spice do
 					if type(i) == 'string' and type(v) == 'table' then
@@ -15,7 +15,7 @@ Util = {
 				file = Spice.Util.gitFile(typ,name)
 			end
 			
-			file = file + ('\n return '..(name and name or 'Citrus'))
+			file = file + ('\n return '..(name and name or 'Spice'))
 			ret = file()
 			if name then
 				Spice[name] = ret

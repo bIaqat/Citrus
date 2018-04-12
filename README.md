@@ -1,2 +1,2 @@
-# Citrus v5
-"Spice"
+# Spice v1
+*preiously named Citrus

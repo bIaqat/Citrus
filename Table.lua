@@ -2,7 +2,7 @@ Table = {
 	insert = function(tabl,...)
 		for i,v in pairs(...) do 
 			if type(v) == 'table' then
-				Citrus.Table.insert(tabl,v)
+				Spice.Table.insert(tabl,v)
 			else
 				rawset(tabl,i,v)
 			end
@@ -25,9 +25,9 @@ Table = {
 		local clone = {}
 		for i,v in next,tab do
 			if type(v) == 'table' then
-				clone[i] = Citrus.Table.clone(v)
+				clone[i] = Spice.Table.clone(v)
 				if getmetatable(v) then
-					local metaclone = Citrus.Table.clone(getmetatable(v))
+					local metaclone = Spice.Table.clone(getmetatable(v))
 					setmetatable(clone[i],metaclone)
 				end
 			else
@@ -69,7 +69,7 @@ Table = {
 		return new
 	end;
 	length = function(tab)
-		return #Citrus.Table.toNumeralIndex(tab)
+		return #Spice.Table.toNumeralIndex(tab)
 	end;
 	reverse = function(tab)
 		local new ={}
@@ -79,14 +79,14 @@ Table = {
 		return new
 	end;
 	indexOf = function(tabl,val)
-		return Citrus.getArgument(3,Citrus.Table.contains(tabl,val))
+		return Spice.getArgument(3,Spice.Table.contains(tabl,val))
 	end;
 	valueOfNext = function(tab,nex)
 		local i,v = next(tab,nex)
 		return v
 	end;
 	find = function(tabl,this)
-		return Citrus.getArgument(2,Citrus.Table.contains(tabl,this))
+		return Spice.getArgument(2,Spice.Table.contains(tabl,this))
 	end;
 	search = function(tabl,this,extra)
 		if not getmetatable(tabl) then setmetatable(tabl,{}) end
@@ -96,17 +96,17 @@ Table = {
 		end
 		local used = meta['0US3D']
 		local likely = {}
-		if Citrus.Table.find(used,this) then
-			return unpack(Citrus.Table.find(used,this))
+		if Spice.Table.find(used,this) then
+			return unpack(Spice.Table.find(used,this))
 		end		
-		if Citrus.Table.find(tabl,this) then
-			used[this] = {Citrus.Table.find(tabl,this)}
-			return Citrus.Table.find(tabl,this)
+		if Spice.Table.find(tabl,this) then
+			used[this] = {Spice.Table.find(tabl,this)}
+			return Spice.Table.find(tabl,this)
 		end
 		for i,v in next,tabl do
 			if type(i) == 'string' or type(v) == 'string' then
 				local subject = type(i) == 'string' and i or type(v) == 'string' and v
-				local caps = Citrus.Misc.stringFilterOut(subject,'%u',nil,false,true)
+				local caps = Spice.Misc.stringFilterOut(subject,'%u',nil,false,true)
 				local numc = caps..(subject:match('%d+$') or '')
 				if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
 					if not extra then
@@ -118,14 +118,14 @@ Table = {
 			end
 		end
 		table.sort(likely,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
-		local resin = Citrus.Table.indexOf(tabl,likely[1])
+		local resin = Spice.Table.indexOf(tabl,likely[1])
 		local firstresult = tabl[resin]
-		used[this] = {firstresult and firstresult or false, firstresult and Citrus.Table.indexOf(tabl,firstresult), likely}
-		return firstresult and firstresult or false, firstresult and Citrus.Table.indexOf(tabl,firstresult), likely
+		used[this] = {firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely}
+		return firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely
 	end;
 	anonSetMetatable = function(tabl,set)
 		local old = getmetatable(tabl)
-		local new = Citrus.Table.clone(setmetatable(tabl,set))
+		local new = Spice.Table.clone(setmetatable(tabl,set))
 		setmetatable(tabl,old)
 		return new
 	end;

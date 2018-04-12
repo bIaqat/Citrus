@@ -4,21 +4,21 @@ Util = {
 		local file
 		pcall( function()
 			if not name then
-				file = Citrus.Util.gitFile(typ,'Citrus')
+				file = Spice.Util.gitFile(typ,'Citrus')
 			elseif name:lower() == 'all' then
-				for i,v in next, Citrus do
+				for i,v in next, Spice do
 					if type(i) == 'string' and type(v) == 'table' then
-						Citrus.Util.AutoUpdate(i,typ)
+						Spice.Util.AutoUpdate(i,typ)
 					end
 				end
 			else
-				file = Citrus.Util.gitFile(typ,name)
+				file = Spice.Util.gitFile(typ,name)
 			end
 			
 			file = file + ('\n return '..(name and name or 'Citrus'))
 			ret = file()
 			if name then
-				Citrus[name] = ret
+				Spice[name] = ret
 			end
 		end)
 		return ret
@@ -48,10 +48,11 @@ Util = {
 			end
 		})
 	end;
-	getUpdateCompressed = function(typ)
-		local main = Citrus.Util.AutoUpdate()
-		local citrus = [[local Citrus
-	Citrus = setmetatable({]]
+	getSpiceCompressed = function(upd,typ)
+		local main = not upd and Spice or Spice.Util.AutoUpdate()
+		local citrus = [[local Spice
+Spice = setmetatable({
+	]]
 		
 	local rest = [[
 		},{
@@ -66,13 +67,13 @@ Util = {
 			end
 		end
 	})
-	table.sort(getmetatable(Citrus.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
+	table.sort(getmetatable(Spice.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
 	]]
 		for i,v in next,main do
 			if type(i) == 'string' and type(v) == 'table' then
-				citrus = citrus..'\n'..Citrus.Util.gitFile(typ,i)
+				citrus = citrus..string.gsub(string.gsub(''..Spice.Util.gitFile(typ,i),'\n','\n\t'),'Citrus','Spice')
 			end
 		end
 		return citrus..rest
 	end;
-};
+}

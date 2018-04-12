@@ -1,5 +1,4 @@
 Color = setmetatable({
-	testAutoUpdate = 'hello';
 	fromRGB = function(r,g,b)
 		return Color3.fromRGB(r,g,b)
 	end;

@@ -1,4 +1,4 @@
-Theming = setmetatable({
+Spice.Theming = setmetatable({
 	new = function(name,...)
 		local self = getmetatable(Spice.Theming)
 		local theme = self:newThemeTable(...)
@@ -190,7 +190,7 @@ Theming = setmetatable({
 	Themes = {};
 })
 
---[[
+
 
 local frame = Spice.Instance.new("Frame",sg,{Size = UDim2.new(0,200,0,200), Pos = UDim2.new(.5,0,.5,0)})
 Spice.Theming.new("Primary", Color3.new(0,0,1),Color3.new(1,0,0)) 
@@ -199,5 +199,3 @@ wait(1)
 Spice.Theming.setTheme("Primary",Color3.new(1,0,1))
 wait(2)
 Spice.Theming.addValues('Primary',Color3.new(0,1,0))
-
-]]

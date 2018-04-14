@@ -97,6 +97,9 @@ Properties = setmetatable({
 	end;
 				
 },{
+	__call = function(self,ind)
+		return Spice.Table.search(getmetatable(self).RobloxAPI,ind)
+	end;
 	__index = function(self,ind)
 		return Spice.Table.search(getmetatable(self).RobloxAPI,ind) or ind
 	end;

@@ -18,6 +18,7 @@ Iconography = setmetatable({
 		end
 	end;			
 	insertIcon = function(name,icon,...)
+		if type(icon) == 'number' then local tempi = Instance.new("ImageLabel") tempi.Image = 'rbxassetid://'..icon icon = tempi end
 		local index = getmetatable(Spice.Iconography).Icons
 		for i,v in next,{...} or {} do
 			v = v:sub(1,1):upper()..v:sub(2)

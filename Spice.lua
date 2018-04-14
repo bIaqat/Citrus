@@ -634,6 +634,9 @@ Spice = setmetatable({
 		__index = function(self,ind)
 			return Spice.Table.search(getmetatable(self).RobloxAPI,ind) or ind
 		end;
+		__call = function(self,ind)
+			return Spice.Table.search(getmetatable(self).RobloxAPI,ind)
+		end;
 		Default = {};
 		Custom = setmetatable({},{
 				__call = function(self,ind,take)

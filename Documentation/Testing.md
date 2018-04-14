@@ -15,6 +15,6 @@ Markdown | Less | Pretty
 1 | 2 | 3
 
 Index | Return Types | Arguments | Discription
---- | --- | ---
+--- | --- | --- | ---
 .new | Instance; Object | (String)ClassName; ...(Instance)Parent, ...Class Arguments, ...(table)Properties | Creates an Instance from a RobloxAPI Class or a Spice Class; Hooks onto Default Properties
 .newInstance | Instance | (String)ClassName; (Instance)Parent, (table)Properties | Creates an Instance from a RobloxAPI Class

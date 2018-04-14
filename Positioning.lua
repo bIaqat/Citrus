@@ -8,10 +8,10 @@ Positioning = {
 			return Spice.Misc.switch(UDim2.new(a,0,b,0),UDim2.new(0,a,0,b),UDim2.new(a,b,a,b),UDim2.new(a,0,0,b),UDim2.new(0,a,b,0)):Filter('s','o','b','so','os')(args[3] or args[2] or 1)
 		end
 	end;
-	toUDim = function(a,b)
+	fromUDim = function(a,b)
 		return Spice.Misc.switch(UDim.new(a,b), UDim.new(a,a))(b and 1 or 2)
 	end;
-	toVector2 = function(a,b)
+	fromVector2 = function(a,b)
 		return Spice.Misc.switch(Vector2.new(a,b), Vector2.new(a,a))(b and 1 or 2)
 	end;
 	fromPosition = function(a,b)

@@ -1,4 +1,4 @@
-Sync = setmetatable({
+SyncChannels = setmetatable({
 	getChannel = function(name)
 		return getmetatable(Spice.Sync).Channels[name]
 	end;

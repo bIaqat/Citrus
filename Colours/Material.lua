@@ -1,5 +1,5 @@
-fromMaterial = function(name,i,ac)
-	local id = Spice.Misc.Functions.switch(1,2,3,4,5,6,7,8,9,10):Filter(unpack(Spice.Misc.Functions.switch({50,100,200,300,400,500,600,700,800,900},{100,200,400,700}):Filter(false,true)(Spice.Misc.Functions.exists(ac))))
+Spice.Color.fromMaterial = function(name,i,ac)
+	local id = Spice.Misc.switch(1,2,3,4,5,6,7,8,9,10):Filter(unpack(Spice.Misc.switch({50,100,200,300,400,500,600,700,800,900},{100,200,400,700}):Filter(false,true)(Spice.Misc.exists(ac))))
 	id = id(i or 500)
 	return id and Spice.Color.getColor(name,id,'Material',ac and 'Accent')
 end;

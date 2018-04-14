@@ -1,4 +1,4 @@
-citrusColor(name,main,inverse,...)
+function citrusColor(name,main,inverse,...)
 	local alias = {...}
 	for i,v in pairs(main)do
 		main[i] = Spice.Color.fromHex(v)
@@ -8,7 +8,7 @@ citrusColor(name,main,inverse,...)
 	end
 	local new = main
 	main.Inverse = inverse
-	Spice.Color.insertColor(name,new)
+	Spice.Color.insertColor(name,new,'CitrusV4')
 end
 
 citrusColor('Ruby',{'EA8A97';

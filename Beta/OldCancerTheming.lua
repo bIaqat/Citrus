@@ -1,4 +1,4 @@
-Theming = setmetatable({ --almost 100% positive this is 100% BROKEN
+OldCancerTheming = setmetatable({ --almost 100% positive this is 100% BROKEN
 		new = function(name,...)
 			local args, filter, funct, vals = {}
 			local vals = {...}

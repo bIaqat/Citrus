@@ -1,4 +1,4 @@
-Spice.Theming = setmetatable({
+TestAdvancedTheming = setmetatable({
 	new = function(name,...)
 		local self = getmetatable(Spice.Theming)
 		local theme = self:newThemeTable(...)

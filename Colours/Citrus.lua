@@ -5,61 +5,61 @@ Spice.Color.insertColor('Red',{
 	[0] = hsv(358,71,100);
 	[1] = hsv(358,76,93);
 	[2] = hsv(357,83,82);
-})
+},'Citrus')
 Spice.Color.insertColor('Red',{
 	[-1] = hsv(359,30,100);
 	[0] = hsv(359,47,100);
 	[1] = hsv(358,59,100);
 	[2] = hsv(358,50,91)
-},'Light')
+},'Citrus','Light')
 Spice.Color.insertColor('Peach',{
 	[-1] = hsv(3,65,100);
 	[0] = hsv(3,71,100);
 	[1] = hsv(2,76,93);
 	[2] = hsv(3,83,82);
-})
+},'Citrus')
 Spice.Color.insertColor('Peach',{
 		[-1] = hsv(3,30,100);
 		[0] = hsv(4,47,100);
 		[1] = hsv(3,59,100);
 		[2] = hsv(4,50,91)
-},'Light')
+},'Citrus','Light')
 Spice.Color.insertColor('Orange',{
 	[-1] = hsv(13,65,100);
 	[0] = hsv(13,71,100);
 	[1] = hsv(13,76,93);
 	[2] = hsv(12,83,82);
-})
+},'Citrus')
 Spice.Color.insertColor('Orange',{
 		[-1] = hsv(14,30,100);
 		[0] = hsv(13,47,100);
 		[1] = hsv(13,59,100);
 		[2] = hsv(14,50,91)
-},'Light')
+},'Citrus','Light')
 Spice.Color.insertColor('Yellow',{
 	[-1] = hsv(41,65,100);
 	[0] = hsv(41,71,100);
 	[1] = hsv(41,76,93);
 	[2] = hsv(40,83,82);
-})
+},'Citrus')
 Spice.Color.insertColor('Yellow',{
 		[-1] = hsv(42,30,100);
 		[0] = hsv(41,47,100);
 		[1] = hsv(40,59,100);
 		[2] = hsv(42,50,91)
-},'Light')
+},'Citrus','Light')
 Spice.Color.insertColor('Lime',{
 	[-1] = hex'AFEF51';
 	[0] = hex'A4E542';
 	[1] = hex'94D82F';
 	[2] = hex'80C41B';
-})
+},'Citrus')
 Spice.Color.insertColor('Lime',{
 		[-1] = hex'DEFFB2';
 		[0] = hex'CDFF87';
 		[1] = hex'BFF76C';
 		[2] = hex'B7EA75';
-},'Light')
+},'Citrus','Light')
 Spice.Color.insertColor('Green',{
 	[-1] = hsv(121,66,93);
 	[0] = hsv(121,71,89);
@@ -71,7 +71,7 @@ Spice.Color.insertColor('Green',{
 		[1] = hsv(121,56,96);
 		[2] = hsv(123,50,91)
 	};
-})
+},'Citrus')
 Spice.Color.insertColor('Teal',{
 	Light = {
 		[-1] = hex'B8FEF6';
@@ -83,7 +83,7 @@ Spice.Color.insertColor('Teal',{
 	[0] = hex'51E6D2';
 	[1] = hex'3ED8C4';
 	[2] = hex'2CC6B1';			
-})
+},'Citrus')
 Spice.Color.insertColor('Cyan',{
 	Light = {
 		[-1] = hex'B8FAFE';
@@ -95,7 +95,7 @@ Spice.Color.insertColor('Cyan',{
 	[0] = hex'51E1E6';
 	[1] = hex'3ED2D8';
 	[2] = hex'2CC1C6';
-})
+},'Citrus')
 Spice.Color.insertColor('Blue',{
 	Light = {
 		[2] = hsv(210,50,92);
@@ -107,7 +107,7 @@ Spice.Color.insertColor('Blue',{
 	[0] = hsv(208,71,100);
 	[1] = hsv(207,76,93);
 	[2] = hsv(208,83,82);
-})
+},'Citrus')
 Spice.Color.insertColor('Naval coacoa',{
 	Light = {
 		[-1] = hsv(230,19,90);
@@ -119,7 +119,7 @@ Spice.Color.insertColor('Naval coacoa',{
 	[0] = hsv(230,53,79);
 	[1] = hsv(230,58,72);
 	[2] = hsv(230,64,62);
-})
+},'Citrus')
 Spice.Color.insertColor('Indigo',{
 	Light = {
 			[-1] = hsv(244,30,100);
@@ -131,7 +131,7 @@ Spice.Color.insertColor('Indigo',{
 		[0] = hsv(243,71,100);
 		[1] = hsv(242,76,93);
 		[2] = hsv(243,83,82);
-})
+},'Citrus')
 Spice.Color.insertColor('Purple',{
 	Light = {
 		[-1] = hsv(261,30,100);
@@ -143,7 +143,7 @@ Spice.Color.insertColor('Purple',{
 	[0] = hsv(260,71,100);
 	[1] = hsv(259,76,93);
 	[2] = hsv(260,83,82);
-})
+},'Citrus')
 Spice.Color.insertColor('Pink',{
 	Light = {
 		[-1] = hsv(326,24,100);
@@ -155,7 +155,7 @@ Spice.Color.insertColor('Pink',{
 	[0] = hsv(325,58,100);
 	[1] = hsv(324,61,94);
 	[2] = hsv(325,65,85);
-})
+},'Citrus')
 Spice.Color.insertColor('Amaranth',{
 	Light = {
 		[-1] = hsv(345,28,100);
@@ -167,7 +167,7 @@ Spice.Color.insertColor('Amaranth',{
 	[0] = hsv(344,67,100);
 	[1] = hsv(344,72,94);
 	[2] = hsv(344,77,83);	
-})
+},'Citrus')
 Spice.Color.insertColor('Grey',{
 	Light = {
 		[-1] = hsv(0,0,98);
@@ -191,7 +191,7 @@ Spice.Color.insertColor('Grey',{
 	[0] = hsv(213,12,27);
 	[1] = hsv(217,12,24);
 	[2] = hsv(220,12,18);
-})
+},'Citrus')
 Spice.Color.insertColor('Brown',{
 	Light = {
 		[-1] = hex'7B6C67';
@@ -203,4 +203,4 @@ Spice.Color.insertColor('Brown',{
 	[0] = hex'6B463C';
 	[1] = hex'623D33';
 	[2] = hex'543127'	
-})
+},'Citrus')

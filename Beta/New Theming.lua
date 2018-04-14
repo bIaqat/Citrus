@@ -1,23 +1,39 @@
 Theming = setmetatable({
 	new = function(name,...)
 		local self = getmetatable(Spice.Theming)
-		local theme = self:newThemeTable({...})
+		local theme = self:newThemeTable(...)
 		self.Themes[name] = theme
 	end;
 	getTheme = function(name)
 		return getmetatable(Spice.Theming).Themes[name]
 	end;
-	setTheme = function(name,...)
+	addValues = function(name,...)
+		local stuff = {...}
+		local index
+		if type(stuff[#stuff]) == 'number' then
+			index = stuff[#stuff]
+			table.remove(stuff,#stuff)
+		else
+			index = 1
+		end
 		local self = getmetatable(Spice.Theming)
 		local theme = Spice.Theming.getTheme(name)
-		theme.Filter = self:filter({...},theme.Filter)
+		theme.Filter = self:filter(stuff,theme.Filter)
 		Spice.Theming.sync(name)
 	end;
-	insertObject = function(obj,...)
+	setTheme = function(name,...)
+		local theme = Spice.Theming.getTheme(name)
+		local self = getmetatable(Spice.Theming)
+		theme.Filter = self:filter({...})
+		Spice.Theming.sync(name)
+	end;
+	insertObject = function(name,obj,...)
 		local theme = Spice.Theming.getTheme(name)
 		theme.Objects[obj] = {...}
+		Spice.Theming.sync(name)
 	end;
 	sync = function(name)
+		pcall(function()
 		local self = getmetatable(Spice.Theming)
 		if not name then
 			for i,v in next, self.Themes do
@@ -36,12 +52,22 @@ Theming = setmetatable({
 				Spice.Properties.setProperties(i,props)
 			end
 		end
+		end)
 	end;
 },{
 	fromFilter = function(self,obj,filter,objfilter)
-		local self = getmetatable(self)
+		local newf
 		if objfilter then
-			local newf = self:filter(objfilter)
+			newf = self:filter(objfilter)
+			for i,v in next, newf do
+				warn(i)
+				for z,x in next,v do
+					warn("\t"..z)
+					for y,u in next, x do
+						print(y,u)
+					end
+				end
+			end
 		end
 		local props = {}
 		for class, v in next, filter do
@@ -56,7 +82,13 @@ Theming = setmetatable({
 		if objfilter then
 			for class, v in next, newf do
 				for prop, i in next, v do
-					rawset(props,prop, filter[class][prop][i[1] or 1])
+					if prop == 0 then
+						print(i)
+						for w, q in next, i do
+							local pro, index = q[1], q[2]
+							rawset(props,pro,filter[class][prop][index or 1])
+						end
+					end
 				end
 				if not obj:isA(class) and class ~= 'All' then
 					for prop, i in next, filter[class] do
@@ -70,10 +102,9 @@ Theming = setmetatable({
 		return props
 	end;	
 	valueCheck = function(self,v)
-		local self = getmetatable(self)
-		if pcall(function() return Spice.Instance.isA('Instance',v)) then
+		if type(v) == 'string' and Spice.Instance.isA(v,'Instance') then
 			return 'Class'
-		elseif pcall(function() return Spice.Properties(v)) then
+		elseif type(v) == 'string' and Spice.Properties(v) then
 			return 'Property'
 		elseif type(v) == 'function' then
 			return 'Function'
@@ -82,7 +113,6 @@ Theming = setmetatable({
 		end
 	end;
 	filter = function(self,stuff,filter)
-		local self = getmetatable(self)
 		local filter = filter or {
 			All = {[0] = {}}
 		}
@@ -94,10 +124,17 @@ Theming = setmetatable({
 				local nextIndex = stuff[i+1]
 				local check = self:valueCheck(v)
 				if check == 'Value' then
+					if storedProperty then 
+						if not filter.All[storedProperty[1]] then
+							filter.All[storedProperty[1]] = {}
+						end
+						table.insert(filter.All[storedProperty[1]],storedProperty[2]) 
+						storedProperty = nil
+					end
 					if storedValue then table.insert(filter.All[0], storedValue) end
 					storedValue = v
 				elseif check == 'Property' then
-					if storingProperty then 
+					if storedProperty then 
 						if not filter.All[storedProperty[1]] then
 							filter.All[storedProperty[1]] = {}
 						end
@@ -114,11 +151,12 @@ Theming = setmetatable({
 							filter[v][storedProperty[1]] = {}
 						end
 						table.insert(filter[v][storedProperty[1]],storedProperty[2])
-					else
-						table.insert(filter[v][0],storedValue)
+						storedProperty = nil
 					end
-					storedProperty = nil
-					storedValue = nil
+					if storedValue then
+						table.insert(filter[v][0],storedValue)
+						storedValue = nil
+					end
 				elseif check == 'Function' then
 					if self:valueCheck(nextIndex) == 'Value' then
 						pushIndex = pushIndex + 1
@@ -126,9 +164,10 @@ Theming = setmetatable({
 					end
 				end
 			end
+			pushIndex = pushIndex + 1
 		end
 		if storedValue then table.insert(filter.All[0], storedValue) end
-		if storingProperty then 
+		if storedProperty then 
 			if not filter.All[storedProperty[1]] then
 				filter.All[storedProperty[1]] = {}
 			end
@@ -137,81 +176,28 @@ Theming = setmetatable({
 		return filter
 	end;
 	newThemeTable = function(self,...)
-		local self = getmetatable(self)
 		local stuff = {...}
 		local theme
 		theme = {
 			Active = theme;
 			Objects = {
-				All = {[0] = {}}
-			}
-			Filter = self.filter(stuff)
+			};
+			Filter = self:filter(stuff);
 			Alts = {};
 		}
 		return theme
-	end
+	end;
 	Themes = {};
-}
+})
 
-local f = Instance.new("Frame")
-local f2 = Instance.new("TextButton")
-local a = Theming.new("Primary", Color3.new(1,0,0), 'BackgroundColor3',5, Color3.new(0,0,1), 'GuiButton', Color3.new(0,1,0), Color3.new(1,1,0), Color3.new(1,0,1),{Color3.new(0,0,0),Color3.new(1,1,1)},'BorderColor3','GuiButton',function(obj,prop,...),{args}) 
+--[[
 
-local Primary = {
-	Objects = {
-		All = {
-			[0] = {
-				f = {'BoderColor3', 1}
-				f2 = {'BackgroundColor3', 2}
-			};
-			BackgroundColor3 = {
-				f = {'BackgroundColor3', 1}
-			}
+local frame = Spice.Instance.new("Frame",sg,{Size = UDim2.new(0,200,0,200), Pos = UDim2.new(.5,0,.5,0)})
+Spice.Theming.new("Primary", Color3.new(0,0,1),Color3.new(1,0,0)) 
+Spice.Theming.insertObject("Primary", frame, {'BorderColor3',2},{'BackgroundColor3',1})
+wait(1)
+Spice.Theming.setTheme("Primary",Color3.new(1,0,1))
+wait(2)
+Spice.Theming.addValues('Primary',Color3.new(0,1,0))
 
-		};
-		GuiButton = {
-			[0] = {};
-			BorderColor3 = {
-				f = {BorderColor3, 1}
-			}
-		}
-	};
-	Filter = {
-		All = {
-			[0] = {5, Color3.new(0,1,0), Color3.new(1,1,0), Color3.new(1,0,1), {function(), {args}}};
-			BackgroundColor3 = {
-				Color3.new(1,0,0)
-			}
-		};
-		GuiButton = {
-			[0] = {Color3.new(0,0,1)};
-			BorderColor3 = {
-				Color3.new(0,0,0);
-				Color3.new(1,1,1);
-			}
-		}
-	}
-
-	Alts = {
-		[1] = ThemeTable;
-	}
-	}
-}
-
-a:InsertObject(f, 'BorderColor3') -- frame will have Background as 1,0,0 and BorderColor3 as 0,1,0
-Theming.insertObject("Primary", f2) --button will have Background as 1, 0, 0; bordercolor3 as 0,0,0
-
-Theming.insertObject(f) --background as 1,0,0
-Theming.insertObject(f,'BackgroundColor3') --background as 1,0,0; background as 0,1,0
-
-Theming.insertObject(f2,'BackgroundColor3',2) --background as 1,0,0; background as 0,1,0; bordercolor3 as 0,0,0
-
-Theming.insertObject(f,f2,'BorderSize',nil,2) --background to both as 1,0,0; BorderSize as 5; f2 bordercolor3 as 1,1,1
-Theming.insertObject(f,f2,'BorderSize') --background to both as 1,0,0; BorderSize as 5
-Theming.insertObject(TextLabel,'GuiButton','TextColor3') -- background as 1,0,0
-
-Theming.newAlt('Primary',1,...)
-
-
-Theming.set("Primary", 1, Color3.new(0,1,1))
-Theming.set("Primary", 'GuiButton', Color3.new(0,1,1))
+]]

@@ -69,7 +69,9 @@ Table = {
 		return new
 	end;
 	length = function(tab)
-		return #Spice.Table.toNumeralIndex(tab)
+		local c = 0
+		table.foreach(tab,function(i,v) count = count + 1 end)
+		return c
 	end;
 	reverse = function(tab)
 		local new ={}

@@ -45,6 +45,10 @@ Iconography = setmetatable({
 		local icon = Spice.Table.search(index,name,true)
 		return icon:Clone()
 	end;		
+	newButton = function(...)
+		local i = Spice.Iconography.getIconData(...)
+		return Spice.Instance.newInstance('ImageButton',i)
+	end;
 	getIconData = function(...)
 		local i = Spice.Iconography.new(...)
 		return {Image = i.Image, ImageRectSize = i.ImageRectSize, ImageRectOffset = i.ImageRectOffset}

@@ -4,9 +4,9 @@ Theming = setmetatable({
 			Name = name;
 			Values = setmetatable({...},{
 				__call = function(self,index,typ)
-					local vals = typ and {} or self.Values
+					local vals = typ and {} or self
 					if typ then
-						for i,v in next, self.Values do
+						for i,v in next, self do
 							if type(v) == typ then
 								table.insert(vals,v)
 							end
@@ -60,7 +60,7 @@ Theming = setmetatable({
 			name = type(name) == 'table' and name or Spice.Theming.getTheme(name)
 			for obj,v in next, name.Objects do
 				for prop,ind in next, v do
-					local value = theme.Values(ind,type(obj[prop]))
+					local value = name.Values(ind,type(obj[prop]))
 					obj[prop] = value
 				end
 			end
@@ -68,4 +68,4 @@ Theming = setmetatable({
 	end
 },{
 	Themes = {};
-})
+});

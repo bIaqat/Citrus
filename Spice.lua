@@ -264,6 +264,7 @@ Spice = setmetatable({
 			end
 		end;			
 		insertIcon = function(name,icon,...)
+			if type(icon) == 'number' then local tempi = Instance.new("ImageLabel") tempi.Image = 'rbxassetid://'..icon icon = tempi end
 			local index = getmetatable(Spice.Iconography).Icons
 			for i,v in next,{...} or {} do
 				v = v:sub(1,1):upper()..v:sub(2)
@@ -293,6 +294,10 @@ Spice = setmetatable({
 		getIconData = function(...)
 			local i = Spice.Iconography.new(...)
 			return {Image = i.Image, ImageRectSize = i.ImageRectSize, ImageRectOffset = i.ImageRectOffset}
+		end;
+		newButton = function(...)
+			local i = Spice.Iconography.getIconData(...)
+			return Spice.Instance.newInstance('ImageButton',i)
 		end;
 	},{
 		Icons = {}
@@ -631,11 +636,11 @@ Spice = setmetatable({
 		end;
 					
 	},{
-		__index = function(self,ind)
-			return Spice.Table.search(getmetatable(self).RobloxAPI,ind) or ind
-		end;
 		__call = function(self,ind)
 			return Spice.Table.search(getmetatable(self).RobloxAPI,ind)
+		end;
+		__index = function(self,ind)
+			return Spice.Table.search(getmetatable(self).RobloxAPI,ind) or ind
 		end;
 		Default = {};
 		Custom = setmetatable({},{
@@ -719,10 +724,10 @@ Spice = setmetatable({
 				return Spice.Misc.switch(UDim2.new(a,0,b,0),UDim2.new(0,a,0,b),UDim2.new(a,b,a,b),UDim2.new(a,0,0,b),UDim2.new(0,a,b,0)):Filter('s','o','b','so','os')(args[3] or args[2] or 1)
 			end
 		end;
-		toUDim = function(a,b)
+		fromUDim = function(a,b)
 			return Spice.Misc.switch(UDim.new(a,b), UDim.new(a,a))(b and 1 or 2)
 		end;
-		toVector2 = function(a,b)
+		fromVector2 = function(a,b)
 			return Spice.Misc.switch(Vector2.new(a,b), Vector2.new(a,a))(b and 1 or 2)
 		end;
 		fromPosition = function(a,b)
@@ -799,7 +804,7 @@ Spice = setmetatable({
 						setmetatable(clone[i],metaclone)
 					end
 				else
-					clone[i] = v
+					clone[i] = Spice.Instance.getObjectOf(v) or v
 				end
 			end
 			if getmetatable(tab) then
@@ -898,6 +903,243 @@ Spice = setmetatable({
 			return new
 		end;
 	};
+	Instance = setmetatable({
+		newClass = function(name,funct)
+			local self = Spice.Instance
+			local pt = Spice.Table
+			getmetatable(self).Classes[name] = setmetatable({funct,Objects = {}},{
+					__call = function(self,...)
+						return self[1](...)
+					end;
+					__index = function(self,ind)
+						return pt.contains(self.Objects,ind)
+					end;
+				})
+		end;
+		isA = function(is,a)
+			local self = Spice.Instance
+			if self.isAClass(is) then
+				is = Instance.new(is)
+				return is:IsA(a)
+			end
+			return false
+		end;
+		isAClass = function(is,custom)
+			if pcall(function() return Instance.new(is) end) or custom and getmetatable(Spice.Instance).Classes[is] then
+				return true
+			else
+				return false
+			end
+		end;
+		newPure = function(class,...)
+			local args = {...}
+			if type(args[#args]) ~= 'table' then
+				table.insert(args,{})
+			end
+			table.insert(args[#args],true)
+			return Spice.Instance.new(class,unpack(args))
+		end;
+		new = function(class,...)
+			local self = Spice.Instance
+			local pt = Spice.Table
+			local args,storage,new,parent,properties = {...},getmetatable(self).Classes
+			if typeof(args[1]) == 'Instance' or self.isAnObject(args[1]) then
+				parent = self.getInstanceOf(args[1])
+				table.remove(args,1)
+			end
+			if type(args[#args]) == 'table' then
+				properties = args[#args]
+				table.remove(args,#args)
+			end
+			new = pt.find(storage,class) and pt.find(storage,class)(unpack(args)) or Instance.new(class)
+			new.Parent = parent
+			local a = next(properties or {})
+			if type(a) ~= 'number' then
+				Spice.Properties.setPropertiesToDefault(new)
+			else
+				table.remove(properties,a)
+			end		
+			Spice.Properties.setProperties(new,properties or {})
+			return new
+		end;
+		newInstance = function(class,parent,props)
+			local new = Instance.new(class)
+			local parent = Spice.Instance.getInstanceOf(parent)
+			props = props or type(parent) == 'table' and parent
+			parent = type(parent) ~= 'table' and parent or nil
+			local a = next(props or {})
+			return Spice.Properties.setProperties(Instance.new(class,parent),props or {})
+		end;
+		newObject = function(...)
+			local function insert(who)
+				rawset(getmetatable(Spice.Instance).Objects,who.Instance,who)
+			end
+			local args,obj,class,parent,props = {...},{}
+			for i,v in next,args do
+				class = type(v) == 'string' and Spice.Instance.isAClass(v) and v or class
+				parent = typeof(v) == 'Instance' and v or parent
+				props = type(v) == 'table' and Spice.Table.length(obj) > 0 and v or props
+				obj = type(v) == 'table' and Spice.Table.length(obj) == 0 and v or obj
+			end
+			local ins = Spice.Instance.newInstance(class,parent,props)
+			local new = {Instance = ins,Object = obj}
+			local newmeta = {
+				Properties = {Index = {}, NewIndex = {}};
+				__index = function(self,ind)
+					local pro = getmetatable(self).Properties
+					if Spice.Table.contains(pro.Index,ind) then
+						local ret = Spice.Table.find(pro.Index,ind)
+						return type(ret) ~= 'function' and ret or ret(self)
+					elseif Spice.Table.contains(self.Object,ind) or not Spice.Properties.hasProperty(self.Instance,ind) then
+						return Spice.Table.find(self.Object,ind)
+					elseif Spice.Properties.hasProperty(self.Instance,ind) then
+						return self.Instance[Spice.Properties[ind]]
+					end
+				end;
+				__newindex = function(self,ind,new)
+					local pro = getmetatable(self).Properties
+					if Spice.Table.contains(pro.NewIndex,ind) then
+						Spice.Table.find(pro.NewIndex,ind)(self,new)
+					elseif Spice.Table.contains(self.Object,ind) or not Spice.Properties.hasProperty(self.Instance,ind) or type(new) == 'function' then
+						rawset(self.Object,ind,new)
+					elseif Spice.Properties.hasProperty(self.Instance,ind) then
+						self.Instance[Spice.Properties[ind]] = new
+					end
+				end;
+				__call = function(self,prop)
+					Spice.Properties.setProperties(self.Instance,prop)
+				end;
+			}
+			function new:Index(name,what)
+				rawset(getmetatable(self).Properties.Index,name,what)
+			end;
+			function new:NewIndex(name,what)
+				if type(what) == 'function' then
+					rawset(getmetatable(self).Properties.NewIndex,name,what)
+				end
+			end;
+			function new:Clone(parent,prop)
+				return Spice.cloneObject(self,parent,prop)
+			end;
+			setmetatable(new,newmeta)
+			insert(new)
+			return new
+		end;
+		cloneObject = function(obj,parent,prop)
+			local ins = obj.Instance:Clone()
+			ins.Parent = parent
+			local clone = Spice.Table.clone(obj)
+			clone.Instance = ins
+			Spice.setProperties(clone.Instance, prop and prop or {})
+			rawset(getmetatable(Spice.Instance).Objects,clone.Instance,clone)
+			return clone
+		end;
+		getInstanceOf = function(who)
+			local self = getmetatable(Spice.Instance).Objects
+			return Spice.Table.indexOf(self,who) or who
+		end;
+		getObjectOf = function(who)
+			local self = getmetatable(Spice.Instance).Objects
+			return Spice.Table.find(self,who) or nil
+		end;
+		isAnObject = function(who)
+			return Spice.Instance.getObjectOf(who) and true or false
+		end;
+		getAncestors = function(who)
+			local anc = {game}
+			who = Spice.Instance.getInstanceOf(who)
+			local chain = Spice.Misc.stringFilterOut(who:GetFullName(),'%.','game',nil,true)
+			local ind = game
+			for i,v in next,chain do
+				ind = ind[v]
+				table.insert(anc,ind)
+			end
+			return Spice.Table.pack(Spice.Table.reverse(anc),2)
+		end;
+	},{
+		Classes = {};
+		Objects = {};
+	});
+	Theming = setmetatable({
+		new = function(name,...)
+			local theme = {
+				AutoSync = true;
+				Name = name;
+				Values = setmetatable({...},{
+					__call = function(self,index,typ)
+						local vals = typ and {} or self
+						if typ then
+							for i,v in next, self do
+								if type(v) == typ then
+									table.insert(vals,v)
+								end
+							end
+						end
+						return vals[index or 1], vals
+					end;
+				});
+				Objects = {};
+				Set = function(self,...)
+					Spice.Theming.setTheme(self,...)
+				end;
+				Insert = function(self,...)
+					Spice.Theming.insertObjectToTheme(self,...)
+				end;
+				Sync = function(self,...)
+					Spice.Theming.sync(self,...)
+				end;
+			}
+			getmetatable(Spice.Theming).Themes[name] = theme
+			return theme
+		end;
+		getTheme = function(name,index,typ)
+			local theme = type(name) == 'table' and name or type(name) == 'string' and getmetatable(Spice.Theming).Themes[name]
+			return index and theme.Values(index,typ) or theme
+		end;
+		setTheme = function(name,...)
+			local theme = type(name) == 'table' and name or Spice.Theming.getTheme(name)
+			local args = {...}
+			if #args == 2 and type(args[2]) == 'number' then
+				theme.Values[args[2]] = args[1]
+			else
+				theme.Values = setmetatable({...},getmetatable(theme.Values))
+			end
+			local run = theme.AutoSync and theme:Sync()
+		end;
+		insertObjectToTheme = function(name,obj,prop,ind)
+			local theme = type(name) == 'table' and name or Spice.Theming.getTheme(name)
+			local value = theme.Values(ind,type(obj[prop]))
+			if not Spice.Instance.isAnObject(obj) then
+				prop = Spice.Properties[prop]
+			end
+			if not theme.Objects[obj] then
+				theme.Objects[obj] = {}
+			end
+			theme.Objects[obj][prop] = ind or 1
+			obj[prop] = theme.AutoSync and value or obj[prop]
+		end;
+		sync = function(name,lerp,tim,...)
+			if not name then
+				for i,v in next, getmetatable(Spice.Theming).Themes do
+					Spice.Theming.sync(v)
+				end
+			else
+				name = type(name) == 'table' and name or Spice.Theming.getTheme(name)
+				for obj,v in next, name.Objects do
+					for prop,ind in next, v do
+						local value = name.Values(ind,type(obj[prop]))
+						if not lerp then
+							obj[prop] = value
+						else
+							Spice.Misc.tweenService(obj,prop,value,tim or 1,...)
+						end
+					end
+				end
+			end
+		end
+	},{
+		Themes = {};
+	});
 	Util = {
 		AutoUpdate = function(name,typ)
 			local ret = false
@@ -1066,242 +1308,16 @@ Spice = setmetatable({
 			MAIN = {};
 		};
 	});
-	Theming = setmetatable({
-		new = function(name,...)
-			local vals = {...}
-			local th = getmetatable(Spice.Theming).Themes
-			th[name] = { Values = vals, Objects = {} }
-		end;
-		getTheme = function(name)
-			return getmetatable(Spice.Theming).Themes[name]
-		end;
-		getObjects = function(name,obj)
-			return obj and Spice.Theming.getTheme(name).Objects[obj] or Spice.Theming.getTheme(name).Objects
-		end;
-		getValues = function(name,index)
-			return not index and Spice.Theming.getTheme(name).Values or Spice.Theming.getTheme(name).Values[index]
-		end;
-		setTheme = function(name,...)
-			Spice.Theming.getTheme(name).Values = {...}
-			Spice.Theming.syncTheme(name)
-		end;
-		setValue = function(name,to,index)
-			Spice.Theming.getValues(name)[index or 1] = to
-			Spice.Theming.syncTheme(name)
-		end;
-		setObjects = function(name,...)
-			Spice.Theming.getTheme(name).Objects = {}
-			Spice.Theming.insertObjects(...)
-		end;
-		insertObject = function(name,obj,...)
-			obj = Spice.Instance.getInstanceOf(obj)
-			Spice.Theming.getObjects(name)[obj] = {}
-			local ob = Spice.Theming.getObjects(name)[obj]
-			local args = {...}
-			local count = 1
-			for i,val in next,args do
-				if type(val) == 'string' and i == count and Spice.Properties.hasProperty(obj,Spice.Properties[val]) then
-					count = count + 1
-					val = Spice.Properties[val]
-					Spice.Theming.insertProperty(name,obj,val,type(args[count]) == 'number' and args[count] or nil)
-					if type(args[count]) == 'number' then
-						count = count + 1
-					end
-				end				
+			},{
+		__index = function(self,nam)
+			if rawget(self,nam) then
+				return rawget(self,nam)
 			end
-		end;
-		insertProperty = function(name,obj,prop,index)
-			obj = Spice.Instance.getInstanceOf(obj)
-			local objs = Spice.Theming.getObjects(name,obj)
-			objs[prop] = index or 1
-			obj[prop] = Spice.Theming.getValues(name,index or 1)
-		end;
-		insertObjects = function(name,...)
-			for i,v in next,{...} do
-				Spice.Theme.insertObject(name,unpack(type(v) == 'table' and v and v or {v}))
-			end
-		end;
-		syncTheme = function(name)
-			for i,theme in next, name and {Spice.Theming.getTheme(name)} or getmetatable(Spice.Theming).Themes do
-				local val,objs = theme.Values,theme.Objects
-				for obj, data in next, objs do
-					for prop,index in next,data do
-						obj[prop] = val[index]
-					end
+			for i,v in next, self do
+				if rawget(v,nam) then
+					return rawget(v,nam)
 				end
 			end
-		end;
-	},{
-		Themes = {};
-	});
-	Instance = setmetatable({
-		newClass = function(name,funct)
-			local self = Spice.Instance
-			local pt = Spice.Table
-			getmetatable(self).Classes[name] = setmetatable({funct,Objects = {}},{
-					__call = function(self,...)
-						return self[1](...)
-					end;
-					__index = function(self,ind)
-						return pt.contains(self.Objects,ind)
-					end;
-				})
-		end;
-		isA = function(is,a)
-			local self = Spice.Instance
-			if self.isAClass(is) then
-				is = Instance.new(is)
-				return is:IsA(a)
-			end
-			return false
-		end;
-		isAClass = function(is,custom)
-			if pcall(function() return Instance.new(is) end) or custom and getmetatable(Spice.Instance).Classes[is] then
-				return true
-			else
-				return false
-			end
-		end;
-		newPure = function(class,...)
-			local args = {...}
-			if type(args[#args]) ~= 'table' then
-				table.insert(args,{})
-			end
-			table.insert(args[#args],true)
-			return Spice.Instance.new(class,unpack(args))
-		end;
-		new = function(class,...)
-			local self = Spice.Instance
-			local pt = Spice.Table
-			local args,storage,new,parent,properties = {...},getmetatable(self).Classes
-			if typeof(args[1]) == 'Instance' or self.isAnObject(args[1]) then
-				parent = self.getInstanceOf(args[1])
-				table.remove(args,1)
-			end
-			if type(args[#args]) == 'table' then
-				properties = args[#args]
-				table.remove(args,#args)
-			end
-			new = pt.find(storage,class) and pt.find(storage,class)(unpack(args)) or Instance.new(class)
-			new.Parent = parent
-			local a = next(properties or {})
-			if type(a) ~= 'number' then
-				Spice.Properties.setPropertiesToDefault(new)
-			else
-				table.remove(properties,a)
-			end		
-			Spice.Properties.setProperties(new,properties or {})
-			return new
-		end;
-		newInstance = function(class,parent,props)
-			local new = Instance.new(class)
-			local parent = Spice.Instance.getInstanceOf(parent)
-			props = props or type(parent) == 'table' and parent
-			parent = type(parent) ~= 'table' and parent or nil
-			local a = next(props or {})
-			return Spice.Properties.setProperties(Instance.new(class,parent),props or {})
-		end;
-		newObject = function(...)
-			local function insert(who)
-				rawset(getmetatable(Spice.Instance).Objects,who.Instance,who)
-			end
-			local args,obj,class,parent,props = {...},{}
-			for i,v in next,args do
-				class = type(v) == 'string' and Spice.Instance.isAClass(v) and v or class
-				parent = typeof(v) == 'Instance' and v or parent
-				props = type(v) == 'table' and Spice.Table.length(obj) > 0 and v or props
-				obj = type(v) == 'table' and Spice.Table.length(obj) == 0 and v or obj
-			end
-			local ins = Spice.Instance.newInstance(class,parent,props)
-			local new = {Instance = ins,Object = obj}
-			local newmeta = {
-				Properties = {Index = {}, NewIndex = {}};
-				__index = function(self,ind)
-					local pro = getmetatable(self).Properties
-					if Spice.Table.contains(pro.Index,ind) then
-						local ret = Spice.Table.find(pro.Index,ind)
-						return type(ret) ~= 'function' and ret or ret(self)
-					elseif Spice.Table.contains(self.Object,ind) or not Spice.Properties.hasProperty(self.Instance,ind) then
-						return Spice.Table.find(self.Object,ind)
-					elseif Spice.Properties.hasProperty(self.Instance,ind) then
-						return self.Instance[Spice.Properties[ind]]
-					end
-				end;
-				__newindex = function(self,ind,new)
-					local pro = getmetatable(self).Properties
-					if Spice.Table.contains(pro.NewIndex,ind) then
-						Spice.Table.find(pro.NewIndex,ind)(self,new)
-					elseif Spice.Table.contains(self.Object,ind) or not Spice.Properties.hasProperty(self.Instance,ind) or type(new) == 'function' then
-						rawset(self.Object,ind,new)
-					elseif Spice.Properties.hasProperty(self.Instance,ind) then
-						self.Instance[Spice.Properties[ind]] = new
-					end
-				end;
-				__call = function(self,prop)
-					Spice.Properties.setProperties(self.Instance,prop)
-				end;
-			}
-			function new:Index(name,what)
-				rawset(getmetatable(self).Properties.Index,name,what)
-			end;
-			function new:NewIndex(name,what)
-				if type(what) == 'function' then
-					rawset(getmetatable(self).Properties.NewIndex,name,what)
-				end
-			end;
-			function new:Clone(parent,prop)
-				return Spice.cloneObject(self,parent,prop)
-			end;
-			setmetatable(new,newmeta)
-			insert(new)
-			return new
-		end;
-		cloneObject = function(obj,parent,prop)
-			local ins = obj.Instance:Clone()
-			ins.Parent = parent
-			local clone = Spice.Table.clone(obj)
-			clone.Instance = ins
-			Spice.setProperties(clone.Instance, prop and prop or {})
-			rawset(getmetatable(Spice.Instance).Objects,clone.Instance,clone)
-			return clone
-		end;
-		getInstanceOf = function(who)
-			local self = getmetatable(Spice.Instance).Objects
-			return Spice.Table.indexOf(self,who) or who
-		end;
-		getObjectOf = function(who)
-			local self = getmetatable(Spice.Instance).Objects
-			return Spice.Table.find(self,who) or nil
-		end;
-		isAnObject = function(who)
-			return Spice.Instance.getObjectOf(who) and true or false
-		end;
-		getAncestors = function(who)
-			local anc = {game}
-			who = Spice.Instance.getInstanceOf(who)
-			local chain = Spice.Misc.stringFilterOut(who:GetFullName(),'%.','game',nil,true)
-			local ind = game
-			for i,v in next,chain do
-				ind = ind[v]
-				table.insert(anc,ind)
-			end
-			return Spice.Table.pack(Spice.Table.reverse(anc),2)
-		end;
-	},{
-		Classes = {};
-		Objects = {};
-	});
-		},{
-	__index = function(self,nam)
-		if rawget(self,nam) then
-			return rawget(self,nam)
 		end
-		for i,v in next, self do
-			if rawget(v,nam) then
-				return rawget(v,nam)
-			end
-		end
-	end
 })
 table.sort(getmetatable(Spice.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
-	

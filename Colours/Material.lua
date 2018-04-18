@@ -4,7 +4,6 @@ Spice.Color.fromMaterial = function(name,i,ac)
 	return id and Spice.Color.getColor(name,id,'Material',ac and 'Accent')
 end;
 
---Colours
 Spice.Color.insertColor('Red',{Spice.Color.fromRGB(255, 235, 238),Spice.Color.fromRGB(255, 205, 210),Spice.Color.fromRGB(239, 154, 154),Spice.Color.fromRGB(229, 115, 115),Spice.Color.fromRGB(239, 83, 80),Spice.Color.fromRGB(244, 67, 54),Spice.Color.fromRGB(229, 57, 53),Spice.Color.fromRGB(211, 47, 47),Spice.Color.fromRGB(198, 40, 40),Spice.Color.fromRGB(183, 28, 28),}, 'Material')
 Spice.Color.insertColor('Pink',{Spice.Color.fromRGB(252, 228, 236),Spice.Color.fromRGB(248, 187, 208),Spice.Color.fromRGB(244, 143, 177),Spice.Color.fromRGB(240, 98, 146),Spice.Color.fromRGB(236, 64, 122),Spice.Color.fromRGB(233, 30, 99),Spice.Color.fromRGB(216, 27, 96),Spice.Color.fromRGB(194, 24, 91),Spice.Color.fromRGB(173, 20, 87),Spice.Color.fromRGB(136, 14, 79),}, 'Material')
 Spice.Color.insertColor('Purple',{Spice.Color.fromRGB(243, 229, 245),Spice.Color.fromRGB(225, 190, 231),Spice.Color.fromRGB(206, 147, 216),Spice.Color.fromRGB(186, 104, 200),Spice.Color.fromRGB(171, 71, 188),Spice.Color.fromRGB(156, 39, 176),Spice.Color.fromRGB(142, 36, 170),Spice.Color.fromRGB(123, 31, 162),Spice.Color.fromRGB(106, 27, 154),Spice.Color.fromRGB(74, 20, 140),}, 'Material')

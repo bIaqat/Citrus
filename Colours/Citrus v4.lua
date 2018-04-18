@@ -3,11 +3,13 @@ function citrusColor(name,main,inverse,...)
 	for i,v in pairs(main)do
 		main[i] = Spice.Color.fromHex(v)
 	end
+	local inv = {}
 	for i,v in pairs(inverse)do
 		inverse[i] = Spice.Color.fromHex(v)
+		inv[#inverse-i+1] = inverse[i]
 	end
 	local new = main
-	main.Inverse = inverse
+	main.Inverse = inv
 	Spice.Color.insertColor(name,new,'CitrusV4')
 end
 
@@ -66,4 +68,3 @@ citrusColor('Pink',{'EA8ADF','E060D1','CF3FBA','C431AE','9E1F8B','891A7A','77116
 citrusColor('Hot pink',{'EA8AB7','E0609C','CF3F7E','C43171','9E1F56','891A4C','771141'},
 	{'EE88B8','E576A8','E06198','CE3B7B','C0306F','9F1F5B','751542'},'Rose'
 )
-

@@ -1,10 +1,10 @@
 Spice.Instance.newClass("RoundedFrame",function(round)
 	round = round or 15;
-	local ud,v2 = Spice.Positioning.new, Spice.Positioning.toVector2
+	local ud,v2 = Spice.Positioning.new, Spice.Positioning.fromVector2
 	local Class = {
 		Round = round;
 		setRound = function(self,new,d)
-			if self.Object.Round ~= new then
+			if self.Object.Round ~= new or d then
 				self.Object.Round = new
 				if self.RoundValue.Value ~= self.Object.Value then 
 					self.RoundValue.Value = new
@@ -46,7 +46,7 @@ Spice.Instance.newClass("RoundedFrame",function(round)
 		setBorder = function(self,new)
 			if new > 0 and self.Transparency <= 0 then
 				self.Rounded.Border.Visible = true
-				self.Rounded.Border.Size = ud(1,new,3)
+				self.Rounded.Border.Size = ud(1,new*2,3)
 			else
 				self.Rounded.Border.Visible = false
 				self.Rounded.Border.Size = ud(1,0,3)
@@ -72,7 +72,6 @@ Spice.Instance.newClass("RoundedFrame",function(round)
 		end
 	}
 	local rounded = Spice.Instance.newInstance('Frame',{siz = ud(1),trans = 1,nam = 'Rounded'})
-	
 	for i = 1,4 do
 		local stuff = {ud(0,0,1),ud(1,0,1),ud(0,1,1),ud(1,1,1),v2(0,0),v2(1,0),v2(0,1),v2(1,1),{-1,-1},{1,-1},{-1,1},{1,1}}
 		local c = Spice.Instance.new("Circle",rounded)
@@ -135,9 +134,11 @@ Spice.Instance.newClass("RoundedFrame",function(round)
 	end)
 
 	new.Clone = function(self,parent,prop)
-		local clone = Spice.cloneObject(self,parent,prop)
+		return error'Cloning this object is unavaiable at this time.'
+		--[[
+		local clone = Spice.Instance.cloneObject(self,parent,prop)
 		clone:resetSignal()
-		return clone
+		return clone]]
 	end;
 	new:resetSignal()
 	rounded.Parent = new.Instance

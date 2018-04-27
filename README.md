@@ -3,7 +3,7 @@
 
 # ToDo/Ideas
 ```
-*Key*
+Key
 ✓ | complete
 ○ | actively working on
 ```

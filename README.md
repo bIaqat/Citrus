@@ -4,6 +4,7 @@
 # ToDo/Ideas
 
 *✓ | complete
+
  ○ | actively working on*
 
 * Remake Color.editHSV

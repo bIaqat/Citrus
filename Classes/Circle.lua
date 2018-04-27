@@ -1,4 +1,4 @@
---non custom instance
+--non object
 Spice.Instance.newClass("Circle",function(siz,typ)
 	local circle
 	if typ then
@@ -10,7 +10,7 @@ Spice.Instance.newClass("Circle",function(siz,typ)
 	return circle
 end)
 
---custom instance
+--object
 Spice.Instance.newClass("Circle",function(rad,typ)
 	local circle
 	local obj = {Radius = rad or 0,ClassName = 'Circle',GetAncestors = function(self)

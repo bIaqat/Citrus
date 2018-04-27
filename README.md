@@ -3,10 +3,11 @@
 
 # ToDo/Ideas
 
-*✓ | complete*
-
- *○ | actively working on*
-
+`Key`
+```
+✓ | complete
+ ○ | actively working on
+```
 * Remake Color.editHSV
 * Make Advanced Text Editor
 * Advanced Theming

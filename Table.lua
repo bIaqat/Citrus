@@ -88,7 +88,7 @@ Table = {
 	find = function(tabl,this)
 		return Spice.getArgument(2,Spice.Table.contains(tabl,this))
 	end;
-	search = function(tabl,this,extra)
+	search = function(tabl,this,extra,keep)
 		if not getmetatable(tabl) then setmetatable(tabl,{}) end
 		local meta = getmetatable(tabl)
 		if not meta['0US3D'] then
@@ -121,7 +121,7 @@ Table = {
 		local resin = Spice.Table.indexOf(tabl,likely[1])
 		local firstresult = tabl[resin]
 		used[this] = {firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely}
-		return firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely
+		return keep and #likely > 0 and likely or firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely
 	end;
 	anonSetMetatable = function(tabl,set)
 		local old = getmetatable(tabl)

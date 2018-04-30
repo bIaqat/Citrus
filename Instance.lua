@@ -47,7 +47,7 @@ Instance = setmetatable({
 			table.remove(args,#args)
 		end
 		new = pt.find(storage,class) and pt.find(storage,class)(unpack(args)) or Instance.new(class)
-		new.Parent = parent
+		new.Parent = parent or new.Parent
 		local a = next(properties or {})
 		if type(a) ~= 'number' then
 			Spice.Properties.setPropertiesToDefault(new)
@@ -62,7 +62,6 @@ Instance = setmetatable({
 		local parent = Spice.Instance.getInstanceOf(parent)
 		props = props or type(parent) == 'table' and parent
 		parent = type(parent) ~= 'table' and parent or nil
-		local a = next(props or {})
 		return Spice.Properties.setProperties(Instance.new(class,parent),props or {})
 	end;
 	newObject = function(...)

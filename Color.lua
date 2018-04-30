@@ -159,6 +159,9 @@ Color = setmetatable({
 		local h,s,v = Spice.Color.toHSV(color)
 		return Spice.Color.fromHSV((h + 180) % 360, v, s)
 	end;
+	random = function()
+		return Color.fromRGB(math.random(1,255),math.random(1,255),math.random(1,255))
+	end;
 	getObjectsOfColor = function(color,directory)
 		local objs = {}
 		for i,obj in pairs(Spice.Instance:getInstanceOf(directory):GetDescendants())do

@@ -13,3 +13,5 @@
 * `○` Remake Rounded Frame (more organized) 
 * Make guidelines
 * Tutorials and Documentation
+* Custom Lerping
+* UDim2 X and Y Seperation lerping

@@ -2,17 +2,34 @@ Properties = setmetatable({
 	getDefault = function(classname)
 		local def = {}
 		for i,v in next, getmetatable(Spice.Properties).Default do
-			if Spice.Instance.isA(classname,i) or classname == i or i == 'GuiText' and classname:find'Text' then
-				table.insert(def,v)
+			if type(i) == 'number' then
+				for i,v in next, v do
+					if Spice.Instance.isA(classname,i) or classname == i or (i == 'GuiText' and classname:find'Text') then
+						table.insert(def,Spice.Table.clone(v))
+					end
+				end
+			else
+				if Spice.Instance.isA(classname,i) or classname == i or (i == 'GuiText' and classname:find'Text') then
+					table.insert(def,Spice.Table.clone(v))
+				end					
 			end
 		end
 		for i = 2,#def do
-			Spice.Table.merge(def[i],def[1])
+			def[1] = Spice.Table.mergeTo(def[i],def[1])
 		end
 		return def[1]
 	end;
-	setDefault = function(classname,properties)
-		getmetatable(Spice.Properties).Default[classname] = properties;
+	setDefault = function(classname,properties,arch)
+		if arch then
+			local d = getmetatable(Spice.Properties).Default
+			if not d[arch] then
+				d[arch] = {[classname] = properties}
+			else
+				d[arch][classname] = properties
+			end
+		else
+			getmetatable(Spice.Properties).Default[classname] = properties
+		end
 	end;
 	setPropertiesToDefault = function(who)
 		Spice.Properties.setProperties(who,Spice.Properties.getDefault(who.ClassName) or {})
@@ -28,7 +45,7 @@ Properties = setmetatable({
 						return true
 					end
 					for i = 2,#self do
-						if self[i]:lower() == 'all' or indexed:IsA(self[i]) or self[i] == 'GuiText' and indexed.ClassName:find'Text' then
+						if self[i]:lower() == 'all' or indexed:IsA(self[i]) or (self[i] == 'GuiText' and indexed.ClassName:find'Text') then
 							return true
 						end
 					end
@@ -56,34 +73,39 @@ Properties = setmetatable({
 		return new
 	end;
 	setProperties = function(who,props)
+		local vanil = who
 		who = Spice.Instance.getInstanceOf(who)
 		local c = getmetatable(Spice.Properties).Custom
 		for i,v in next,props do
+			local hasnormal, hassub =  pcall(function() return vanil[i] and true or false end),pcall(function() return vanil[Spice.Properties[i]] and true or false end)
 			if type(i) == 'string' then
 				local custom,cargs, normal
 				if c[i] and c[i][who] then
 					cargs = v
 					if type(cargs) ~= 'table' then cargs = {cargs} end
-					--custom object check
-					--c[i](who,unpack(v))
 					custom = c(i)
 				end
-				if Spice.Properties[i]:find'Color3' and type(v) == 'string' or type(v) == 'table' then
+				if Spice.Properties[i]:find'Color3' and (type(v) == 'string' or type(v) == 'table') then
 					v = type(v) == 'table' and v or {v}
-					Spice.Theming.insertObject(v[1],who,i,unpack(Spice.Table.pack(v,2) or {}))
-				elseif Spice.Properties.hasProperty(who,i)  then
-					normal = Spice.Properties[i]
+					Spice.Theming.insertObject(v[1],vanil,Spice.Properties[i],unpack(Spice.Table.pack(v,2) or {}))
+				elseif hasnormal or hassub then
+					local normal
+					if hasnormal then
+						normal = i
+					else
+						normal = Spice.Properties[i]
+					end
 					if custom and custom <= normal then
 						c[i](who,unpack(cargs))
 					else
-						pcall(function() who[normal] = v end)
+						pcall(function() vanil[normal] = v end)
 					end
 				elseif custom then
 					c[i](who,unpack(cargs))
 				end
 			end
 		end
-		return who
+		return vanil
 	end;
 	getObjectOfProperty = function(property,directory)
 		directory = Spice.Instance.getInstanceOf(directory)
@@ -137,3 +159,4 @@ Properties = setmetatable({
 		'AbsoluteContentSize','FillDirection','HorizontalAlignment','SortOrder','VerticalAlignment','Padding','Animated','Circular','CurrentPage','EasingDirection','EasingStyle','GamepadInputEnabled','ScrollWhellInputEnabled','TweenTime','TouchImputEnable','FillEmptySpaceColumns','FillEmptySpaceRows','MajorAxis','PaddingBottom','PaddingLeft','PaddingRight','PaddingTop','Scale'
 	}
 });
+table.sort(getmetatable(Spice.Properties).RobloxAPI,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);

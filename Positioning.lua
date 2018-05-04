@@ -1,7 +1,7 @@
 Positioning = {
 	new = function(...)
 		local args = {...}
-		if #args == 4 then
+		if #args == 4 or (typeof(args[1]) == 'UDim' or typeof(args[2]) == 'UDim')  then
 			return UDim2.new(unpack(args))
 		else
 			local a,b  = args[1], args[3] == nil and args[1] or args[2]

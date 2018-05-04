@@ -1,5 +1,5 @@
 Spice.Properties.new("Round",function(who, ...)
-	local round = Spice.Instance.new('RoundedObject',who,{Size = UDim2.new(1,0,1,0), Name = 'RoundedGuiObject'})
+	local round = Spice.Instance.new('RoundedGuiObject',{Size = UDim2.new(1,0,1,0), Name = 'RoundedGuiObject'})
 	local setRound = function(who,...)
 		local function getRadius(...)
 			local args = type(({...})[1]) == 'table' and ({...})[1] or {...}
@@ -21,4 +21,6 @@ Spice.Properties.new("Round",function(who, ...)
 		val.Corner_4.Value = rad[4]
 	end
 	setRound(round,...)
+	who.ZIndex = who.ZIndex + 1
+	round.Parent = who
 end)

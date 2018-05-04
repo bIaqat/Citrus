@@ -26,3 +26,7 @@ Spice.Properties.new("Draggable",function(who, ...)
 	who.Active = true
 	who.Draggable = true
 end)
+Spice.Properties.new("Draggable",function(who, ...)
+	who.Active = true
+	who.Draggable = true
+end)

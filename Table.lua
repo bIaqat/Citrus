@@ -15,11 +15,15 @@ Table = {
 		end
 		return new
 	end;
-	merge = function(from,to)
+	mergeTo = function(from,to)
 		for i,v in next, from do
 			to[i] = v
 		end
 		return to
+	end;
+	merge = function(a,b)
+		local a,b = Spice.Table.clone(a), Spice.Table.clone(b)
+		return Spice.Table.mergeTo(b,a)
 	end;
 	clone = function(tab)
 		local clone = {}
@@ -31,7 +35,7 @@ Table = {
 					setmetatable(clone[i],metaclone)
 				end
 			else
-				clone[i] = v
+				clone[i] = Spice.Instance.getObjectOf(v) or v
 			end
 		end
 		if getmetatable(tab) then
@@ -96,14 +100,18 @@ Table = {
 		end
 		local used = meta['0US3D']
 		local likely = {}
-		if Spice.Table.find(used,this) then
-			return unpack(Spice.Table.find(used,this))
-		end		
-		if Spice.Table.find(tabl,this) then
-			used[this] = {Spice.Table.find(tabl,this)}
-			return Spice.Table.find(tabl,this)
+		if used[this] then
+			return unpack(used[this])
+		end
+		if Spice.Table.contains(tabl,this) then
+			local found = Spice.Table.find(tabl,this)
+			if not extra then used[this] = {found} return found end
+			table.insert(likely, found)
 		end
 		for i,v in next,tabl do
+			if typeof(v) == 'Instance' then
+				i = v.Name
+			end
 			if type(i) == 'string' or type(v) == 'string' then
 				local subject = type(i) == 'string' and i or type(v) == 'string' and v
 				local caps = Spice.Misc.stringFilterOut(subject,'%u',nil,false,true)
@@ -113,14 +121,14 @@ Table = {
 						used[this] = {v, i}
 						return v, i
 					end
-					table.insert(likely,subject)
+					table.insert(likely,v)
 				end
 			end
 		end
 		table.sort(likely,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
 		local resin = Spice.Table.indexOf(tabl,likely[1])
 		local firstresult = tabl[resin]
-		used[this] = {firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely}
+		used[this] = {keep and #likely > 0 and likely or firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely}
 		return keep and #likely > 0 and likely or firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely
 	end;
 	anonSetMetatable = function(tabl,set)

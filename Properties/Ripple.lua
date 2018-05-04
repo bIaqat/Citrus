@@ -11,18 +11,24 @@ Spice.Properties.new("Ripple",function(button,...)
 			circle = Spice.Instance.newInstance("ImageLabel",Spice.Table.merge(props,{Image = 'rbxassetid://1533003925'}))
 		end
 		local who = circle
-		local color, timer, typ, siz, lightness = Color3.new(0,0,0), .8, Spice.Misc.dynamicType(who), who.Parent:IsA'GuiObject' and (who.Parent.AbsoluteSize.X > who.Parent.AbsoluteSize.Y and who.Parent.AbsoluteSize.X or who.Parent.AbsoluteSize.Y)
+		local color, timer, typ, siz, lightness = Color3.new(0,0,0), .8, Spice.Misc.dynamicProperty(who), who.Parent:IsA'GuiObject' and (who.Parent.AbsoluteSize.X > who.Parent.AbsoluteSize.Y and who.Parent.AbsoluteSize.X or who.Parent.AbsoluteSize.Y)
+		local mid = false
 		for i,v in next, args do
 			typ = type(v) == 'string' and v or typ
-			color = type(v) == 'Color3' and v or color
+			color = typeof(v) == 'Color3' and v or color
 			timer = lightness and type(v) == 'number' and v or timer
 			lightness = not lightness and type(v) == 'number' and v or lightness
+			mid = type(v) == 'boolean' and v or mid
 		end
 		if not lightness then lightness = .85 end
-		if not siz then siz = who.AbsoluteSize.X * 5 end
 		Spice.Properties.setProperties(who,{[typ..'Color3'] = color, [typ..'Transparency'] = lightness})
 		Spice.Misc.destroyIn(who,timer + .01)
-		Spice.Positioning.tweenObject(who,'siz',UDim2.new(0,siz,0,siz),timer,'Sine','Out')
+		siz = siz*1.5
+		if not mid then
+			Spice.Positioning.tweenObject(who,'siz',UDim2.new(0,siz,0,siz),timer,'Sine','Out')
+		else
+			Spice.Positioning.tweenObject(who,'both',UDim2.new(.5, 0, .5, 0),UDim2.new(0,siz,0,siz),timer,'Quad','Out')
+		end
 		Spice.Misc.tweenService(who,'ImageTransparency',1,timer,'Sine','Out')
 	end)
 end, 'GuiButton')

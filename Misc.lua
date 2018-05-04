@@ -1,4 +1,43 @@
 Misc = {
+	getPlayer = function(speaker, ...)
+		local players = setmetatable({},{
+			__call = function(self, plr)
+				if not Spice.Table.contains(self,plr) then
+					table.insert(self,plr)
+				end
+			end
+		})
+		local gp = game:GetService("Players")
+		for _,v in next, {...} do
+			if v == 'all' then
+				for _,plr in next, gp:GetPlayers() do
+					players(plr)
+				end
+			elseif v == 'others' then
+				for _, plr in next, gp:Players() do
+					if plr ~= speaker then
+						players(plr)
+					end
+				end
+			elseif v == 'me' then
+				players(speaker)
+			else
+				local results = Spice.Table.search(gp:GetPlayers(), v, true, true)
+				for i, plr in next, results do
+					print(typeof(plr), plr, typeof(Spice.Table.search(gp:GetPlayers(), v)))
+					players(plr)
+				end
+			end
+		end
+		return setmetatable(players,{})
+	end;
+	doAfter = function(wai,fun,...)
+		local args = {...}
+		spawn(function()
+			wait(wai)
+			do fun(unpack(args)) end
+		end)
+	end;
 	runTimer = function()
 		return setmetatable({time = 0,running = false},{
 			__call = function(self,start)
@@ -10,7 +49,7 @@ Misc = {
 							self.time = self.time + .01
 						end
 					end)()
-					return true
+					return true, self.time
 				else
 					self.running = false
 					gettime = self.time
@@ -98,14 +137,14 @@ Misc = {
 		out = tostr and table.concat(out) or out
 		return flip and out or filter, flip and filter or out
 	end;
-	dynamicType = function(obj)
+	dynamicProperty = function(obj,to)
 		obj = Spice.Instance.getInstanceOf(obj)
 		if obj.ClassName:find'Text' then
 			return 'Text'
 		elseif obj.ClassName:find'Image' then
 			return 'Image'
 		end
-		return 'Background'
+		return 'Background'..to or ''
 	end;
 	switch = function(...)
 		return setmetatable({filter = {},Default = false,data = {...},

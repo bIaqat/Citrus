@@ -1,14 +1,4 @@
 Settings = setmetatable({
-	getDefault = function(classname)
-		for i,v in next, getmetatable(Spice.Settings).Default do
-			if Spice.Instance.isA(classname,i) or classname == i then
-				return v
-			end
-		end
-	end;
-	setDefault = function(classname,properties)
-		getmetatable(Spice.Settings).Default[classname] = properties;
-	end;
 	newList = function(name)
 		getmetatable(Spice.Settings).Settings[name] = {};
 	end;
@@ -87,4 +77,3 @@ Settings = setmetatable({
 		MAIN = {};
 	};
 });
-		

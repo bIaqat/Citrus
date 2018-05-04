@@ -21,7 +21,7 @@ Theming = setmetatable({
 				Spice.Theming.setTheme(self,...)
 			end;
 			Insert = function(self,...)
-				Spice.Theming.insertObjectToTheme(self,...)
+				Spice.Theming.insertObject(self,...)
 			end;
 			Sync = function(self,...)
 				Spice.Theming.sync(self,...)
@@ -44,7 +44,7 @@ Theming = setmetatable({
 		end
 		local run = theme.AutoSync and theme:Sync()
 	end;
-	insertObjectToTheme = function(name,obj,prop,ind)
+	insertObject = function(name,obj,prop,ind)
 		local theme = type(name) == 'table' and name or Spice.Theming.getTheme(name)
 		local value = theme.Values(ind,type(obj[prop]))
 		if not Spice.Instance.isAnObject(obj) then

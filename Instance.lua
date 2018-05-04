@@ -62,6 +62,7 @@ Instance = setmetatable({
 		local parent = Spice.Instance.getInstanceOf(parent)
 		props = props or type(parent) == 'table' and parent
 		parent = type(parent) ~= 'table' and parent or nil
+		local a = next(props or {})
 		return Spice.Properties.setProperties(Instance.new(class,parent),props or {})
 	end;
 	newObject = function(...)
@@ -75,7 +76,7 @@ Instance = setmetatable({
 			props = type(v) == 'table' and Spice.Table.length(obj) > 0 and v or props
 			obj = type(v) == 'table' and Spice.Table.length(obj) == 0 and v or obj
 		end
-		local ins = Spice.Instance.newInstance(class,parent,props)
+		local ins = Spice.Instance.newInstance(class,parent)
 		local new = {Instance = ins,Object = obj}
 		local newmeta = {
 			Properties = {Index = {}, NewIndex = {}};
@@ -117,7 +118,18 @@ Instance = setmetatable({
 		end;
 		setmetatable(new,newmeta)
 		insert(new)
+		Spice.Properties.setProperties(new,props)
 		return new
+	end;
+	clone = function(ins,parent,prop)
+		if type(ins) == 'table' then
+			return Spice.Instance.cloneObject(ins,parent,prop)
+		else
+			local clone = ins:Clone()
+			clone.Parent = typeof(parent) == 'Instance' and parent or nil
+			Spice.Properties.setProperties(clone, prop or type(parent) == 'table' or {})
+			return clone
+		end
 	end;
 	cloneObject = function(obj,parent,prop)
 		local ins = obj.Instance:Clone()

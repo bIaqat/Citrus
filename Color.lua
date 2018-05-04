@@ -85,6 +85,7 @@ Color = setmetatable({
 		end
 		return Spice.Color.fromHSV(unpack(nc))
 	end;
+	
 	setHSV = function(color,...)
 		local args = {...}
 		local nr,ng,nb,nc
@@ -159,9 +160,6 @@ Color = setmetatable({
 		local h,s,v = Spice.Color.toHSV(color)
 		return Spice.Color.fromHSV((h + 180) % 360, v, s)
 	end;
-	random = function()
-		return Color.fromRGB(math.random(1,255),math.random(1,255),math.random(1,255))
-	end;
 	getObjectsOfColor = function(color,directory)
 		local objs = {}
 		for i,obj in pairs(Spice.Instance:getInstanceOf(directory):GetDescendants())do
@@ -203,12 +201,22 @@ Color = setmetatable({
 		end	
 	end;
 	getColor = function(name,id,...)
+		local set = type(id) == 'string' and Spice.Color.getColorSet(name,id,...) or Spice.Color.getColorSet(name,...)
+		return set and set[type(id) == 'number' and id or next(set)]
+	end;
+	getColorSet = function(name,...)
+		local set = {}
 		local index = getmetatable(Spice.Color).Colors
-		for i,v in next,{type(id) == 'string' and id or nil,...} do
+		for i,v in next,{...} do
 			index = Spice.Table.search(index,v)
 		end
-		local col = index[name]
-		return col and col[type(id) == 'number' and id or next(col)]
+		local col = index[name]	
+		for i,v in next, col do
+			if typeof(v) == 'Color3' then
+				set[i] = v
+			end
+		end
+		return set	
 	end;
 	removeColor = function(name,...)
 		local index = getmetatable(Spice.Color).Colors

@@ -69,28 +69,23 @@ Spice.Instance.newClass("RoundedGuiObject",function(radius) --radius is udim2
 		})
 	end
 	local connected
+	local function spacesaver(prop,to)
+		roundFolder.Top[prop] = roundFolder.Parent[prop]
+		roundFolder.Bottom[prop] = roundFolder.Parent[prop]
+		roundFolder.Left[prop] = roundFolder.Parent[prop]
+		roundFolder.Right[prop] = roundFolder.Parent[prop]
+		roundFolder.Center[prop] = roundFolder.Parent[prop]
+		roundFolder.Corner_1[to or prop] = roundFolder.Parent[prop]
+		roundFolder.Corner_2[to or prop] = roundFolder.Parent[prop]
+		roundFolder.Corner_3[to or prop] = roundFolder.Parent[prop]
+		roundFolder.Corner_4[to or prop] = roundFolder.Parent[prop]
+	end
 	local connect = function(prop,to)
 		if connected then connected:Disconnect() end
 		pcall(function()		
-			roundFolder.Top[prop] = roundFolder.Parent[prop]
-			roundFolder.Bottom[prop] = roundFolder.Parent[prop]
-			roundFolder.Left[prop] = roundFolder.Parent[prop]
-			roundFolder.Right[prop] = roundFolder.Parent[prop]
-			roundFolder.Center[prop] = roundFolder.Parent[prop]
-			roundFolder.Corner_1[to or prop] = roundFolder.Parent[prop]
-			roundFolder.Corner_2[to or prop] = roundFolder.Parent[prop]
-			roundFolder.Corner_3[to or prop] = roundFolder.Parent[prop]
-			roundFolder.Corner_4[to or prop] = roundFolder.Parent[prop]
+			spacesaver(prop,to)
 			connected = roundFolder.Parent:GetPropertyChangedSignal(prop):connect(function()
-				roundFolder.Top[prop] = roundFolder.Parent[prop]
-				roundFolder.Bottom[prop] = roundFolder.Parent[prop]
-				roundFolder.Left[prop] = roundFolder.Parent[prop]
-				roundFolder.Right[prop] = roundFolder.Parent[prop]
-				roundFolder.Center[prop] = roundFolder.Parent[prop]
-				roundFolder.Corner_1[to or prop] = roundFolder.Parent[prop]
-				roundFolder.Corner_2[to or prop] = roundFolder.Parent[prop]
-				roundFolder.Corner_3[to or prop] = roundFolder.Parent[prop]
-				roundFolder.Corner_4[to or prop] = roundFolder.Parent[prop]
+				spacesaver(prop,to)
 			end)
 		end)
 	end

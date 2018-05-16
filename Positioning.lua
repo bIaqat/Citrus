@@ -27,31 +27,5 @@ Positioning = {
 	end;
 	fromScale = function(a,b)
 		return UDim2.new(a,0,b,0)
-	end;
-	tweenObject = function(object,typ,...)
-		object = Spice.Instance.getInstanceOf(object)
-		local interupt,udim,udim2,time,style,direction,after = true
-		for i,v in pairs({...})do
-			if typeof(v) == 'UDim2' then
-				udim2 = udim and v or nil
-				udim = udim and udim or v
-			elseif type(v) == 'function' then
-				after = v
-			elseif type(v) == 'boolean' then
-				interupt = v
-			elseif type(v) == 'number' then
-				time = v
-			elseif type(v) == 'string' then
-				style = style and style or v
-				direction = style and nil or v
-			end
-		end
-		if udim2 then
-			object:TweenSizeAndPosition(udim2,udim,direction or 'Out',style or 'Quad',time or .3,interupt,after)
-		elseif typ:find'p' then
-			object:TweenPosition(udim,direction or 'Out',style or 'Quad',time or .3,interupt,after)
-		else
-			object:TweenSize(udim,direction or 'Out',style or 'Quad',time or .3,interupt,after)
-		end
-	end;				
+	end;			
 };

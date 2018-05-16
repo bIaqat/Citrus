@@ -69,7 +69,7 @@ Theming = setmetatable({
 					if not lerp then
 						obj[prop] = value
 					else
-						Spice.Misc.tweenService(obj,prop,value,tim or 1,...)
+						Spice.Tweening.new(obj,prop,value,tim or 1,...)
 					end
 				end
 			end

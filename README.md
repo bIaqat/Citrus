@@ -14,5 +14,5 @@
 * Tutorials and Documentation
 * Custom Lerping
 * UDim2 X and Y Seperation lerping
-* `○` New Color Mixer
 * `○` Finalize Theming
+* `○` New Color Mixer

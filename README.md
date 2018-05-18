@@ -10,8 +10,7 @@
 * Remake Color.editHSV
 * Make Advanced Text Editor
 * `✓` Remake Rounded Frame (more organized) 
-* Give Rounded Frame Bar Subobjects (Topbar, etc)
-* Make guidelines
+* `○` Give Rounded Frame Bar Subobjects (Topbar, etc)
 * Tutorials and Documentation
 * Custom Lerping
 * UDim2 X and Y Seperation lerping

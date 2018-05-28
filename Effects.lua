@@ -61,5 +61,4 @@ Effects = setmetatable({
 },
 {
 	Effects  = {};
-}
-);
+});

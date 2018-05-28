@@ -1,4 +1,10 @@
 Misc = {
+	getTextSize = function(text)
+		if type(text) == 'string' then
+			text = Spice.Instance.new("TextLabel",{Text = text})
+		end
+		return game:GetService("TextService"):GetTextSize(text.Text,text.TextSize,text.Font,text.AbsoluteSize)
+	end;
 	getPlayer = function(speaker, ...)
 		local players = setmetatable({},{
 			__call = function(self, plr)
@@ -29,7 +35,7 @@ Misc = {
 				end
 			end
 		end
-		return setmetatable(players,{})
+		return setmetatable(players,{__call = function(self, func) for i,v in next,self do func(v) end end})
 	end;
 	doAfter = function(wai,fun,...)
 		local args = {...}
@@ -39,23 +45,19 @@ Misc = {
 		end)
 	end;
 	runTimer = function()
-		return setmetatable({time = 0,running = false},{
+		return setmetatable({startTime = 0,running = false},{
 			__call = function(self,start)
 				local gettime
 				if start or not self.running then
 					self.running = true
-					coroutine.wrap(function()
-						while self.running and wait(.01) do
-							self.time = self.time + .01
-						end
-					end)()
-					return true, self.time
+					self.startTime = tick()
+					return true, tick()
 				else
 					self.running = false
-					gettime = self.time
-					self.time = 0
+					gettime = tick() - self.startTime
+					self.startTime = 0
 				end
-				return gettime or self.time
+				return gettime or self.startTime
 			end
 		})
 	end;

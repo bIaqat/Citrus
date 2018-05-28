@@ -1,5 +1,12 @@
 Tweening = {
 	new = function(what,prop,to,...)
+		if type(what) == 'table' and type(what[1]) == 'userdata' then
+			local data = {}
+			for i,what in next,what do
+				data[i] = Spice.Tweening.new(what,prop,to,...)
+			end
+			return data
+		end
 		what = Spice.getInstanceOf(what)
 		local args = {...}
 		local props = {}

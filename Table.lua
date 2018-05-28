@@ -83,14 +83,14 @@ Table = {
 		return new
 	end;
 	indexOf = function(tabl,val)
-		return Spice.getArgument(3,Spice.Table.contains(tabl,val))
+		return Spice.Misc.getArgument(3,Spice.Table.contains(tabl,val))
 	end;
 	valueOfNext = function(tab,nex)
 		local i,v = next(tab,nex)
 		return v
 	end;
 	find = function(tabl,this)
-		return Spice.getArgument(2,Spice.Table.contains(tabl,this))
+		return Spice.Misc.getArgument(2,Spice.Table.contains(tabl,this))
 	end;
 	search = function(tabl,this,extra,keep)
 		if not getmetatable(tabl) then setmetatable(tabl,{}) end
@@ -109,9 +109,6 @@ Table = {
 			table.insert(likely, found)
 		end
 		for i,v in next,tabl do
-			if typeof(v) == 'Instance' then
-				i = v.Name
-			end
 			if type(i) == 'string' or type(v) == 'string' then
 				local subject = type(i) == 'string' and i or type(v) == 'string' and v
 				local caps = Spice.Misc.stringFilterOut(subject,'%u',nil,false,true)

@@ -8,7 +8,7 @@ Spice.Imagery = setmetatable({
 		local ImageLabel = Instance.new('ImageLabel')
 		Spice.Properties.setProperties(ImageLabel,props)
 		local index = getmetatable(Spice.Imagery).Images
-		for i,v in next,... and {...} or {} do
+		for i,v in next,{...} do
 			if index[v] and type(index[v]) ~= 'table' then index[v] = {index[v]} end
 			if not index[v] then index[v] = {} end
 			index = index[v]
@@ -17,7 +17,7 @@ Spice.Imagery = setmetatable({
 	end;
 	get = function(...)
 		local index = getmetatable(Spice.Imagery).Images
-		for i,v in next,... and {...} or {} do
+		for i,v in next, {...} do
 			index = index[v]
 		end
 		return index

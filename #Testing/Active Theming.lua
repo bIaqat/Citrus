@@ -1,4 +1,4 @@
-Theming = setmetatable({
+Spice.Theming = setmetatable({
 	isActive = function(themeName)
 		for i,v in next, getmetatable(Spice.Theming).Active do
 			if v.ThemeName == themeName then
@@ -8,9 +8,9 @@ Theming = setmetatable({
 		return false
 	end;
 	newTheme = function(name,...)
-		getmetatable(Spice.Theming).Themes[name] = {
+		getmetatable(Spice.Theming).Themes[name] = setmetatable({
 			...
-		}
+		},{...})
 	end;
 	setTheme = function(name, ...)
 		local vals = getmetatable(Spice.Theming).Themes[name]
@@ -19,16 +19,23 @@ Theming = setmetatable({
 				vals[i] = v
 			end
 		end
-		local _, active = Spice.Theming.isActive(name) or nil
-		if active then
+		local check, active = Spice.Theming.isActive(name)
+		if check then
 			for object,v in next, active.Objects do
 				for property, index in next, v do
 					pcall(function()
-						object[property] = vals[index]
+						if active.lerp then
+							Spice.Tweening.new(object,property,vals[index],type(active.lerp) == 'table' and unpack(active.lerp) or active.lerp)
+						else
+							object[property] = vals[index]
+						end
 					end)
 				end
 			end
 		end
+	end;
+	themeToDefault = function(name)
+		Spice.Theming.setTheme(name, unpack(getmetatable(getmetatable(Spice.Theming).Themes[name])))
 	end;
 	getTheme = function(name)
 		return getmetatable(Spice.Theming).Themes[name]
@@ -37,6 +44,32 @@ Theming = setmetatable({
 		local act = setmetatable({
 			Objects = {};
 			ThemeName = themeName;
+			lerp = false;
+			Name = name;
+			toTheme = function(self,to)
+				Spice.Theming.set(self.Name, to)
+			end;
+			Insert = function(self, ...)
+				Spice.Theming.insertObject(self.Name, ...)
+			end;
+			Set = function(self, ...)
+				Spice.Theming.setTheme(self.ThemeName, ...)
+			end;
+			Sync = function(self)
+				Spice.Theming.sync(self.Name)
+			end;
+			toDefault = function(self)
+				Spice.Theming.themeToDefault(self.ThemeName)
+			end;
+			setLerpStyle = function(self,tim,...)
+				if not tim then
+					self.lerp = false
+				elseif ... then
+					self.lerp = {tim,...}
+				else
+					self.lerp = tim
+				end
+			end;
 		},{
 			Theme = {};
 			__index = function(self,ind)
@@ -56,6 +89,7 @@ Theming = setmetatable({
 			Spice.Theming.setTheme(themeName,...)
 		end
 		getmetatable(Spice.Theming).Active[name] = act
+		return act
 	end;
 	set = function(name, to)
 		getmetatable(Spice.Theming).Active[name].Theme = to
@@ -63,6 +97,12 @@ Theming = setmetatable({
 	insertObject = function(name,obj,prop,ind)
 		prop = Spice.Properties[prop]
 		local active = getmetatable(Spice.Theming).Active[name]
+		local link = getmetatable(Spice.Theming).ObjectLinks
+		if link[obj] then
+			link[obj][obj][prop] = nil
+		else
+			link[obj] = active.Objects
+		end
 		if not active.Objects[obj] then active.Objects[obj] = {} end
 		active.Objects[obj][prop] = ind or 1
 		obj[prop] = active.Theme[ind or 1]
@@ -72,7 +112,11 @@ Theming = setmetatable({
 		for object,v in next, active.Objects do
 			for property, index in next, v do
 				pcall(function()
-					object[property] = active.Theme[index]
+					if active.lerp then
+						Spice.Tweening.new(object,property,active.Theme[index],type(active.lerp) == 'table' and unpack(active.lerp) or active.lerp)
+					else
+						object[property] = active.Theme[index]
+					end
 				end)
 			end
 		end
@@ -80,4 +124,5 @@ Theming = setmetatable({
 },{
 	Active = {};
 	Themes = {};
+	ObjectLinks = {};
 })

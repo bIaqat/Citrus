@@ -18,7 +18,7 @@
 * Custom Lerping
 * `-	UDim2 X and Y Seperation lerping`
 * `✓	Remake Theming`
-* `○	New Color Mixer`
+* `○`  New Color Mixer
 * `✓	Recreate Instance.newObject (work with namecall)`
 
 

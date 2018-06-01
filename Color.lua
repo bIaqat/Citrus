@@ -85,7 +85,6 @@ Color = setmetatable({
 		end
 		return Spice.Color.fromHSV(unpack(nc))
 	end;
-	
 	setHSV = function(color,...)
 		local args = {...}
 		local nr,ng,nb,nc
@@ -98,7 +97,7 @@ Color = setmetatable({
 			nc[args[2]] = args[1]
 		else
 			for i,v in pairs(nc)do
-				nc[i] = args[i]
+				nc[i] = args[i] and args[i] or nc[i]
 			end
 		end
 		return Spice.Color.fromHSV(unpack(nc))
@@ -171,7 +170,6 @@ Color = setmetatable({
 		end
 		return objs
 	end;
-	
 	insertColor = function(name,col,...)
 		local index = getmetatable(Spice.Color).Colors
 		local subs = {}
@@ -225,7 +223,6 @@ Color = setmetatable({
 		end
 		index[name] = nil
 	end;
-	
 	new = function(...)
 		local args = {...}
 		if type(args[1]) == 'string' then

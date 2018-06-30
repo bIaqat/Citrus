@@ -104,22 +104,22 @@ Instance = setmetatable({
 				local self = getmetatable(self)
 				Spice.Properties.setProperties(self.Instance,prop)
 			end;	
-			__namecall = function(self, ...)
+			__namecall = function(proxy, ...)
 				local args = {...}
 				local name = args[#args]
 				table.remove(args,#args)
-				local self = getmetatable(self)
+				local self = getmetatable(proxy)
 				local default = {
 					Index = function(name,what)
-						rawset(getmetatable(self).Properties.Index,name,what)
+						rawset(self.Index,name,what)
 					end;
 					NewIndex = function(name,what)
 						if type(what) == 'function' then
-							rawset(getmetatable(self).Properties.NewIndex,name,what)
+							rawset(self.NewIndex,name,what)
 						end
 					end;
 					Clone = function(parent,prop)
-						return Spice.Instance.cloneObject(self,parent,prop)
+						return Spice.Instance.cloneObject(proxy,parent,prop)
 					end;
 				}
 				if default[name] then return default[name](unpack(args)) end

@@ -1,12 +1,17 @@
 Table = {
-	insert = function(tabl,...)
-		for i,v in pairs(...) do 
-			if type(v) == 'table' then
-				Spice.Table.insert(tabl,v)
-			else
-				rawset(tabl,i,v)
+	insert = function(tabl, ...)--... inserting
+		local insert
+		insert = function(x)
+			for i,v in next, x do
+				if type(v) == 'table' then
+					insert(v)
+				else
+					rawset(tabl,i,v)
+				end
 			end
-		end
+		end;
+		insert({...})
+		return tabl
 	end;
 	pack = function(tabl,start,en)
 		local new = {}
@@ -21,117 +26,160 @@ Table = {
 		end
 		return to
 	end;
-	merge = function(a,b)
+	mergeClone = function(a,b) --bypasses no call back rule
 		local a,b = Spice.Table.clone(a), Spice.Table.clone(b)
 		return Spice.Table.mergeTo(b,a)
 	end;
 	clone = function(tab)
-		local clone = {}
-		for i,v in next,tab do
-			if type(v) == 'table' then
-				clone[i] = Spice.Table.clone(v)
-				if getmetatable(v) then
-					local metaclone = Spice.Table.clone(getmetatable(v))
-					setmetatable(clone[i],metaclone)
+		local cloned, clone = {}
+		clone = function(x)
+			for i,v in next,x do
+				if type(v) == 'table' then
+					cloned[i] = clone(v)
+					if getmetatable(v) then
+						local metaclone = clone(getmetatable(v))
+						setmetatable(cloned[i],metaclone)
+					end
+				else
+					cloned[i] = v
 				end
-			else
-				clone[i] = Spice.Instance.getObjectOf(v) or v
-			end
+			end	
+			if getmetatable(x) then
+				local metaclone = getmetatable(x)
+				setmetatable(cloned,metaclone)
+			end		
 		end
-		if getmetatable(tab) then
-			local metaclone = getmetatable(tab)
-			setmetatable(clone,metaclone)
-		end
-		return clone
+		clone(tab)
+		return cloned
 	end;
 	contains = function(tabl,contains)
 		for i,v in next,tabl do
-			if v == contains or (typeof(i) == typeof(contains) and v == contains) or i == contains then
-				return true,v,i
+			if v == contains or i == contains then
+				return true
 			end
 		end
 		return nil
 	end;
 	toNumeralIndex = function(tabl)
-		local new = {}
-		for index,v in next,tabl do
-			if type(index) ~= 'number' then
-				table.insert(new,{index,v})
-			else
-				table.insert(new,index,v)
+		for i,v in next, tabl do
+			if type(i) ~= 'number' then
+				table.insert(tabl,v)
+				tabl[i] = nil
 			end
 		end
-		setmetatable(new,{
-				__index = function(self,index)
-					for i,v in next,self do
-						if type(v) == 'table' and v[1] == index then
-							return v[2]
-						end
-					end
-				end
-				})
-		return new
+		return tabl
 	end;
-	length = function(tab)
-		return #Spice.Table.toNumeralIndex(tab)
-	end;
-	reverse = function(tab)
-		local new ={}
-		for i,v in next,tab do
-			table.insert(new,tab[#tab-i+1])
+	length = function(tabl)
+		local count = 0
+		for i,v in next, tab do
+			count = count + 1
 		end
-		return new
+		return count
+	end;
+	reverse = function(tabl)
+		local new = {}
+		for i,v in next, tabl do
+			if type(i) == 'number' then
+				new[#tabl-i+1] = v
+			else
+				new[i] = v
+			end
+			tabl[i] = nil
+		end
+		for i,v in next, new do
+			tabl[i] = v
+		end
+		return tabl
 	end;
 	indexOf = function(tabl,val)
-		return Spice.Misc.getArgument(3,Spice.Table.contains(tabl,val))
-	end;
-	valueOfNext = function(tab,nex)
-		local i,v = next(tab,nex)
-		return v
-	end;
-	find = function(tabl,this)
-		return Spice.Misc.getArgument(2,Spice.Table.contains(tabl,this))
-	end;
-	search = function(tabl,this,extra,keep)
-		if not getmetatable(tabl) then setmetatable(tabl,{}) end
-		local meta = getmetatable(tabl)
-		if not meta['0US3D'] then
-			meta['0US3D'] = {}
+		for i,v in next, tabl do
+			if v == val then
+				return i
+			end
 		end
-		local used = meta['0US3D']
-		local likely = {}
-		if used[this] then
-			return unpack(used[this])
-		end
-		if Spice.Table.contains(tabl,this) then
-			local found = Spice.Table.find(tabl,this)
-			if not extra then used[this] = {found} return found end
-			table.insert(likely, found)
-		end
-		for i,v in next,tabl do
-			if type(i) == 'string' or type(v) == 'string' then
-				local subject = type(i) == 'string' and i or type(v) == 'string' and v
-				local caps = Spice.Misc.stringFilterOut(subject,'%u',nil,false,true)
-				local numc = caps..(subject:match('%d+$') or '')
-				if subject:lower():sub(1,#this) == this:lower() or caps:lower() == this:lower() or numc:lower() == this:lower() then
-					if not extra then
-						used[this] = {v, i}
-						return v, i
-					end
-					table.insert(likely,v)
+	end;
+	find = function(tabl,this,compareFunction, keepFound) --function(this, index, value)
+		local found = {}
+		for i,v in next, tabl do
+			if i == this or v == this or 
+				(type(this) == 'string' and (
+					 type(i) == 'string'  and i:sub(1,#this):lower() == this:lower() or 
+					 type(v) == 'string' and v:sub(1,#this):lower() == this:lower() or
+					 typeof(v) == 'Instance' and v.Name:sub(1,#this):lower() == this:lower()
+				)) or 
+				compareFunction(this, i, v)
+			then
+				if not keepFound then
+					return v, i
+				else
+					table.insert(found,{v,i})
 				end
 			end
 		end
-		table.sort(likely,function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end);
-		local resin = Spice.Table.indexOf(tabl,likely[1])
-		local firstresult = tabl[resin]
-		used[this] = {keep and #likely > 0 and likely or firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely}
-		return keep and #likely > 0 and likely or firstresult and firstresult or false, firstresult and Spice.Table.indexOf(tabl,firstresult), likely
+		if keepFound then return 
+			found
+		end
 	end;
-	anonSetMetatable = function(tabl,set)
-		local old = getmetatable(tabl)
-		local new = Spice.Table.clone(setmetatable(tabl,set))
-		setmetatable(tabl,old)
-		return new
+	search = function(tabl, this, skipStored, keepSimilar, returnFirst, capSearch, Alg) --relies on Table.find; bypasses no call back rule
+		local index, value, capAlg	
+		--Saved Results means less elapsed time if searched again
+		if not getmetatable(tabl) then setmetatable(tabl,{}) end
+		local meta = getmetatable(tabl) 
+		if not meta['SpiceSearchResultsStorage'] then
+			meta['SpiceSearchResultsStorage'] = {}
+		end
+		local usedStorage = meta['SpiceSearchResultsStorage']		
+		--Stops the search or continues
+		local function stopSearch()
+			if value and index then
+				usedStorage[this] = {value, index}
+				return value, index
+			end
+		end		
+		--capSearch function
+		if capSearch then
+			function capAlg(comparative, ind, val)
+				local subject = type(ind) == 'string' and ind or type(val) == 'string' and val
+				if subject then
+					local strin = ''
+					for cap in subject:gmatch('%u') do
+						strin = strin..cap
+					end
+					strin = strin..(subject:match('%d+$') or '')
+					if strin == comparative then
+						return true
+					end
+				end
+				return false
+			end
+		end	
+		--Checks the Used Storage for 'this' and returns if exists
+		if not skipStored then
+			local stored = usedStorage[this]
+			if stored then
+				value, index = stored[1], stored[2]
+			end
+			stopSearch()
+		end	
+		--Checks if 'this' is found with chosen specified means
+		value, index = Spice.Table.find(tabl, this, 
+			capSearch and capAlg or Alg or nil,
+			keepSimilar
+		)
+		stopSearch()		
+		--Returns the results if keepSimilar
+		if keepSimilar and value then
+			table.sort(value,function(a,b)
+				a, b = a[1], b[1]
+				local function get(x) 
+					return type(x) == 'table' and #x or type(x) == 'string' and #x:lower() or type(x) == 'number' and x or typeof(x) == 'Instance' and #x.Name or type(x) == 'boolean' and (x == true and 4 or x == false and 5) 
+				end
+				local lena, lenb = get(a), get(b)
+				if type(a) == 'string' and type(b) == 'string' then if lena == lenb then return a:lower() < b:lower() else  return lena < lenb end end 
+				return lena < lenb
+			end);
+			return returnFirst and value[1][1] or value, returnFirst and value[1][2] or nil
+		end
+		return false
 	end;
 };

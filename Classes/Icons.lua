@@ -1,6 +1,0 @@
-Spice.Instance.newClass("Icon",function(...)
-	return Spice.Iconography.new(...)
-end)
-Spice.Instance.newClass("IconButton",function(...)
-	return Spice.Instance.newInstance("ImageButton",Spice.Table.merge(Spice.Iconography.getIconData(...),{BackgroundTransparency = 1}))
-end)

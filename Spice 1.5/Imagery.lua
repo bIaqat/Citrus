@@ -1,4 +1,4 @@
-Spice.Imagery = setmetatable({
+Imagery = setmetatable({
 	new = function(name, id,props, ...)
 		if type(id) ~= 'string' then id = 'rbxassetid://'..id end
 		if not props then props = {} end

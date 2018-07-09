@@ -98,7 +98,7 @@ Table = {
 			end
 		end
 	end;
-	find = function(tabl,this,compareFunction, keepFound) --function(this, index, value)
+	find = function(tabl,this, keepFound,...) --...compareFunction function(this, index, value)
 		local found = {}
 		for i,v in next, tabl do
 			if i == this or v == this or 
@@ -107,7 +107,9 @@ Table = {
 					 type(v) == 'string' and v:sub(1,#this):lower() == this:lower() or
 					 typeof(v) == 'Instance' and v.Name:sub(1,#this):lower() == this:lower()
 				)) or 
-				compareFunction(this, i, v)
+				for _,compareFunction in next, {...} do
+					compareFunction(this, i, v)
+				end
 			then
 				if not keepFound then
 					return v, i
@@ -120,7 +122,7 @@ Table = {
 			found
 		end
 	end;
-	search = function(tabl, this, skipStored, keepSimilar, returnFirst, capSearch, Alg) --relies on Table.find; bypasses no call back rule
+	search = function(tabl, this, skipStored, keepSimilar, returnFirst, capSearch, ...) --relies on Table.find; bypasses no call back rule
 		local index, value, capAlg	
 		--Saved Results means less elapsed time if searched again
 		if not getmetatable(tabl) then setmetatable(tabl,{}) end
@@ -162,9 +164,8 @@ Table = {
 			stopSearch()
 		end	
 		--Checks if 'this' is found with chosen specified means
-		value, index = Spice.Table.find(tabl, this, 
-			capSearch and capAlg or Alg or nil,
-			keepSimilar
+		value, index = Spice.Table.find(tabl, this, keepSimilar
+			capSearch and capAlg or Alg or nil, ...
 		)
 		stopSearch()		
 		--Returns the results if keepSimilar

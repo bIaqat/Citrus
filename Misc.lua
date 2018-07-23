@@ -46,6 +46,17 @@ Misc = {
 		end
 		return setmetatable(players,{__call = function(self, func) for i,v in next,self do func(v) end end})
 	end;
+<<<<<<< HEAD
+=======
+	--what have a "doAfter" function when there is already a delay(WaitTime, Function) already thonk
+	doAfter = function(wai,fun,...)
+		local args = {...}
+		spawn(function()
+			wait(wai)
+			do fun(unpack(args)) end
+		end)
+	end;
+>>>>>>> 3c933e55aacb9f3e847ccbb4c2de9c03a17a537d
 	runTimer = function()
 		return setmetatable({startTime = 0,running = false},{
 			__call = function(self,start)
@@ -63,20 +74,19 @@ Misc = {
 			end
 		})
 	end;
-	searchAPI = function(link,typ)
-		local tab = {}
-		link = game.HttpService:UrlEncode(link:sub(link:find'?'+1,#link))
-		local proxy = 'https://www.classy-studios.com/APIs/Proxy.php?Subdomain=search&Dir=catalog/json?'
-		if not typ then
-			link = game:GetService'HttpService':JSONDecode(game:GetService'HttpService':GetAsync(proxy..link))
-		else
-			link = game:GetService'HttpService':JSONDecode(game:HttpGetAsync(proxy..link))
+	searchAPI = function(ApiLink, Exploiting)
+		local http = game:GetService'HttpService'
+		local proxyLink = 'https://www.classy-studios.com/APIs/Proxy.php?Subdomain=search&Dir=catalog/json?'
+		local data = {}
+		ApiLink = http:UrlEncode(ApiLink:sub(ApiLink:find'?'+1,#ApiLink))
+		local jsonData
+		jsonData = Exploiting and http:JSONDecode(game:HttpGetAsync(proxyLink..ApiLink))
+			or http:JSONDecode(http:GetAsync(proxyLink..ApiLink))
+		for i,v in next, jsonData do
+			data[v.Name] = v
 		end
-		for i,v in pairs(link)do
-			tab[v.Name] = v
-		end
-		return tab
-	end;
+		return data
+	end
 	getArgument = function(num,...)
 		return ({...})[num]
 	end;

@@ -46,13 +46,6 @@ Misc = {
 		end
 		return setmetatable(players,{__call = function(self, func) for i,v in next,self do func(v) end end})
 	end;
-	doAfter = function(wai,fun,...)
-		local args = {...}
-		spawn(function()
-			wait(wai)
-			do fun(unpack(args)) end
-		end)
-	end;
 	runTimer = function()
 		return setmetatable({startTime = 0,running = false},{
 			__call = function(self,start)

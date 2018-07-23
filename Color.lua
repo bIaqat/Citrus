@@ -73,7 +73,7 @@ Color = {
 		return Color3.fromHSV(1 - h, 1 - s, 1 - v)
 	end;
 	fromStored = function(Name, Key, ...) --... Index
-		local index = Spice.Color.Colors.Storage
+		local index = Spice.Color.Colors
 		for i,v in next, {...} do
 			index = index[v]
 		end
@@ -84,41 +84,50 @@ Color = {
 		local args = {...}
 		return
 			type(args[1]) == 'string' and (args[1]:sub(1,1) == '#' and Spice.Color.fromHex(args[1]) or Spice.Color.fromStored(...)) or
-			args[4] and args[4] == true and Color3.fromHSV(args[1]/360,args[2]/100,args[3]/100) or
-			#args == 3 and Color3.fromRGB(args[1],args[2],args[3]) 
+			args[4] and Color3.fromHSV(args[1]/360,args[2]/100,args[3]/100) or
+			Color3.fromRGB(args[1],args[2],args[3]) 
 	end;
-	Colors = setmetatable({
-		Storage = {};
-		new = function(Name, Color, ...) --Name, ColorSet,...   ... Index
-			local index = Spice.Color.Colors.Storage
-			for i,v in next, {...} do
-				if not index[v] then
-					index[v] = {}
+	Colors = setmetatable({},{
+		__index = function(self,ind)
+			for i,v in next, {
+				new = function(Name, Color, ...) --Name, ColorSet,...   ... Index
+					local index = self
+					for i,v in next, {...} do
+						if not index[v] then
+							index[v] = {}
+						end
+						index = index[v]
+					end
+					if not index[Name] then index[Name] = type(Color) == 'table' and Color or {Color}
+					else
+						for i,v in next, type(Color) == 'table' and Color or {Color}  do
+							index[Name][i] = v
+						end
+					end
+				end;
+				get = function(Name, ...) --... Index
+					local index = self
+					for i,v in next, {...} do
+						index = index[v]
+					end
+					return index[Name]
+				end;
+				remove = function(Name, ...) --... Index
+					local index = sself
+					for i,v in next, {...} do
+						index = index[v]
+					end		
+					index[Name] = nil
+				end;
+			} do
+				local self = getmetatable(self)
+				self.__index = {}
+				self.__index[i] = v
+				if i == ind then
+					return v
 				end
-				index = index[v]
 			end
-			if not index[Name] then index[Name] = type(Color) == 'table' and Color or {Color}
-			else
-				for i,v in next, type(Color) == 'table' and Color or {Color}  do
-					index[Name][i] = v
-				end
-			end
-		end;
-		get = function(Name, ...) --... Index
-			local index = Spice.Color.Colors.Storage
-			for i,v in next, {...} do
-				index = index[v]
-			end
-			return index[Name]
-		end;
-		remove = function(Name, ...) --... Index
-			local index = Spice.Color.Colors.Storage
-			for i,v in next, {...} do
-				index = index[v]
-			end		
-			index[Name] = nil
-		end;
-	},{
-		__index = Spice.Colors.Storage;
-	})
+		end
+	});
+	store = Spice.Color.Colors.new;
 }

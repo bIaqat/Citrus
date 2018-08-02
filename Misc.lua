@@ -46,8 +46,6 @@ Misc = {
 		end
 		return setmetatable(players,{__call = function(self, func) for i,v in next,self do func(v) end end})
 	end;
-<<<<<<< HEAD
-=======
 	--what have a "doAfter" function when there is already a delay(WaitTime, Function) already thonk
 	doAfter = function(wai,fun,...)
 		local args = {...}
@@ -56,7 +54,6 @@ Misc = {
 			do fun(unpack(args)) end
 		end)
 	end;
->>>>>>> 3c933e55aacb9f3e847ccbb4c2de9c03a17a537d
 	runTimer = function()
 		return setmetatable({startTime = 0,running = false},{
 			__call = function(self,start)

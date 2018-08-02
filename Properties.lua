@@ -173,4 +173,4 @@ Properties = setmetatable({
 				end
 			end
 		end;	
-})
+});

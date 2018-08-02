@@ -1,4 +1,4 @@
-Color = {
+Color = setmetatable({
 	fromRGB = function(r,g,b)
 		return Color3.fromRGB(r,g,b)
 	end;
@@ -72,21 +72,6 @@ Color = {
 		local h,s,v = Color3.toHSV(Color)
 		return Color3.fromHSV(1 - h, 1 - s, 1 - v)
 	end;
-	fromStored = function(Name, Key, ...) --... Index
-		local index = Spice.Color.Colors
-		for i,v in next, {...} do
-			index = index[v]
-		end
-		local colors = index[Name]
-		return colors[type(Key) == 'number' and Key or next(colors)]
-	end;
-	new = function(...)
-		local args = {...}
-		return
-			type(args[1]) == 'string' and (args[1]:sub(1,1) == '#' and Spice.Color.fromHex(args[1]) or Spice.Color.fromStored(...)) or
-			args[4] and Color3.fromHSV(args[1]/360,args[2]/100,args[3]/100) or
-			Color3.fromRGB(args[1],args[2],args[3]) 
-	end;
 	Colors = setmetatable({},{
 		__index = function(self,ind)
 			for i,v in next, {
@@ -129,5 +114,32 @@ Color = {
 			end
 		end
 	});
-	store = Spice.Color.Colors.new;
-}
+},{
+	__index = function(self,index)
+		for i,v in next, {
+			fromStored = function(Name, Key, ...) --... Index
+				local index = self.Colors
+				for i,v in next, {...} do
+					index = index[v]
+				end
+				local colors = index[Name]
+				return colors[type(Key) == 'number' and Key or next(colors)]
+			end;
+			new = function(...)
+				local args = {...}
+				return
+					type(args[1]) == 'string' and (args[1]:sub(1,1) == '#' and self.fromHex(args[1]) or self.fromStored(...)) or
+					args[4] and Color3.fromHSV(args[1]/360,args[2]/100,args[3]/100) or
+					Color3.fromRGB(args[1],args[2],args[3]) 
+			end;
+			storeColor = self.Colors.new;
+		} do
+			local self = getmetatable(self)
+			self.__index = {}
+			self.__index[i] = v
+			if i == index then
+				return v
+			end
+		end
+	end
+});

@@ -1,12 +1,15 @@
 Motion = setmetatable({
-	Easings = setmetatable({},{
+	Easings = setmetatable({
+		},{
 		__index = function(self, index)
+			local gelf, ret = getmetatable(self)
+			gelf.__index = {}
 			for i,v in next, {
 				newStyle = function(Name, Types,...) --creates a section for new easings under a keyname such as Quad
 					if ... then Types = self.fromBezier(Types,...) end
 					self[Name] = Types and (type(Types) == 'table' and Types or type(Types) == 'function' and {Out = Types}) or {}
 				end;
-				newStyleType = function(Style, Name, Function,...) --creates a type (typically a direction) for a easing style such as InOut
+				newDirection = function(Style, Name, Function,...) --creates a type (typically a direction) for a easing style such as InOut
 					if ... then Function = self.fromBezier(Function,...) end
 					if not self[Style] then self[Style] = {} end
 					self[Style][Name] = Function
@@ -14,7 +17,7 @@ Motion = setmetatable({
 				getStyle = function(Name)
 					return self[Name]
 				end;
-				getStyleType = function(Style, Type)
+				getDirection = function(Style, Type)
 					return self[Style][Type]
 				end;
 				fromBezier = function(x1, y1, x2, y2)--function from RoStrap
@@ -73,13 +76,10 @@ Motion = setmetatable({
 					end
 				end;
 			} do
-				local self = getmetatable(self)
-				self.__index = {}
-				self.__index[i] = v
-				if i == index then
-					return v
-				end
+				gelf.__index[i] = v
+				if i == index then ret = v end
 			end
+			return ret
 		end;
 	});
  	Lerps = {
@@ -99,17 +99,20 @@ Motion = setmetatable({
 		end
 	};
 },{
-	tweenedObjects = {}
+	tweenedObjects = {};
 	__index = function(self,index)
+		local gelf,ret = getmetatable(self)
+		gelf.__index = {}
 		for i,v in next, {
 			customTween = function(Object, Property, EndValue, Duration, cancel, EasingStyle, EasingDirection, Repeat)
-				if cancel then self.cancelTween(Object) end
-				for i,v in next, type(Property) == 'table' and Property or {Property} do
-					Property[v] = {Object[v],type(EndValue) == 'table' and EndValue[i] or EndValue}
-					Property[v][3] = self.Lerps[typeof(Property[v])]
+				Property = type(Property) == 'table' and Property or {Property}
+				if cancel then self.cancelTween(Object,table.concat(Property)) end
+				for i = 1,#Property do
+					local v = Property[i]
+					Property[v] = {Object[v],type(EndValue) == 'table' and EndValue[i] or EndValue,self.Lerps[typeof(EndValue)]}
 					Property[i] = nil
 				end
-				local easingFunction = EasingStyle and type(EasingStyle) == 'function' and EasingStyle or self.Easings.getType(EasingStyle or 'Quad', EasingDirection or 'Out')
+				local easingFunction = EasingStyle and (type(EasingStyle) == 'function' and EasingStyle or self.Easings.getDirection(EasingStyle, EasingDirection or 'Out'))
 				local time, rep, elapsed
 				local heart = game:GetService('RunService').Heartbeat
 				local function reset()
@@ -120,7 +123,7 @@ Motion = setmetatable({
 				local function tween(en)
 					for i,v in next, Property do
 						if not en then
-							Object[i] = v[3](v[1],v[2], easingFunction(elapsed))
+							Object[i] = v[3](v[1],v[2], easingFunction and easingFunction(elapsed/Duration) or elapsed/Duration)
 						else
 							Object[i] = v[2]
 						end
@@ -162,12 +165,18 @@ Motion = setmetatable({
 					}
 				})
 				tween:Play()
-				table.insert(getmetatable(self).tweenedObjects,tween)
+				local to = getmetatable(self).tweenedObjects
+				if not to[Object] then to[Object] = {} end
+				for i,v in next, Property do
+					to[Object][i] = tween
+				end
 				return tween
 			end;
 			tweenServiceTween = function(Object, Property, EndValue, Duration, cancel, EasingStyle, EasingDirection, Repeat, Reverse, Delay)
-				if cancel then self.cancelTween(Object) end
-				for i,v in next, type(Property) == 'table' and Property or {Property} do
+				local Property = type(Property) == 'table' and Property or {Property}
+				if cancel then self.cancelTween(Object,table.concat(Property)) end
+				for i = 1,#Property do
+					local v = Property[i]
 					Property[v] = type(EndValue) == 'table' and EndValue[i] or EndValue
 					Property[i] = nil
 				end
@@ -175,12 +184,17 @@ Motion = setmetatable({
 					TweenInfo.new(Duration,
 						EasingStyle and (type(EasingStyle) == 'string' and Enum.EasingStyle[EasingStyle] or EasingStyle) or Enum.EasingStyle.Quad,
 						EasingDirection and (type(EasingDirection) == 'string' and Enum.EasingDirection[EasingDirection] or EasingDirection) or Enum.EasingDirection.Out,
-						Repeat or 0, Reverse or false, Delay or 0
+						Repeat and (Repeat == true and -1 or Repeat) or 0, Reverse or false, Delay or 0
 					),
 					Property
 				)
 				tween:Play()
-				table.insert(getmetatable(self).tweenedObjects,tween)
+				local to = getmetatable(self).tweenedObjects
+				if not to[Object] then to[Object] = {} end
+				local str = ''
+				for i,v in next, Property do
+					to[Object][i] = tween
+				end
 				return tween
 			end;
 			lerp = function(BeginingValue, EndValue, Alpha, EasingStyle, EasingDirection)
@@ -192,121 +206,35 @@ Motion = setmetatable({
 					Alpha
 				)
 			end;
-			cancelTween = function(Object)
+			cancelTween = function(Object,Property)
 				pcall(function() --im lazy lol
-					if Object then
-						getmetatable(self).tweenedObjects[Object]:Cancel()
-					else
-						for i,v in next, getmetatable(self).tweenedObjects do
+					if Object and Property then
+						for i,v in next, getmetatable(self).tweenedObjects[Object] do
+							if i:find(Property) then
+								v:Cancel()
+							end
+						end
+					elseif Object then
+						for i,v in next, Object do
 							v:Cancel()
+						end
+					else
+						for i,Object in next, getmetatable(self).tweenedObjects do
+							for i,v in next, Object do
+								v:Cancel()
+							end
 						end
 					end
 				end)
 			end;
-			asymmetricTween = function(Object, Property, End, tim, cancel, easing)--function from RoStrap
-				if cancel then self.cancelTween(Object) end
-				local easing = easing or self.Easings.fromBezier(0.4, 0.0, 0.2, 1)
-				local Heartbeat = game.GetService('RunService').Heartbeat
-				local StartX = Object[Property].X
-				local StartY = Object[Property].Y
-				local EndX = End.X
-				local EndY = End.Y	
-				local XStartScale = StartX.Scale
-				local XStartOffset = StartX.Offset
-				local YStartScale = StartY.Scale
-				local YStartOffset = StartY.Offset	
-				local XScaleChange = EndX.Scale - XStartScale
-				local XOffsetChange = EndX.Offset - XStartOffset
-				local YScaleChange = EndY.Scale - YStartScale
-				local YOffsetChange = EndY.Offset - YStartOffset
-				local ElapsedTime, Connection = 0
-				local Clone = Object:Clone()
-				Clone.Name = ""
-				Clone[Property] = End
-				Clone.Visible = false
-				Clone.Parent = Object.Parent
-				if Object.AbsoluteSize.X * Object.AbsoluteSize.Y < Clone.AbsoluteSize.X * Clone.AbsoluteSize.Y then
-					Clone:Destroy()
-					local Duration = tim or 0.375
-					local HeightStart = Duration*0.1
-					local WidthDuration = Duration*0.75
-					Connection = Heartbeat:Connect(function(Step)
-						ElapsedTime = ElapsedTime + Step
-						if Duration > ElapsedTime then
-							local XScale, XOffset, YScale, YOffset
-
-							if WidthDuration > ElapsedTime then
-								local WidthAlpha = easing(ElapsedTime, 0, 1, WidthDuration)
-								XScale = XStartScale + WidthAlpha*XScaleChange
-								XOffset = StartX.Offset + WidthAlpha*XOffsetChange
-							else
-								XScale = Object[Property].X.Scale
-								XOffset = Object[Property].X.Offset
-							end
-
-							if ElapsedTime > HeightStart then
-								local HeightAlpha = easing(ElapsedTime - HeightStart, 0, 1, Duration)
-								YScale = YStartScale + HeightAlpha*YScaleChange
-								YOffset = YStartOffset + HeightAlpha*YOffsetChange
-							else
-								YScale = YStartScale
-								YOffset = YStartOffset
-							end
-
-							Object[Property] = UDim2.new(math.ceil(XScale), math.ceil(XOffset), math.ceil(YScale), math.ceil(YOffset))
-						else
-							Connection:Disconnect()
-							Object[Property] = End
-						end
-					end)
-				else
-					Clone:Destroy()
-					local Duration = tim or .375
-					local WidthStart = Duration*0.15
-					local HeightDuration = Duration*0.95
-					Connection = Heartbeat:Connect(function(Step)
-						ElapsedTime = ElapsedTime + Step
-						if Duration > ElapsedTime then
-							local XScale, XOffset, YScale, YOffset
-				
-							if HeightDuration > ElapsedTime then
-								local HeightAlpha = easing(ElapsedTime, 0, 1, HeightDuration)
-								YScale = YStartScale + HeightAlpha*YScaleChange
-								YOffset = YStartOffset + HeightAlpha*YOffsetChange
-							else
-								YScale = Object[Property].Y.Scale
-								YOffset = Object[Property].Y.Offset
-							end
-				
-							if ElapsedTime > WidthStart then
-								local WidthAlpha = easing(ElapsedTime - WidthStart, 0, 1, Duration)
-								XScale = XStartScale + WidthAlpha*XScaleChange
-								XOffset = XStartOffset + WidthAlpha*XOffsetChange
-							else
-								XScale = XStartScale
-								XOffset = XStartOffset
-							end
-				
-							Object[Property] = UDim2.new(math.ceil(XScale), math.ceil(XOffset), math.ceil(YScale), math.ceil(YOffset))
-						else
-							Connection:Disconnect()
-							Object[Property] = End
-						end
-					end)
-				end
-				return Connection
-			end;
-			rotate = function(Object, Angle, Custom, ...)
+			rotate = function(Object, Angle, Speed,Custom, ...)
 				local EndValue = Object.Rotation + Angle
-				return Custom and self.customTween(Object,'Rotation',EndValue,...) or self.tweenServiceTween(Object,'Rotation',EndValue,...)
+				return Custom and self.customTween(Object,'Rotation',EndValue,Speed,...) or self.tweenServiceTween(Object,'Rotation',EndValue,Speed,...)
 			end;
 		} do
-			local self = getmetatable(self)
-			self.__index = {}
-			self.__index[i] = v
-			if i == index then
-				return v
-			end
+			gelf.__index[i] = v
+			if i == index then ret = v end
 		end
+		return ret
 	end
 });

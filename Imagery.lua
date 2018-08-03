@@ -1,6 +1,8 @@
 Imagery = setmetatable({
 	Images = setmetatable({},{
 		__index = function(self,index)
+			local gelf, ret = getmetatable(self)
+			gelf.__index = {}
 			for i,v in next, {
 				new = function(Name, ImageId, Props, ...) --... Directory
 					ImageId = type(ImageId) ~= 'string' and 'rbxassetid://'..ImageId or ImageId
@@ -52,36 +54,41 @@ Imagery = setmetatable({
 					end			
 				end;
 			} do
-				local self = getmetatable(self)
-				self.__index = {}
-				self.__index[i] = v
-				if i == index then
-					return v
-				end
+				gelf.__index[i] = v
+				if i == index then ret = v end
 			end
+			return ret
 		end
-	});
+	})},{
 	__index = function(self,index)
+		local gelf,ret = getmetatable(self)
+		gelf.__index = {}
 		for i,v in next, {
-			newInstance = function(LabelOrButton, Parent, Props, ...) --...Directory
-					local image = self.Images.getImage(...)
-					Props.Parent = Parent
-					for i,v in next, Props do
-						image[i] = v
-					end
-					return image
-				end;
+			newInstance = function(Class, Parent, Props, ...) --...Directory
+				local image
+				if Class and Class ~= 'ImageLabel' then
+					image = self.setImage(Class, ...)
+				else
+					image = self.Images.getImage(...)
+				end
+				image.Parent = Parent
+				for i,v in next, Props do
+					image[i] = v
+				end
+				return image
+			end;
 			playGif = function(ImageObject, Speed, Repeat, ...) --...Directory
 				local sheet = self.Images.get(...)
-				ImageObject.onChildAdded:connect(function(who)
+				ImageObject.ChildAdded:connect(function(who)
 					if who.Name == 'STOPGIF' then
 						Repeat = false
-						who:Destroy()
+						game:GetService('Debris'):AddItem(who,.01)
 					end
 				end)
 				spawn(function()
 					repeat
 						for i,image in next, sheet do
+							if not Repeat then break end
 							if typeof(image) == 'Instance' then
 								for i,image in next, {ImageRectOffset = image.ImageRectOffset, ImageRectSize = image.ImageRectSize, ScaleType = image.ScaleType, Image = image.Image, ImageColor3 = image.ImageColor3} do
 									ImageObject[i] = image
@@ -93,21 +100,22 @@ Imagery = setmetatable({
 				end)
 			end;
 			stopGif = function(ImageObject)
-				Instance.new("IntValue",ImageObject).Name = 'STOPGIF' 
+				local stop = Instance.new("IntValue")
+				stop.Name = 'STOPGIF' 
+				stop.Parent = ImageObject
 			end;
 			setImage = function(ImageObject, ...) --...Directory
-				local image = self.getImage(...)
+				if type(ImageObject) == 'string' then ImageObject = Instance.new(ImageObject) end
+				local image = self.Images.getImage(...)
 				for i,v in next, {ImageRectOffset = image.ImageRectOffset, ImageRectSize = image.ImageRectSize, ScaleType = image.ScaleType, Image = image.Image, ImageColor3 = image.ImageColor3} do
 					ImageObject[i] = v
 				end
+				return image
 			end;
 		} do
-			local self = getmetatable(self)
-			self.__index = {}
-			self.__index[i] = v
-			if i == index then
-				return v
-			end
+			gelf.__index[i] = v
+			if i == index then ret = v end
 		end
+		return ret
 	end
 });

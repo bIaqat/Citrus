@@ -1,6 +1,8 @@
 Properties = setmetatable({
 	Default = setmetatable({},{
 		__index = function(self,index)
+			local gelf, ret = getmetatable(self)
+			gelf.__index = {}
 			for i,v in next, {
 				set = function(ClassName, Properties, Z) --If the Z is higher it overlaps the Zs lower
 					if not self[Z or 0] then self[Z or 0] = {} end
@@ -35,13 +37,10 @@ Properties = setmetatable({
 					end
 				end;
 			} do
-				local self = getmetatable(self)
-				self.__index = {}
-				self.__index[i] = v
-				if i == index then
-					return v
-				end
+				gelf.__index[i] = v
+				if i == index then ret = v end
 			end
+			return ret
 		end
 	});
 	Custom = setmetatable({},{
@@ -71,7 +70,7 @@ Properties = setmetatable({
 			if index == 'new' then return getmetatable(self).__index.new end
 		end
 	});
-	RobloxAPI = setmetatable({
+	RobloxApi = setmetatable({
 		'Shape','Anchored','BackSurfaceInput','BottomParamA','BottomParamB','BottomSurface','BottomSurfaceInput','BrickColor','CFrame','CanCollide','CenterOfMass','CollisionGroupId','Color','CustomPhysicalProperties','FrontParamA','FrontParamB','FrontSurface','FrontSurfaceInput';
 		'LeftParamA','LeftParamB','LeftSurface','LeftSurfaceInput','Locked','Material','Orientation','Reflectance','ResizeIncrement','ResizeableFaces','RightParamA','RightParamB','RightSurface','RightSurfaceInput','RotVelocity','TopParamA','TopParamB','TopSurface','TopSurfaceInput','Velocity';
 		'Archivable','ClassName','Name','Parent','AttachmentForward','AttachmentPoint','AttachmentPos','AttachmentRight','AttachmentUp';
@@ -91,26 +90,28 @@ Properties = setmetatable({
 		'Depth','Mix','Rate','Attack','GainMakeup','Ratio','Release','SieChain','Threshold','Level','Delay','DryLevel','Feedback','WetLevel','HighGain','LowGain','MidGain','Octave','Volume','MaxSize','MinSize','AspectRatio','DominantAxis','AspectType','MaxTextSize','MinTextSize','CellPadding','CellSize','FillDirectionMaxCells','StartCorner';
 		'AbsoluteContentSize','FillDirection','HorizontalAlignment','SortOrder','VerticalAlignment','Padding','Animated','Circular','CurrentPage','EasingDirection','EasingStyle','GamepadInputEnabled','ScrollWhellInputEnabled','TweenTime','TouchImputEnable','FillEmptySpaceColumns','FillEmptySpaceRows','MajorAxis','PaddingBottom','PaddingLeft','PaddingRight','PaddingTop','Scale'
 	},{
+		ObjectProperties = {};
 		__index = function(self,index)
+			local gelf, ret = getmetatable(self)
+			gelf.__index = {}
 			for i,v in next, {
 				sort = function(self,func)
 					table.sort(self,func)
 				end;
-				search = function(self, index, keepSimilar, returnFirstResult)
-					return Spice.Table.search(self,index,false,keepSimilar or false, returnFirstResult ~= nil and returnFirstResult or true, true)
+				search = function(self, index, keepSimilar)
+					return Spice.Table.search(self,index,false,keepSimilar, true, false,true)
 				end;
 			} do
-				local self = getmetatable(self)
-				self.__index = {}
-				self.__index[i] = v
-				if i == index then
-					return v
-				end
+				gelf.__index[i] = v
+				if i == index then ret = v end
 			end
+			return ret
 		end;
 	});
 },{
 		__index = function(self,index)
+			local gelf, ret = getmetatable(self)
+			gelf.__index = {}
 			for i,v in next, {
 				new = self.Custom.new;
 				hasProperty = function(Object,Property)
@@ -119,11 +120,15 @@ Properties = setmetatable({
 				end;
 				getProperties = function(Object)
 					local props = {}
-					for i,property in next, self.RobloxAPI do
-						if  pcall(function() return Object[property] and true end) then
-							rawset(props,property,Object[property])
+					local op = getmetatable(self.RobloxApi).ObjectProperties
+					if not op[Object.ClassName] then
+						for i,property in next, self.RobloxApi do
+							if  pcall(function() return Object[property] and true end) then
+								rawset(props,property,Object[property])
+							end
 						end
-					end
+						op[Object.ClassName] = props
+					else props = op[Object.ClassName] end
 					return props
 				end;
 				getChildrenOfProperty = function(Object, Property)
@@ -145,7 +150,7 @@ Properties = setmetatable({
 					return desc
 				end;
 				setProperties = function(Object, Properties, dontIncludeShorts, dontIncludeCustom, includeDefault)
-					local custom, api, default = self.Custom, self.RobloxAPI, self.Default
+					local custom, api, default = self.Custom, self.RobloxApi, self.Default
 					if includeDefault then
 						self.Default.toDefaultProperties(Object,type(includeDefault) == 'number' or nil)
 					end
@@ -165,12 +170,9 @@ Properties = setmetatable({
 					end
 				end;
 			} do
-				local self = getmetatable(self)
-				self.__index = {}
-				self.__index[i] = v
-				if i == index then
-					return v
-				end
+				gelf.__index[i] = v
+				if i == index then ret = v end
 			end
+			return ret
 		end;	
 });

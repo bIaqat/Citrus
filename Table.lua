@@ -27,26 +27,25 @@ Table = setmetatable({
 		return to
 	end;
 	clone = function(tab)
-		local cloned, clone = {}
+		local clone
 		clone = function(x)
+			local cloned = {}
 			for i,v in next,x do
 				if type(v) == 'table' then
-					cloned[i] = clone(v)
-					if getmetatable(v) then
-						local metaclone = clone(getmetatable(v))
-						setmetatable(cloned[i],metaclon)
-					end
+					rawset(cloned,i,clone(v))
 				else
-					cloned[i] = v
+					if typeof(i) == 'Instance' then i = i:Clone() end
+					if typeof(v) == 'Instance' then v = v:Clone() end
+					rawset(cloned,i,v)
 				end
 			end	
 			if getmetatable(x) then
 				local metaclone = getmetatable(x)
 				setmetatable(cloned,metaclone)
 			end		
+			return cloned
 		end
-		clone(tab)
-		return cloned
+		return clone(tab)
 	end;
 	contains = function(tabl,contains)
 		for i,v in next,tabl do
@@ -67,7 +66,7 @@ Table = setmetatable({
 	end;
 	length = function(tabl)
 		local count = 0
-		for i,v in next, tab do
+		for i,v in next, tabl do
 			count = count + 1
 		end
 		return count
@@ -96,16 +95,22 @@ Table = setmetatable({
 	end;
 	find = function(tabl,this, keepFound,...) --...compareFunction function(this, index, value)
 		local found = {}
+		local compareFunctions = {...}
+		if #compareFunctions == 0 then compareFunctions = nil end
 		for i,v in next, tabl do
 			if i == this or v == this or 
 				(type(this) == 'string' and (
 					 type(i) == 'string'  and i:sub(1,#this):lower() == this:lower() or 
 					 type(v) == 'string' and v:sub(1,#this):lower() == this:lower() or
 					 typeof(v) == 'Instance' and v.Name:sub(1,#this):lower() == this:lower()
-				)) or 
-				if ... then for _,comp in next, {...} do
-					comp(this,i,v)
-				end end
+				)) or compareFunctions and ({pcall(function()	
+						for _,compareFunction in next, compareFunctions do
+							if compareFunction(this,i,v) then
+								return true
+							end
+						end 
+					return false
+				end)})[2] == true
 			then
 				if not keepFound then
 					return v, i
@@ -114,19 +119,19 @@ Table = setmetatable({
 				end
 			end
 		end
-		if keepFound then return 
-			found
-		end
+		if keepFound then return found end
 	end;
 },{
 	__index = function(self,index)
+		local gelf,ret = getmetatable(self)
+		gelf.__index = {}
 		for i,v in next, {
 			mergeClone = function(a,b) --bypasses no call back rule
 				local a,b = self.clone(a), self.clone(b)
 				return self.mergeTo(b,a)
 			end;
-			search = function(tabl, this, skipStored, keepSimilar, returnFirst, capSearch, ...) --relies on Table.find; bypasses no call back rule
-				local index, value, capAlg	
+			search = function(tabl, this, skipStored, keepSimilar, returnFirst, subStringSearch, capSearch, ...) --relies on Table.find; bypasses no call back rule
+				local index, value, capAlg, subAlg
 				--Saved Results means less elapsed time if searched again
 				if not getmetatable(tabl) then setmetatable(tabl,{}) end
 				local meta = getmetatable(tabl) 
@@ -134,13 +139,6 @@ Table = setmetatable({
 					meta['SpiceSearchResultsStorage'] = {}
 				end
 				local usedStorage = meta['SpiceSearchResultsStorage']		
-				--Stops the search or continues
-				local function stopSearch()
-					if value and index then
-						usedStorage[this] = {value, index}
-						return value, index
-					end
-				end		
 				--Search functions
 				if capSearch then
 					function capAlg(comparative, ind, val)
@@ -151,21 +149,18 @@ Table = setmetatable({
 								strin = strin..cap
 							end
 							strin = strin..(subject:match('%d+$') or '')
-							if strin == comparative then
+							if strin:lower() == comparative:lower() then
 								return true
 							end
 						end
 						return false
 					end
 				end	
-				function subAlg(comparative, ind, val)
-					local subject = type(ind) == 'string' and ind or type(val) == 'string' and val
-						if subject then
-							if subject:find(comparative, 1, true) then
-								return true
-							end
-						end
-					return false
+				if subStringSearch then
+					function subAlg(comparative, ind, val)
+						local subject = (type(ind) == 'string' and ind or type(val) == 'string' and val):lower()
+						return subject and subject:find(comparative:lower(), 1, true) and true or false
+					end
 				end
 				--Checks the Used Storage for 'this' and returns if exists
 				if not skipStored then
@@ -173,13 +168,19 @@ Table = setmetatable({
 					if stored then
 						value, index = stored[1], stored[2]
 					end
-					stopSearch()
+					if value and index then
+						usedStorage[this] = {value, index}
+						return value, index
+					end
 				end	
 				--Checks if 'this' is found with chosen specified means
 				value, index = self.find(tabl, this, keepSimilar or false,
-					subAlg, capSearch and capAlg or nil, ...
+					subAlg, capAlg, ...
 				)
-				stopSearch()		
+				if value and index then
+					usedStorage[this] = {value, index}
+					return value, index
+				end	
 				--Returns the results if keepSimilar
 				if keepSimilar and value then
 					table.sort(value,function(a,b)
@@ -196,12 +197,9 @@ Table = setmetatable({
 				return false
 			end;
 		} do
-			local self = getmetatable(self)
-			self.__index = {}
-			self.__index[i] = v
-			if i == index then
-				return v
-			end
+			gelf.__index[i] = v
+			if i == index then ret = v end
 		end
+		return ret
 	end
 });

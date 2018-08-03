@@ -1,3 +1,4 @@
+local Spice
 Spice = {
 	Audio = setmetatable({
 		Sounds = {};
@@ -361,7 +362,7 @@ Spice = {
 					end
 				end
 			end
-		});
+		})},{
 		__index = function(self,index)
 			for i,v in next, {
 				newInstance = function(LabelOrButton, Parent, Props, ...) --...Directory
@@ -497,7 +498,7 @@ Spice = {
 				data[v.Name] = v
 			end
 			return data
-		end
+		end;
 		getArgument = function(num,...)
 			return ({...})[num]
 		end;
@@ -635,7 +636,7 @@ Spice = {
 			end
 		};
 	},{
-		tweenedObjects = {}
+		tweenedObjects = {};
 		__index = function(self,index)
 			for i,v in next, {
 				customTween = function(Object, Property, EndValue, Duration, cancel, EasingStyle, EasingDirection, Repeat)
@@ -1295,16 +1296,23 @@ Spice = {
 		end;
 		find = function(tabl,this, keepFound,...) --...compareFunction function(this, index, value)
 			local found = {}
+			local compareFunctions = ... and {...}
 			for i,v in next, tabl do
 				if i == this or v == this or 
 					(type(this) == 'string' and (
 						 type(i) == 'string'  and i:sub(1,#this):lower() == this:lower() or 
 						 type(v) == 'string' and v:sub(1,#this):lower() == this:lower() or
 						 typeof(v) == 'Instance' and v.Name:sub(1,#this):lower() == this:lower()
-					)) or 
-					if ... then for _,comp in next, {...} do
-						comp(this,i,v)
-					end end
+					)) or pcall(function()	
+						if compareFunctions then
+							for _,compareFunction in next, compareFunctions do
+								if compareFunction(this,i,v) then
+									return true
+								end
+							end 
+						end
+						return false
+					end)
 				then
 					if not keepFound then
 						return v, i
@@ -1325,7 +1333,7 @@ Spice = {
 					return self.mergeTo(b,a)
 				end;
 				search = function(tabl, this, skipStored, keepSimilar, returnFirst, capSearch, ...) --relies on Table.find; bypasses no call back rule
-					local index, value, capAlg	
+					local index, value, capAlg, subAlg
 					--Saved Results means less elapsed time if searched again
 					if not getmetatable(tabl) then setmetatable(tabl,{}) end
 					local meta = getmetatable(tabl) 

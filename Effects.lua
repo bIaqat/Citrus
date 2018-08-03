@@ -2,6 +2,8 @@ Effects = setmetatable({
 	Effects = {}
 	},{
 	__index = function(self,index)
+		local gelf,ret = getmetatable(self)
+		gelf.__index = {}
 		for i,v in next, {	
 			new = function(Name, Function)
 				self.Effects[Name] = Function;
@@ -24,13 +26,13 @@ Effects = setmetatable({
 			end;
 			affectOnChildAdded = function(Object, Name, ...)
 				local args = {...}
-				Object.onChildAdded:connect(function(Object)
+				Object.ChildAdded:connect(function(Object)
 					(type(Name) == 'string' and self.Effects[Name] or Name)(Object, unpack(args))
 				end)
 			end;
 			affectOnDescendantAdded = function(Object, Name,...)
 				local args = {...}
-				Object.onDescendantAdded:connect(function(Object)
+				Object.DescendantAdded:connect(function(Object)
 					(type(Name) == 'string' and self.Effects[Name] or Name)(Object, unpack(args))
 				end)
 			end;
@@ -46,16 +48,16 @@ Effects = setmetatable({
 			affectOnEvent = function(Object, EventName, Name, ...)
 				local args = {...}
 				Object[EventName]:connect(function(arg)
-					(type(Name) == 'string' and self.Effects[Name] or Name)(typeof(arg) == 'Instance' and arg or Object, unpack(args))
+					if typeof(arg) == 'Instance' then Object = arg else
+						table.insert(args,1,arg)
+					end
+					(type(Name) == 'string' and self.Effects[Name] or Name)(Object, unpack(args))
 				end)
 			end;
 		} do
-			local self = getmetatable(self)
-			self.__index = {}
-			self.__index[i] = v
-			if i == index then
-				return v
-			end
+			gelf.__index[i] = v
+			if i == index then ret = v end
 		end
+		return ret
 	end
 });

@@ -5,20 +5,23 @@ Misc = {
 		id = id[idn == 'ShirtGraphic' and 'Graphic' or idn == 'Shirt' and 'ShirtTemplate' or 'Pants' and 'PantsTemplate' or 'Decal' and 'Texture']
 		return id:sub(id:find'='+1)
 	end;
-	getTextSize = function(text)
+	getTextSize = function(text,prop)
 		local textl
 		if type(text) == 'string' then
 			textl = Instance.new('TextLabel')
 			textl.Text = text
+			for i,v in next, prop or {} do
+				textl[i] = v
+			end
 		end
-		return game:GetService('TextService'):GetTextService(text, textl.TextSize, textl.Font, textl.AbsoluteSize)
+		return game:GetService('TextService'):GetTextSize(text, textl.TextSize, textl.Font, textl.AbsoluteSize)
 	end;
 	getPlayer = function(speaker, ...)
-		local players = {}
+		local plrs = {}
 		local has = {}
 		local function insert(a)
 			if not has[a] then
-				table.insert(players,a)
+				table.insert(plrs,a)
 				has[a] = true;
 			end
 		end
@@ -44,17 +47,10 @@ Misc = {
 				end
 			end
 		end
-		return setmetatable(players,{__call = function(self, func) for i,v in next,self do func(v) end end})
+		return setmetatable(plrs,{__call = function(self, func) for i,v in next,self do func(v) end end})
 	end;
 	--what have a "doAfter" function when there is already a delay(WaitTime, Function) already thonk
-	doAfter = function(wai,fun,...)
-		local args = {...}
-		spawn(function()
-			wait(wai)
-			do fun(unpack(args)) end
-		end)
-	end;
-	runTimer = function()
+	timer = function()
 		return setmetatable({startTime = 0,running = false},{
 			__call = function(self,start)
 				local gettime
@@ -68,7 +64,13 @@ Misc = {
 					self.startTime = 0
 				end
 				return gettime or self.startTime
-			end
+			end;
+			__concat = function(self,value)
+				return ''..tick()-self.startTime..value
+			end;
+			__tostring = function(self)
+				return ''..tick()-self.startTime
+			end;
 		})
 	end;
 	searchAPI = function(ApiLink, Exploiting)
@@ -83,7 +85,7 @@ Misc = {
 			data[v.Name] = v
 		end
 		return data
-	end
+	end;
 	getArgument = function(num,...)
 		return ({...})[num]
 	end;
@@ -93,7 +95,7 @@ Misc = {
 	exists = function(yes)
 		return yes ~= nil and true or false
 	end;
-	--Redo StringFilterOut Later and Switch
+	--Redo StringFilterOut  and Switch
 	dynamicProperty = function(Object, Typ)
 		local cn = Object.ClassName
 		return (cn:find'Text' and 'Text' or cn:find'Image' and 'Image' or 'Background')..(Typ or '')
@@ -102,7 +104,7 @@ Misc = {
 		return math.floor(num+.5)
 	end;
 	contains = function(containing,...)
-		for _,content in next,{...} do
+		for i,content in next,{...} do
 			if content == containing then
 				return true
 			end

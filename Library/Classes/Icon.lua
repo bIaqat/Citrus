@@ -1,0 +1,6 @@
+Spice.Instance.newClass("Icon",function(...)
+	return Spice.Imagery.newInstance('ImageLabel',nil,nil,...)
+end)
+Spice.Instance.newClass("IconButton",function(...)
+	return return Spice.Imagery.newInstance('ImageButton',nil,nil,...)
+end)

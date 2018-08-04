@@ -35,7 +35,7 @@ Objects = setmetatable({
 			return ret
 		end		
 	});
-	Customs = setmetatable({},{
+	Custom = setmetatable({},{
 		__index = function(self,index)
 			local gelf, ret = getmetatable(self)
 			gelf.__index = {}

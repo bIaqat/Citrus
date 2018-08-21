@@ -98,7 +98,7 @@ Properties = setmetatable({
 				sort = function(self,func)
 					table.sort(self,func)
 				end;
-				search = function(self, index, keepSimilar)
+				search = function(self, index, keepSimilar) --Needs Table.lua to work
 					return Spice.Table.search(self,index,false,keepSimilar, true, false,true)
 				end;
 			} do

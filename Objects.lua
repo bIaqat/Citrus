@@ -1,3 +1,4 @@
+--Needs Properties.lua and Table.lua for most functions to work
 Objects = setmetatable({
 	getAncestors = function(Object)
 		local directory = {game};

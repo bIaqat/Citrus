@@ -36,7 +36,7 @@ Effects = setmetatable({
 					(type(Name) == 'string' and self.Effects[Name] or Name)(Object, unpack(args))
 				end)
 			end;
-			affectAncestors = function(Object,Name,...)
+			affectAncestors = function(Object,Name,...) --needs Objects.lua to work
 				for _,Object in next, Spice.Instance.getAncestors(Object) do
 					(type(Name) == 'string' and self.Effects[Name] or Name)(Object, ...)
 				end

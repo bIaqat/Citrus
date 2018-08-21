@@ -1,8 +1,15 @@
-Spice.Color.fromMaterial = function(name,i,ac)
-	local id = Spice.Misc.switch(1,2,3,4,5,6,7,8,9,10):Filter(unpack(Spice.Misc.switch({50,100,200,300,400,500,600,700,800,900},{100,200,400,700}):Filter(false,true)(Spice.Misc.exists(ac))))
-	id = id(i or 500)
-	return id and Spice.Color.fromStored(name,id,'Material',ac and 'Accent')
+Spice.Color.fromMaterial = function(name, number, accent)
+	local set = accent and {100,200,400,700} or {50,100,200,300,400,500,600,700,800,900}
+	local number, key = number or 6
+	for i,v in next, set do
+		if number == v then
+			key = i
+		end
+	end
+	key = key or set[number]
+	return Spice.Color.fromStored(name, key, accent and 'Accent' or nil)
 end;
+
 
 Spice.Color.Colors.new('Red',{Spice.Color.fromRGB(255, 235, 238),Spice.Color.fromRGB(255, 205, 210),Spice.Color.fromRGB(239, 154, 154),Spice.Color.fromRGB(229, 115, 115),Spice.Color.fromRGB(239, 83, 80),Spice.Color.fromRGB(244, 67, 54),Spice.Color.fromRGB(229, 57, 53),Spice.Color.fromRGB(211, 47, 47),Spice.Color.fromRGB(198, 40, 40),Spice.Color.fromRGB(183, 28, 28),}, 'Material')
 Spice.Color.Colors.new('Pink',{Spice.Color.fromRGB(252, 228, 236),Spice.Color.fromRGB(248, 187, 208),Spice.Color.fromRGB(244, 143, 177),Spice.Color.fromRGB(240, 98, 146),Spice.Color.fromRGB(236, 64, 122),Spice.Color.fromRGB(233, 30, 99),Spice.Color.fromRGB(216, 27, 96),Spice.Color.fromRGB(194, 24, 91),Spice.Color.fromRGB(173, 20, 87),Spice.Color.fromRGB(136, 14, 79),}, 'Material')

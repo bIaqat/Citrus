@@ -1,5 +1,5 @@
 Spice.Properties.Custom.new("Round",function(who, ...)
-	local round = Spice.Objects.new('RoundedGuiObject',{Size = UDim2.new(1,0,1,0), Name = 'RoundedGuiObject'})
+	local round = Spice.Objects.new('RoundedGuiObject',nil,{Size = UDim2.new(1,0,1,0), Name = 'RoundedGuiObject'})
 	local setRound = function(who,...)
 		local function getRadius(...)
 			local args = type(({...})[1]) == 'table' and ({...})[1] or {...}

@@ -1,13 +1,13 @@
 Spice.Objects.Classes.new('ColorPicker',function(typ)
-	local colorMixer = Spice.Objects.Custom.new('Frame',nil,
+	local colorMixer = Spice.Objects.Custom.new('Frame',nil,{bt = 1},
 		{
-			Bar = Spice.Objects.newInstance('Frame',{pos = ud(1,3,0,0),siz = ud(.15,1,1)});
-			BarCursor = Spice.Objects.newInstance('Frame',{bc3 = Color3.new(1,1,1),bsp = 2,siz = ud(1,3,0,5),pos = ud(.5,0,1),ap = v2(.5)});
-			Mixer = Spice.Objects.newInstance('Frame',{siz = ud(1), bt = 1});
-			MixerCursor = Spice.Objects.newInstance('Frame',{siz = ud(25,2), bt = 1,ap = v2(.5)});
+			Bar = Spice.Objects.newInstance('Frame',nil,{pos = ud(1,3,0,0),siz = ud(.15,1,1)});
+			BarCursor = Spice.Objects.newInstance('Frame',nil,{bc3 = Color3.new(1,1,1),bsp = 2,siz = ud(1,3,0,5),pos = ud(.5,0,1),ap = v2(.5)});
+			Mixer = Spice.Objects.newInstance('Frame',nil,{siz = ud(1), bt = 1});
+			MixerCursor = Spice.Objects.newInstance('Frame',nil,{siz = ud(25,2), bt = 1,ap = v2(.5)});
 			Color = Color3.new(1,1,1);
 			Type = '';
-			onChanged = function(self,color)
+			onChanged = function(color)
 				
 			end;
 			setType = function(self,new)
@@ -29,9 +29,9 @@ Spice.Objects.Classes.new('ColorPicker',function(typ)
 			end;
 			colorInHex = '#ffffff';
 			colorInHSV = {0, 0, 100};
-		},
-		{bt = 1}
+		}
 	)
+
 	set(Spice.Objects.newInstance('ImageLabel',colorMixer.Mixer,{siz = ud(1), bt = 1}):Clone(),{
 		Parent = colorMixer.Bar
 	})
@@ -63,20 +63,21 @@ Spice.Objects.Classes.new('ColorPicker',function(typ)
 				
 			end
 		else
-			local x,y = x-100,y-100
+			local xs,ys = colorMixer.AbsoluteSize.X/2,colorMixer.AbsoluteSize.Y/2
+			local x,y = x-xs,y-ys
 			local rad = math.atan2(y,x)
 			local ang = math.deg(rad)
 			local tan
-			local rx,ry = (math.cos(rad)*100),(math.sin(rad)*100)
+			local rx,ry = (math.cos(rad)*xs),(math.sin(rad)*ys)
 			if math.abs(x) <= math.abs(rx) and math.abs(y) <= math.abs(ry) then
 				colorMixer.MixerCursor.Position = UDim2.new(.5,x,.5,y)
 				tan  = x*x + y*y 
 			else
-				tan = 100*100
+				tan = xs*ys
 				colorMixer.MixerCursor.Position = UDim2.new(.5,rx,.5,ry)
 			end
 			local corrected = ang > 0 and 360-ang or -ang
-			setColor(5, corrected/360, math.sqrt(tan)/100)
+			setColor(5, corrected/360, math.sqrt(tan)/xs)
 			colorMixer.Bar.BackgroundColor3 = Color3.fromHSV(corrected/360,1,1)
 			colorMixer.BarCursor.BackgroundColor3 = Color.setHSV(colorMixer.BarCursor.BackgroundColor3,corrected)
 			--colorMixer.MixerCursor.Position = ud(.5,,.5,)
@@ -138,7 +139,8 @@ Spice.Objects.Classes.new('ColorPicker',function(typ)
 				end
 			end)
 		end
-	end)	
+	end)
+	
 	function setColor(basedon,a,b)
 		if basedon == 1 then
 			colorMixer.colorInHSV[1] = a*360
@@ -162,7 +164,7 @@ Spice.Objects.Classes.new('ColorPicker',function(typ)
 		local col = Color.fromHSV(unpack(colorMixer.colorInHSV))
 		colorMixer.Object.Color = col
 		colorMixer.Object.colorInHex = Spice.Color.toHex(col)
-		colorMixer:onChanged(col);
+		colorMixer.onChanged(col);
 	end
 	
 	colorMixer:NewIndex('Color',function(self,new)

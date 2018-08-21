@@ -39,7 +39,7 @@ Color = setmetatable({
 	end;
 	setHSV = function(Color, newH, newS, newV)
 		local h,s,v = Color3.toHSV(Color)
-		return Color3.fromHSV((newH or h)/360,(newS or s)/100,(newV or v)/100)
+		return Color3.fromHSV(newH and newH / 360 or h,newS and newS / 100 or s,newV and newV / 100 or v)
 	end;	
 	fromHex = function(Hex)
 		Hex = Hex:sub(1,1) == '#' and Hex:sub(2) or Hex
@@ -87,19 +87,20 @@ Color = setmetatable({
 						end
 						index = index[v]
 					end
-					if not index[Name] then index[Name] = type(Color) == 'table' and Color or {Color}
+					if not index[Name] then index[Name] = Color
 					else
+						if type(index[Name]) == 'table' then index[Name] = {index[Name]} end
 						for i,v in next, type(Color) == 'table' and Color or {Color}  do
 							index[Name][i] = v
 						end
 					end
 				end;
-				get = function(Name, ...) --... Index
+				get = function(...) --... Index
 					local index = self
 					for i,v in next, {...} do
 						index = index[v]
 					end
-					return index[Name]
+					return index
 				end;
 				remove = function(Name, ...) --... Index
 					local index = self

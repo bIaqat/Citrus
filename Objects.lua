@@ -53,7 +53,7 @@ Objects = setmetatable({
 					getmetatable(object).__index = {setmetatable = function(self, tab) for i,v in next, getmetatable(self) do getmetatable(self)[i] = nil end for i,v in next, tab do getmetatable(self)[i] = v end end}
 					local objectMeta
 					objectMeta = {
-						Instance = instance, Object = CustomProps or {}, Index = {}, NewIndex = {};
+						['Instance'] = instance, Object = CustomProps or {}, Index = {}, NewIndex = {};
 						__index = function(proxy,ind)
 							local objmeta = getmetatable(proxy)
 							if ind == 'Instance' or ind == 'Object' then return objmeta[ind] end
@@ -112,7 +112,10 @@ Objects = setmetatable({
 								end;
 							}
 							if default[name] then return default[name](unpack(args)) end
-							if objmeta.Instance[name] and type(objmeta.Instance[name]) == 'function' then
+							if objmeta.Object[name] and type(objmeta.Object[name]) == 'function' then
+								return objmeta.Object[name](proxy,unpack(args))
+							end
+							if pcall(function() return objmeta.Instance[name] end) and type(objmeta.Instance[name]) == 'function' then
 								return objmeta.Instance[name](objmeta.Instance,unpack(args))
 							end
 						end;
@@ -122,7 +125,7 @@ Objects = setmetatable({
 					}
 					object:setmetatable(objectMeta)
 					rawset(self,instance,object)
-					object(Props)
+					object(Props or {})
 					return object					
 				end;
 			} do
@@ -139,12 +142,12 @@ Objects = setmetatable({
 		for i,v in next, {
 			new = function(ClassName, Parent, ...) --faster
 				local args, instance, props = {...}
-				instance = self.Classes[ClassName] and self.Classes[ClassName](unpack(args)) or Instance.new(ClassName)
-				instance.Parent = type(Parent) == 'table' and Parent.Instance or Parent
 				if type(args[#args]) == 'table' then
 					props = args[#args]
 					args[#args] = nil
 				end
+				instance = self.Classes[ClassName] and self.Classes[ClassName](unpack(args)) or Instance.new(ClassName)
+				instance.Parent = type(Parent) == 'table' and Parent.Instance or Parent
 				if props then
 				Spice.Properties.setProperties(instance, props) end
 				return instance

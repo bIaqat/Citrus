@@ -47,7 +47,7 @@ Audio = setmetatable({
 			get = function(Name)
 				return self.Sounds[Name]
 			end;
-			getSound = function(Name, ...)
+			getSound = function(Name)
 				return self.Sounds[Name].Sound
 			end;
 			getAudioConnections = function(Name)

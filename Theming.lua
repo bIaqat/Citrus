@@ -2,6 +2,8 @@ Theming = setmetatable({
 	Themes = {}
 	},{
 	__index = function(self,index)
+		local gelf,ret = getmetatable(self)
+		gelf.__index = {}
 		for i,v in next, {
 			new = function(name,...)
 				local theme = {
@@ -31,7 +33,7 @@ Theming = setmetatable({
 						self.sync(self,...)
 					end;
 				}
-				getmetatable(self).Themes[name] = theme
+				self.Themes[name] = theme
 				return theme
 			end;
 			getTheme = function(name,index,typ)
@@ -77,12 +79,9 @@ Theming = setmetatable({
 				end
 			end			
 		} do
-			local self = getmetatable(self)
-			self.__index = {}
-			self.__index[i] = v
-			if i == index then
-				return v
-			end
+			gelf.__index[i] = v
+			if i == index then ret = v end
 		end
+		return ret
 	end
 });

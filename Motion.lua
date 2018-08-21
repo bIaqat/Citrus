@@ -120,9 +120,11 @@ Motion = setmetatable({
 					elapsed = 0
 				end
 				reset()	
-				local function tween(en)
+				local function tween(en,rep)
 					for i,v in next, Property do
-						if not en then
+						if rep then
+							Object[i] = v[1]
+						elseif not en then
 							Object[i] = v[3](v[1],v[2], easingFunction and easingFunction(elapsed/Duration) or elapsed/Duration)
 						else
 							Object[i] = v[2]
@@ -131,23 +133,29 @@ Motion = setmetatable({
 				end	
 				local playing, connection = false
 				local function stepped(step)
-					local function go()
-						elapsed = elapsed + step
-						if time > elapsed then
-							tween()
+					if not (elapsed == 0 and step > 1) then
+						local function go()
+							elapsed = elapsed + step
+							if time > elapsed then
+								tween()
+							else
+								tween(true)
+								playing = 'check'
+							end	
+						end
+						
+						if playing == true then
+							go()
+						elseif playing == 'check' and (rep == true or rep > 0 or rep < 0) then
+							rep = rep == true or rep - 1
+							elapsed = 0
+							tween(false,true)
+							playing = true
 						else
+							playing = false
 							connection:Disconnect()
-							tween(true)
-						end	
+						end		
 					end
-					if playing then
-						go()
-					elseif rep > 0 or rep < 0 then
-						rep = rep - 1
-						go()
-					else
-						connection:Disconnect()
-					end		
 				end	
 				local tween = setmetatable({},{
 					__index = {

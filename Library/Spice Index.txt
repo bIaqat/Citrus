@@ -1,0 +1,183 @@
+Spice Index
+___________________________________
+Audio
+
+	.new 						| Name, SoundId, Props
+	.get 						| Name
+	.getSound 					| Name
+	.getAudioConnections		| Name
+	.connect 					| Name, ObjectConnectingTo, EventName, ... Play Args
+	.disconnect					| Name, Object, EventName
+	.play 						| Name, Parent, StartTime, EndTime
+___________________________________
+Color
+
+	.fromRGB					| R, G, B
+	.toRGB						| Color
+	.editRGB					| Color, Operation, R, G, B
+	.setRGB						| Color, newR, newG, newB
+	.fromHSV					| H, S, V
+	.toHSV						| Color
+	.editHSV					| Color, Operation, H, S, V
+	.setHSV						| Color, newH, newS, newV
+	.fromHex					| Hex
+	.toHex						| Color
+	.fromString					| String, replace default colors(Boolean), ... Additional Colors
+	.toInverse					| Color
+	
+	------------------------------
+	Colors
+		.new					| Name, Color, ... Index
+		.get					| Name, ... Index
+		.remove					| Name, ... Index
+	------------------------------
+	
+	.fromStored					| Name, Key, ... Index
+	.new						| ...
+	.storeColor					| Color.Colors.new args
+___________________________________
+Effects
+
+	.new						| Name, Function
+	.get						| Name
+	.affect						| Object, Name, ... Function Args
+	.affectChildren				| Object, Name, ... Function Args
+	.affectDescendants			| Object, Name, ... Function Args
+	.affectOnChildAdded			| Object, Name, ... Function Args
+	.affectOnDescendantAdded	| Object, Name, ... Function Args
+	.affectAncestors			| Object, Name, ... Function Args
+	.massAffect					| Object, Name, ... Function Args
+	.affectOnEvent				| Object, EventName, Name, ... Function Args
+___________________________________
+Imagery
+
+	-------------------------------
+	Images
+		.new					| Name, ImageId, Props, ... Index
+		.get					| ... Index
+		.getImage				| Name, ... Index
+		.newFromSheet			| ImageId, XAmt, YAmt, XSiz, YSiz, Names, ... Index
+	-------------------------------
+	
+	.newInstance				| Class, Parent, Props, ... Index
+	.playGif					| Object, Speed, Repeat, ... Index
+	.stopGif					| Object
+	.setImage					| Object, ... Index
+___________________________________
+Misc
+
+	.getAssetId					| ID
+	.getTextSize				| Text, Props
+	.getPlayer					| Speaker, ... PlayerNames
+	.timer						| 
+	.searchAPI					| ApiLink
+	.getArgument				| Argument Number, ... Args
+	.destroyIn					| Object, Seconds
+	.exists						| Value
+	.dynamicProperty			| Object, Value Type
+	.round						| Number
+	.contains					| Container, ... Check
+	.operation					| a, b, operator
+___________________________________
+Motion
+
+	-------------------------------
+	Easings
+		.newStyle				| Name, Directions, ... Bezier
+		.newDirection			| Style, Name, Function, ... Bezier
+		.getStyle				| Name
+		.getDirection			| Style, Name
+		.fromBezier				| x1, y1, x2, y2
+	-------------------------------
+	Lerps > 					| a, b, c
+		  Color3
+		  Vector2
+		  UDim2
+		  CFrame
+		  Vector3
+		  UDim
+		  number
+	-------------------------------
+	
+	.customTween				| Object, Property, EndValue, Duration, Cancel (bool), Style, Direction, Repeat
+	.tweenServiceTween			| Object, Property, EndValue, Duration, Cancel (bool), Style, Direction, Repeat, Reverse, Delay
+	.lerp						| BeginingValue, EndValue, Alpha, Style, Direction
+	.cancelTween				| Object, Property
+	.rotate						| Object, Angle, Speed, Custom Tween (bool), ... Tween Args
+___________________________________
+Objects
+
+	.getAncestors				| Object
+	
+	-------------------------------
+	Classes
+		.new					| Name, onCreated
+		.isA					| Object, ClassName
+	-------------------------------
+	Custom
+		.getCustomFromInstance	| Object
+		.isCustom				| Object
+		.new					| ClassName, Parent, Props, CustomProps
+	-------------------------------
+	
+	.new						| ClassName, Parent, ... onCreated Args, Props
+	.newInstance				| ClassName, Parent, Props
+	.newDefault					| ClassName, Parent, ... onCreated Args, Props
+	.clone						| Object, Parent, Props
+___________________________________
+Positioning
+
+	.new						| ...
+	.fromUDIm					| Scale, Offset
+	.fromVector2				| X, Y
+	.fromPosition				| NameA, NameB
+	.fromOffset					| A, B
+	.fromScale					| A, B
+___________________________________
+Properties
+
+	-------------------------------
+	Default
+		.set					| ClassName, Props, Priority
+		.get					| ClassName, Priority
+		.toDefaultProperties	| Object, Priority
+	-------------------------------
+	Custom
+		.new					| Name, onUse, ... Eligible Classes
+	-------------------------------
+	RobloxApi
+		:sort					| Sort Function
+		:search					| Index, keepSimilar
+	-------------------------------
+	
+	.new						| Properties.Custom.new Args
+	.hasProperty				| Object, Props
+	.getProperties				| Object
+	.getChildrenOfProperty		| Object, Props
+	.getDescendantsOfProperty	| Object, Props
+	.setProperties				| Object, Props, declude ShortNames, declude Custom Properties, include Default Properties
+	.setVanillaProperties 		| Object, Props
+___________________________________
+Table
+
+	.insert						| Table, ... Inserting
+	.pack						| Table, StartingPoint, EndPoint
+	.mergeTo					| TableA, TableB
+	.clone						| Table
+	.contains					| Table, Value
+	.toNumeralIndex				| Table
+	.length						| Table
+	.reverse					| Table
+	.indexOf					| Table, Value
+	.find						| Table, Value, keepSimilar, ... comparative Functions (returns bool)
+	.mergeClone					| TableA, TableB
+	.search						| Table, Value, skipSavedResults, keepSimilar, returnFirstResult, subStringSearch, capsAlgSearch, ... comparative Functions (returns bool)
+___________________________________
+Theming
+
+	.new						| Name, ... Values
+	.getTheme					| Name, Index, ValueType
+	.setTheme					| Name, ... Values
+	.insertObject				| Name, Object, Property, Index
+	.sync						| Name, Tween (bool), Duration, Repeat, Reverse, Delay
+___________________________________

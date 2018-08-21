@@ -1,6 +1,7 @@
-Spice.Instance.newClass("Icon",function(...)
+Spice.Objects.Classes.new("Icon",function(...)
 	return Spice.Imagery.newInstance('ImageLabel',nil,nil,...)
 end)
-Spice.Instance.newClass("IconButton",function(...)
-	return return Spice.Imagery.newInstance('ImageButton',nil,nil,...)
+
+Spice.Objects.Classes.new("IconButton",function(...)
+	return Spice.Imagery.newInstance('ImageButton',nil,nil,...)
 end)

@@ -1,4 +1,4 @@
-local hsv,hex = Spice.fromHSV, Spice.fromHex
+local hsv,hex = Spice.Color.fromHSV, Spice.Color.fromHex
 
 Spice.Color.Colors.new('Red',{
 	[-1] = hsv(358,65,100);

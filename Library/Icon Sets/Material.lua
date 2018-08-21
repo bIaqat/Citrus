@@ -830,4 +830,4 @@ Spice.Imagery.Images.newFromSheet('rbxassetid://1784765566',14, 4, 72,72, Notifi
 Spice.Imagery.Images.newFromSheet('rbxassetid://1784765734',7, 3, 72,72, Places, 'Material')
 Spice.Imagery.Images.newFromSheet('rbxassetid://1797162009',3, 10, 72,72, Social, 'Material')
 Spice.Imagery.Images.newFromSheet('rbxassetid://1797162200',3, 1, 72,72, Toggle, 'Material')
-Spice.Imagery.Images.new('Google','rbxassetid://2171423721','Material')
+Spice.Imagery.Images.new('Google','rbxassetid://2171423721',nil,'Material')

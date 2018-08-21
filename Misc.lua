@@ -73,6 +73,19 @@ Misc = {
 			end;
 		})
 	end;
+	--[[
+	searchApi = function(ApiLink)
+		local httpget = pcall(function() return game.HttpGet end) and game.HttpGet or game:GetService('HttpService').GetAsync
+		local proxyLink = 'https://www.classy-studios.com/APIs/Proxy.php?Subdomain=search&Dir=catalog/json?'
+		local data = {}
+		local jsonData
+		jsonData = game:GetService('HttpService'):JSONDecode(httpget(proxyLink..ApiLink))
+		for i,v in next, jsonData do
+			data[v.Name] = v
+		end
+		return data
+	end;
+	]]
 	searchAPI = function(ApiLink, Exploiting)
 		local http = game:GetService'HttpService'
 		local proxyLink = 'https://www.classy-studios.com/APIs/Proxy.php?Subdomain=search&Dir=catalog/json?'
@@ -98,7 +111,7 @@ Misc = {
 	--Redo StringFilterOut  and Switch
 	dynamicProperty = function(Object, Typ)
 		local cn = Object.ClassName
-		return (cn:find'Text' and 'Text' or cn:find'Image' and 'Image' or 'Background')..(Typ or '')
+		return (cn:find'Text' and 'Text' or cn:find'Image' and 'Image' or 'Background')..(Typ or 'Color3')
 	end;
 	round = function(num)
 		return math.floor(num+.5)

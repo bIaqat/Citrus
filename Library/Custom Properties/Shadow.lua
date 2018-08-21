@@ -1,3 +1,9 @@
-Spice.Properties.Custom.new('Shadow',function(self, thicc, lightness)
-	local a = Spice.Objects.newInstance('ImageLabel', self, {Name = 'Shadow',bt = 1, pos = ud(0,1,1), siz = ud(1,thicc and type(thicc) == 'number' and thicc or 8,4), Image = 'rbxasset://textures/ui/TopBar/dropshadow@2x.png', it = lightness or .8})
+Spice.Properties.Custom.new('Shadow',function(self, thickness,lightness)
+	local shadow = Instance.new('ImageLabel', self)
+	shadow.Name = 'Shadow'
+	shadow.BackgroundTransparency = 1
+	shadow.Position = UDim2.new(0,0,1,0)
+	shadow.Size = UDim2.new(1,0,0,thickness and type(thickness) == 'number' and thickness or 8)
+	shadow.Image = 'rbxasset://textures/ui/TopBar/dropshadow@2x.png'
+	shadow.ImageTransparency = lightness or .8
 end)

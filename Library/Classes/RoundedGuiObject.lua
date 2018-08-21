@@ -1,5 +1,6 @@
 Spice.Objects.Classes.new("RoundedGuiObject",function(radius) --radius is udim2
-	local roundFolder = Spice.Objects.newInstance('Folder',{Name = 'Round'})
+	local ud, Color, set, v2, um = Spice.Positioning.new, Spice.Color, Spice.Properties.setProperties, Spice.Positioning.fromVector2, Spice.Positioning.fromUDim
+	local roundFolder = Spice.Objects.newInstance('Folder',nil,{Name = 'Round'})
 	local radiusFolder = Spice.Objects.newInstance('Folder',roundFolder,{Name = 'RadiusValues'})
 	local getRadius = function(...)
 		local args = type(({...})[1]) == 'table' and ({...})[1] or {...}

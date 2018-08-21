@@ -1,5 +1,6 @@
 Spice.Objects.Classes.new('RoundedFrame',function(roundsize)
-	local frame = Spice.Objects.Custom.new('Frame',{TopBarColor3 = Color3.fromRGB(163,162,165),BottomBarColor3 = Color3.fromRGB(163,162,165),BackgroundTransparency = 0, RoundSize = roundsize or 8},{Round = roundsize or 8})
+	local ud, Color, set, v2, um = Spice.Positioning.new, Spice.Color, Spice.Properties.setProperties, Spice.Positioning.fromVector2, Spice.Positioning.fromUDim
+	local frame = Spice.Objects.Custom.new('Frame',nil,{Round = roundsize or 8},{TopBarColor3 = Color3.fromRGB(163,162,165),BottomBarColor3 = Color3.fromRGB(163,162,165),BackgroundTransparency = 0, RoundSize = roundsize or 8})
 	frame:NewIndex('RoundSize',function(self,new)
 		for i,v in next, self.Instance.RoundedGuiObject.RadiusValues:GetChildren() do
 			v.Value = new

@@ -23,7 +23,7 @@ Imagery = setmetatable({
 				get = function(...) --... Directory
 					local index = self
 					for i,v in next, {...} do
-						index = self[v]
+						index = index[v]
 					end
 					return index
 				end;
@@ -72,7 +72,7 @@ Imagery = setmetatable({
 					image = self.Images.getImage(...)
 				end
 				image.Parent = Parent
-				for i,v in next, Props do
+				for i,v in next, Props or {} do
 					image[i] = v
 				end
 				return image
@@ -110,7 +110,7 @@ Imagery = setmetatable({
 				for i,v in next, {ImageRectOffset = image.ImageRectOffset, ImageRectSize = image.ImageRectSize, ScaleType = image.ScaleType, Image = image.Image, ImageColor3 = image.ImageColor3} do
 					ImageObject[i] = v
 				end
-				return image
+				return ImageObject
 			end;
 		} do
 			gelf.__index[i] = v

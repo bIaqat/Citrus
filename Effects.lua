@@ -26,28 +26,28 @@ Effects = setmetatable({
 			end;
 			affectOnChildAdded = function(Object, Name, ...)
 				local args = {...}
-				Object.ChildAdded:connect(function(Object)
+				return Object.ChildAdded:connect(function(Object)
 					(type(Name) == 'string' and self.Effects[Name] or Name)(Object, unpack(args))
 				end)
 			end;
 			affectOnDescendantAdded = function(Object, Name,...)
 				local args = {...}
-				Object.DescendantAdded:connect(function(Object)
+				return Object.DescendantAdded:connect(function(Object)
 					(type(Name) == 'string' and self.Effects[Name] or Name)(Object, unpack(args))
 				end)
 			end;
-			affectAncestors = function(Object,Name,...) --needs Objects.lua to work
+			affectAncestors = function(Object,Name,...)
 				for _,Object in next, Spice.Instance.getAncestors(Object) do
 					(type(Name) == 'string' and self.Effects[Name] or Name)(Object, ...)
 				end
 			end;
-			massAffect = function(Object, Name, ...)
-				self.affectChildren(...)
+			massAffect = function(...)
+				return self.affectChildren(...),
 				self.affectOnChildAdded(...)
 			end;
 			affectOnEvent = function(Object, EventName, Name, ...)
 				local args = {...}
-				Object[EventName]:connect(function(arg)
+				return Object[EventName]:connect(function(arg)
 					if typeof(arg) == 'Instance' then Object = arg else
 						table.insert(args,1,arg)
 					end

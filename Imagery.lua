@@ -1,5 +1,6 @@
 Imagery = setmetatable({
 	Images = setmetatable({},{
+		SortedStorage = {};
 		__index = function(self,index)
 			local gelf, ret = getmetatable(self)
 			gelf.__index = {}
@@ -18,6 +19,7 @@ Imagery = setmetatable({
 						elseif type(index[v]) ~= 'table' then index[v] = {index[v]} end
 						index = index[v]
 					end
+					table.insert(index,Image)
 					index[Name] = Image
 				end;
 				get = function(...) --... Directory
@@ -43,7 +45,7 @@ Imagery = setmetatable({
 					for y = 0, YAmt - 1 do
 						for x = 0, XAmt - 1 do
 							local index = {}
-							for name in (Names[namesIndex] or 'Icon'):gsub('_','\0'):gmatch('%Z+') do
+							for name in (Names and Names[namesIndex] or string.format('Icon-%.3i', namesIndex)):gsub('_','\0'):gmatch('%Z+') do
 								table.insert(index,name)
 							end
 							local name = index[#index]
@@ -79,16 +81,19 @@ Imagery = setmetatable({
 			end;
 			playGif = function(ImageObject, Speed, Repeat, ...) --...Directory
 				local sheet = self.Images.get(...)
+				local br
 				ImageObject.ChildAdded:connect(function(who)
 					if who.Name == 'STOPGIF' then
 						Repeat = false
+						br = true
 						game:GetService('Debris'):AddItem(who,.01)
 					end
 				end)
 				spawn(function()
+					local once = false
 					repeat
 						for i,image in next, sheet do
-							if not Repeat then break end
+							if not Repeat and once or br then break end
 							if typeof(image) == 'Instance' then
 								for i,image in next, {ImageRectOffset = image.ImageRectOffset, ImageRectSize = image.ImageRectSize, ScaleType = image.ScaleType, Image = image.Image, ImageColor3 = image.ImageColor3} do
 									ImageObject[i] = image
@@ -96,6 +101,7 @@ Imagery = setmetatable({
 							end
 							wait(Speed)
 						end
+						once = true
 					until not Repeat
 				end)
 			end;
@@ -107,7 +113,7 @@ Imagery = setmetatable({
 			setImage = function(ImageObject, ...) --...Directory
 				if type(ImageObject) == 'string' then ImageObject = Instance.new(ImageObject) end
 				local image = self.Images.getImage(...)
-				for i,v in next, {ImageRectOffset = image.ImageRectOffset, ImageRectSize = image.ImageRectSize, ScaleType = image.ScaleType, Image = image.Image, ImageColor3 = image.ImageColor3} do
+				for i,v in next, {Name = image.Name,ImageRectOffset = image.ImageRectOffset, ImageRectSize = image.ImageRectSize, ScaleType = image.ScaleType, Image = image.Image, ImageColor3 = image.ImageColor3, BackgroundTransparency = image.BackgroundTransparency, ImageTransparency = image.ImageTransparency} do
 					ImageObject[i] = v
 				end
 				return ImageObject

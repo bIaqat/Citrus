@@ -6,7 +6,8 @@ Color = setmetatable({
 		return math.floor(Color.r*255),math.floor(Color.g*255),math.floor(Color.b*255)
 	end;
 	editRGB = function(Color, operation, r, g, b)
-		local operation, cr,cg, cb = operation or '+', Color.r*255, Color.g * 255, Color.b * 255
+		local operation, cr,cg, cb = operation or '+', Color.r, Color.g, Color.b
+		cr, cg, cb = cr * 255, cg * 255, cb * 255
 		return 
 		operation == '+' and Color3.fromRGB(cr + r, cg + g, cb + b) or
 		operation == '-' and Color3.fromRGB(cr - r, cg - g, cb - b) or
@@ -17,25 +18,26 @@ Color = setmetatable({
 		operation == '%' and Color3.fromRGB(cr % r, cg % g, cb % b)
 	end;
 	setRGB = function(Color, newR, newG, newB)
-		return Color3.fromRGB(newR or Color.r, newG or Color.g, newB or Color.b)
+		return Color3.fromRGB(newR or Color.r*255, newG or Color.g*255, newB or Color.b*255)
 	end;	
 	fromHSV = function(h,s,v)
 		return Color3.fromHSV(h/360,s/100,v/100)
 	end;
-	toHSV = function(Color)
+	toHSV = function(Color,i)
 		local h,s,v = Color3.toHSV(Color)
 		return math.floor(h*360),math.floor(s*100),math.floor(v*100)
 	end;
 	editHSV = function(Color, operation, h, s, v)
 		local operation ,ch,cs,cv = operation or '+', Color3.toHSV(Color)
-		ch, cs , cv = ch * 360, cs * 100, cv * 100
-		return operation == '+' and Color3.fromHSV((ch + h)/360,(cs + s)/100,(cv + v)/100) or
-		operation == '-' and Color3.fromHSV((ch - h)/360,(cs - s)/100,(cv - v)/100) or
-		operation == '/' and Color3.fromHSV((ch / h)/360,(cs / s)/100,(cv / v)/100) or		
-		(operation == '*' or operation == 'x') and Color3.fromHSV((ch * h)/360,(cs * s)/100,(cv * v)/100) or
-		operation == '^' and Color3.fromHSV((ch ^ h)/360,(cs ^ s)/100,(cv ^ v)/100) or
-		(operation == 'rt' or operation == '^/') and Color3.fromHSV((ch ^ (1/h))/360,(cs ^ (1/s))/100, (cv ^ (1/v))/100) or
-		operation == '%' and Color3.fromHSV((ch % h)/360,(cs % s)/100,(cv % v)/100)
+		h,s,v = h/360, s/100, v/100
+		return 
+		operation == '+' and Color3.fromHSV(ch + h, cs + s, cv + v) or
+		operation == '-' and Color3.fromHSV(ch - h, cs - s, cv - v) or
+		operation == '/' and Color3.fromHSV(ch / h, cs / s, cv / v) or		
+		(operation == '*' or operation == 'x') and Color3.fromHSV(ch * h, cs * s, cv * v) or
+		operation == '^' and Color3.fromHSV(ch ^ h, cs ^ s, cv ^ v) or
+		(operation == 'rt' or operation == '^/') and Color3.fromHSV(ch ^ (1/h), cs ^ (1/s), cv ^ (1/v)) or
+		operation == '%' and Color3.fromHSV(ch % h, cs % s, cv % v)
 	end;
 	setHSV = function(Color, newH, newS, newV)
 		local h,s,v = Color3.toHSV(Color)
@@ -71,8 +73,8 @@ Color = setmetatable({
 		return colors[value % #colors + 1]
 	end;
 	toInverse = function(Color)
-		local h,s,v = Color3.toHSV(Color)
-		return Color3.fromHSV(1 - h, 1 - s, 1 - v)
+		local r,g,b = Color.r,Color.g,Color.b
+		return Color3.new(1-r,1-g,1-b)
 	end;
 	Colors = setmetatable({},{
 		__index = function(self,ind)
@@ -89,9 +91,13 @@ Color = setmetatable({
 					end
 					if not index[Name] then index[Name] = Color
 					else
-						if type(index[Name]) == 'table' then index[Name] = {index[Name]} end
+						if type(index[Name]) ~= 'table' then index[Name] = {index[Name]} end
 						for i,v in next, type(Color) == 'table' and Color or {Color}  do
-							index[Name][i] = v
+							if type(i) == 'string' then
+								index[Name][i] = v
+							else
+								table.insert(index[Name],v)
+							end
 						end
 					end
 				end;

@@ -73,31 +73,20 @@ Misc = {
 			end;
 		})
 	end;
-	--[[
-	searchApi = function(ApiLink)
-		local httpget = pcall(function() return game.HttpGet end) and game.HttpGet or game:GetService('HttpService').GetAsync
+	searchAPI = function(ApiLink)
+		local exploiting = pcall(function() return game.HttpGet end) and true or false
+		local httpget =  exploiting and game.HttpGet or game:GetService('HttpService').GetAsync
 		local proxyLink = 'https://www.classy-studios.com/APIs/Proxy.php?Subdomain=search&Dir=catalog/json?'
-		local data = {}
 		local jsonData
-		jsonData = game:GetService('HttpService'):JSONDecode(httpget(proxyLink..ApiLink))
+		jsonData = game:GetService('HttpService'):JSONDecode(httpget(exploiting and httpget or game:GetService'HttpService',proxyLink..ApiLink:match('Category=%d+')))
 		for i,v in next, jsonData do
-			data[v.Name] = v
+			setmetatable(v,{
+				__tostring = function(self)
+					return 'Datatable:\t'..self.Name
+				end
+			})
 		end
-		return data
-	end;
-	]]
-	searchAPI = function(ApiLink, Exploiting)
-		local http = game:GetService'HttpService'
-		local proxyLink = 'https://www.classy-studios.com/APIs/Proxy.php?Subdomain=search&Dir=catalog/json?'
-		local data = {}
-		ApiLink = http:UrlEncode(ApiLink:sub(ApiLink:find'?'+1,#ApiLink))
-		local jsonData
-		jsonData = Exploiting and http:JSONDecode(game:HttpGetAsync(proxyLink..ApiLink))
-			or http:JSONDecode(http:GetAsync(proxyLink..ApiLink))
-		for i,v in next, jsonData do
-			data[v.Name] = v
-		end
-		return data
+		return jsonData
 	end;
 	getArgument = function(num,...)
 		return ({...})[num]
@@ -113,8 +102,9 @@ Misc = {
 		local cn = Object.ClassName
 		return (cn:find'Text' and 'Text' or cn:find'Image' and 'Image' or 'Background')..(Typ or 'Color3')
 	end;
-	round = function(num)
-		return math.floor(num+.5)
+	round = function(number, placement)
+		local mult = math.pow(10,placement or 0)
+		return math.floor(number*mult + .5)/mult;
 	end;
 	contains = function(containing,...)
 		for i,content in next,{...} do

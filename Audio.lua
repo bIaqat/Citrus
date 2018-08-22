@@ -22,7 +22,14 @@ Audio = setmetatable({
 					end;
 					disconnect = function(ad,...)
 						self.disconnect(ad,...)
-					end
+					end;
+					reset = function(ad)
+						local sound = ad.Sound
+						sound.Parent = workspace
+						repeat wait() until sound.TimeLength ~= 0
+						ad.Length = sound.TimeLength
+						sound.Parent = nil							
+					end;
 				},{
 					__call = function(self, Parent, StartTime, EndTime)
 						local start, endt = StartTime or 0, EndTime or self.Length
@@ -37,10 +44,10 @@ Audio = setmetatable({
 						return a
 					end
 				});
-				sound.Parent = workspace
-				repeat wait() until sound.TimeLength ~= 0
-				audio.Length = sound.TimeLength
-				sound.Parent = nil
+				sound:GetPropertyChangedSignal('PlaybackSpeed'):connect(function()
+					audio:reset()
+				end)
+				audio:reset()
 				self.Sounds[Name] = audio
 				return audio				
 			end;

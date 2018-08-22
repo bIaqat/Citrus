@@ -75,7 +75,7 @@ Misc
 	.destroyIn					| Object, Seconds
 	.exists						| Value
 	.dynamicProperty			| Object, Value Type
-	.round						| Number
+	.round						| Number, Decimal Placement
 	.contains					| Container, ... Check
 	.operation					| a, b, operator
 ___________________________________

@@ -145,7 +145,7 @@ Properties
 	Custom
 		.new					| Name, onUse, ... Eligible Classes
 	-------------------------------
-	RobloxApi
+	RobloxAPI
 		:sort					| Sort Function
 		:search					| Index, keepSimilar
 	-------------------------------
@@ -153,8 +153,8 @@ Properties
 	.new						| Properties.Custom.new Args
 	.hasProperty				| Object, Props
 	.getProperties				| Object
-	.getChildrenOfProperty		| Object, Props
-	.getDescendantsOfProperty	| Object, Props
+	.getChildrenOfProperty		| Object, Property, Value
+	.getDescendantsOfProperty	| Object, Property, Value
 	.setProperties				| Object, Props, declude ShortNames, declude Custom Properties, include Default Properties
 	.setVanillaProperties 		| Object, Props
 ___________________________________

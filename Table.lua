@@ -22,7 +22,11 @@ Table = setmetatable({
 	end;
 	mergeTo = function(from,to)
 		for i,v in next, from do
-			to[i] = v
+			if type(i) == 'string' then
+				rawset(to,i,v)
+			else
+				table.insert(to,v)
+			end
 		end
 		return to
 	end;
@@ -158,8 +162,8 @@ Table = setmetatable({
 				end	
 				if subStringSearch then
 					function subAlg(comparative, ind, val)
-						local subject = (type(ind) == 'string' and ind or type(val) == 'string' and val):lower()
-						return subject and subject:find(comparative:lower(), 1, true) and true or false
+						local subject, subject2 = (type(ind) == 'string' and ind or type(val) == 'string' and val):lower(),(type(ind) == 'string' and type(val) == 'string' and val):lower()
+						return subject and subject:find(comparative:lower(), 1, true) and true or subject2 and subject2:find(comparative:lower(), 1, true) and true or false
 					end
 				end
 				--Checks the Used Storage for 'this' and returns if exists
@@ -182,7 +186,7 @@ Table = setmetatable({
 					return value, index
 				end	
 				--Returns the results if keepSimilar
-				if keepSimilar and value then
+				if keepSimilar and value and value[1] then
 					table.sort(value,function(a,b)
 						a, b = a[1], b[1]
 						local function get(x) 

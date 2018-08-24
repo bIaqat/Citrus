@@ -264,11 +264,252 @@ print(Spice.Misc.contains('ga','a','b',1,5,2,2,5,35,46,'e','g','ga')) -->>true
 print(Spice.Misc.operation(25, 2, '^/'))-->> 5
 
 ---------------------------------------------------------------------------------------------------------
+--[[		Motion
+	Table for tweening and lerping :)
+--]]
+local screenGui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
+
+local Frame = Instance.new("TextLabel", screenGui)
+Frame.Size = UDim2.new(0,200,0,200)
+Frame.Position = UDim2.new(.5,0,.5,0)
+Frame.AnchorPoint = Vector2.new(.5,.5)
+
+--To tween using TweenService we use the Motion.tweenServiceTween function whos arguments are in the index
+Spice.Motion.tweenServiceTween(Frame, {'Size', 'Rotation'}, {UDim2.new(0,300,0,300), 270}, 1, true, 'Bounce', 'Out', nil, true).Completed:Wait()
+
+--To easily rotate an object we can use the Motion.rotate function
+Spice.Motion.rotate(Frame, 720, 1, false, true, 'Quad', 'InOut', nil, true).Completed:Wait()
+
+--to lerp a value we can use the Motion.lerp function (the lerp function can also use custom easing)
+local red = Color3.new(1,0,0)
+local blue = Color3.new(0,0,1)
+local inBetweenRedAndBlue = Spice.Motion.lerp(red, blue, .5)
+print(inBetweenRedAndBlue) -->> .5, 0, .5
+
+--using the Motion.Easings table we can also create custom Easing Styles :) and using Bezier functions as well (more info on bezier: http://cubic-bezier.com/#0,0,1,1)
+Spice.Motion.Easings.newStyle('LinEase', {
+	In = Spice.Motion.Easings.fromBezier(.75,0,.75,1);
+	Out = Spice.Motion.Easings.fromBezier(.25,0,.25,1);
+	InOut = Spice.Motion.Easings.fromBezier(.25,0,.75,1);
+	OutIn = Spice.Motion.Easings.fromBezier(.75,0,.25,1);
+})
+
+--along with creating custom Easing Styles we can create custom Lerps for DataTypes into the Motion.Lerps table
+Spice.Motion.Lerps.string = function(old,new,alpha)
+	local ol,nl = #old, #new
+	local alo, aln = math.floor((1 - alpha) * ol + .5), math.floor(alpha * nl + .5)
+	return new:sub(1,aln)..(alo == 0 and '' or old:sub(-(alo)))
+end
+
+--To tween using custom easings we use the Motion.customTween function
+Spice.Motion.customTween(Frame, {'Size','Text'}, {UDim2.new(0,300,0,300), 'TweenedText'}, 1, true, 'LinEase', 'Out'):Wait()
 
 ---------------------------------------------------------------------------------------------------------
+--[[		Objects
+	big gay table to help create classes, custom objects for oop, and make making instances more efficient
+--]]
+
+--the Objects table can be used to create Instance like with Instance.new but with less effort for instance:
+local Part = Spice.Objects.newInstance("Part", workspace,{
+	Name = 'MyPart';
+	trans = .3;
+	brickc = BrickColor.new('Really red')
+})
+
+--cloning an Object is also made simpler with Objects.clone
+local PartClone = Spice.Objects.clone(Part,workspace,{
+	brickc = BrickColor.Blue()
+})
+
+--Just like Instace:GetChildren() the Objects.getAncestors function gets the ancestry chain for an object
+for i,v in next, Spice.Objects.getAncestors(Part) do
+	print(v.ClassName,v)
+end
+--[[
+>> Workspace Workspace
+>> DataModel game
+--]]
+
+--to create a custom Class we use Objects.Classes.new function
+Spice.Objects.Classes.new("SparklePart",function(isNeon)
+	
+	--to create custom Objects we use the Objects.Custom.new function
+	local self = Spice.Objects.Custom.new("Part",nil,{
+		Name = "SparklePart";
+		Material = isNeon and Enum.Material.Neon or Enum.Material.Plastic;
+		Transparency = .1;
+	},{
+		ClassName = "SparklePart";
+	})
+	
+	local sparkles = Instance.new("Sparkles",self.Instance) --You can acess the created Instance in a custom object using object.Instance and likewise you can get the CustomObject table of properties using object.Object
+	sparkles.SparkleColor = Color3.new(.5,.5,.5)
+	
+	--custom Objects are a little advanced to use... in comparison to most other stuff in Spice
+	self:NewIndex("SparkleColor",function(self,new)
+		self.Instance.Sparkles.SparkleColor = new
+	end)
+	self:Index("SparkleColor",function(self)
+		return self.Instance.Sparkles.SparkleColor
+	end)
+	
+	return self
+end)
+
+--To use custom Classes we use the Objects.new or Objects.newDefault function
+	--the Objects.newDefault creates an Instance under stored default properties [see in Properties examples]
+local sparklePart = Spice.Objects.new("SparklePart",workspace,true,{SparkleColor = Color3.new(1,0,0)})
+print(sparklePart.ClassName) -->> SparklePart
 
 ---------------------------------------------------------------------------------------------------------
+--[[		Positioning
+	useless table to making getting values from udim, vector2, udim2, faster...
+--]]
+
+--There are many ways to use the Positioning.new function:
+--[[List of Possible Variants:
+	Arguments				|	Results
+	a						|	UDim2.new(a, 0, a, 0)
+	
+	a, 1 or 's'				|	UDim2.new(a, 0, a, 0)
+	a, 2 or 'o'				|	UDim2.new(0, a, 0, a)
+	a, 3 or 'b'				|	UDim2.new(a, a, a, a)
+	a, 4 or 'so'			|	UDim2.new(a, 0, 0, a)
+	a, 5 or 'os'			|	UDim2.new(0, a, a, 0)
+	
+	a, b, 1 or 's'			|	UDim2.new(a, 0, b, 0)
+	a, b, 2 or 'o'			|	UDim2.new(0, a, 0, b)
+	a, b, 3 or 'b'			|	UDim2.new(a, b, a, b)
+	a, b, 4 or 'so'			|	UDim2.new(a, 0, 0, b) *
+	a, b, 5 or 'os'			|	UDim2.new(0, a, b, 0)
+	
+	a, b, c, d				|	UDim2.new(a, b, c, d)
+--]]
+print(Spice.Positioning.new(1, 4, 4)) -->> {1, 0}, {0, 4} *
+
+--The other UDim2 returning function is Positioning.fromPosition who's arguments are Strings...
+print(Spice.Positioning.fromPosition('Top','Right')) -->> {1, 0}, {0, 0}
+
+--The Positioning.fromUDim and Positioning.fromVector2 are the same as UDim.new and Vector2.new except they can accept a single argument
+print(Spice.Positioning.fromVector2(.5)) -->> 0.5, 0.5
 
 ---------------------------------------------------------------------------------------------------------
+--[[		Properties
+	Big yotes stors RobloxApi, custom, and Default pRoPeRtIeS; is called by most functions in the Objects table
+--]]
+--Before using the Properties table it is highly reccomended that you sort the RobloxAPI with Properties.RobloxAPI:sort()
+Spice.Properties.RobloxAPI:sort(function(a,b) if #a == #b then return a:lower() < b:lower() end return #a < #b end)
+
+--You can also search through all the properties in the RobloxApi with Properties.RobloxAPI:search()
+print(Spice.Properties.RobloxAPI:search('bac')) --[COULD CHANGE]>> BackgroundColor3 252 
+
+local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
+local Frame = Instance.new("Frame", ScreenGui)
+--set Properties of an Object with Properties.setVanillaProperties
+Spice.Properties.setVanillaProperties(Frame, {
+	Size = UDim2.new(0,200,0,200);
+	Position = UDim2.new(.5,0,.5,0);
+})
+
+--Default Properties can be made using the Properties.Default.set (these are based off vanilla properties)
+Spice.Properties.Default.set("Frame", {BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,0,0)})
+
+--You can set already made Objects to default properties using the Properties.Default.toDefaultProperties function
+Spice.Properties.Default.toDefaultProperties(Frame)
+
+--Check to see if an Object has a special propert with Properties.hasProperty
+print(Spice.Properties.hasProperty(Frame, 'Transparency')) -->>true 0
+
+--get all an Object's Properties with Properties.getProperties
+for i,v in next, Spice.Properties.getProperties(Frame) do
+	print(i,v)
+end
+--[[
+>> Visible true
+>> Active false
+>> AbsoluteRotation 0
+>> Style Enum.FrameStyle.Custom
+>> AnchorPoint 0, 0
+>> Selectable false
+>> SizeConstraint Enum.SizeConstraint.RelativeXY
+>> ZIndex 1
+>> Archivable true
+>> Size {0, 200}, {0, 200}
+>> Draggable false
+etc
+--]]
+
+--To create custom properties we use the Properties.Custom.new function...
+Spice.Properties.Custom.new("BackgroundColor3", function(Object, newColor)
+	spawn(function()--bad scripting shut up
+		for i = 0, 1, .03 do
+			Object.BackgroundColor3 = Object.BackgroundColor3:lerp(newColor,i)
+			wait(.1)
+		end
+	end)
+end)
+
+--Set Properties of an Object that can connect to default, custom, and short cuts of properties if you so choose with Properties.setProperties
+Spice.Properties.setProperties(Frame,{ap = Vector2.new(.5,.5), bac = Color3.new(0,1,1)})
 
 ---------------------------------------------------------------------------------------------------------
+--[[		Table
+	a Table similar to Misc but only for table managing functions :)
+--]]
+
+
+--Table.pack is similar to the select function but its A. for tables and B. has an end point
+local tabl = {'a','b','c',1,2,3,'x','y','z',Instance.new("Part",workspace)}
+print(table.concat(Spice.Table.pack(tabl,4,8),', ')) -->> 1, 2, 3, x, y
+
+--Table.mergeTo merges table 1 into table 2...
+local table_a = {'a','b','c'}
+local table_b = {4,5,6}
+print(table.concat(Spice.Table.mergeTo(table_b,table_a),', ')) -->> a, b, c, 4, 5, 6
+
+--Table.clone clones a table and all its content...
+local tabl_clone = Spice.Table.clone(tabl)
+print(tabl[#tabl].Parent) --old part >> Workspace
+print(tabl_clone[#tabl_clone].Parent) -- cloned part >> nil
+
+--Table.length gets the real length of a table...
+local tabl = {apple = 1, ban = 2, die = 3, 4, 5, 6}
+print(#tabl, Spice.Table.length(tabl))-->> 3 6
+
+--Table.find and Table.search help find content in a table
+local dictionary = {
+	Roblox = "A massively multiplayer online game",
+	Wiki = "A Web site developed collaboratively by a community of users",
+	Lua = "A lightweight multi-paradigm programming language"
+}
+
+print(Spice.Table.find(dictionary, 'Lua')) -->> A lightweight multi-paradigm programming language Lua
+print(Spice.Table.search(dictionary, 'online', false, false, false, true)) -->> A massively multiplayer online game Roblox
+
+---------------------------------------------------------------------------------------------------------
+--[[		Theming
+	The most remade table ever.
+	oh and its used to theme stuff like colors ¯\_(ツ)_/¯
+--]]
+
+--To create a Theme use Theming.new
+Spice.Theming.new("FakeRedParts", Color3.new(1,0,0))
+
+for i = 1, 10 do
+	local part = Instance.new("Part",workspace)
+	local chance = math.random(1,2) == 2
+	if chance then
+		--to insert an Object into a theme we use the Theming.insertObject function
+		Spice.Theming.insertObject('FakeRedParts', part, 'Color')
+	else
+		part.Color = Color3.new(1,0,0)
+	end
+end
+
+--To set the theme after creation you use the Theming.setTheme function
+Spice.Theming.setTheme('FakeRedParts',Color3.new(1,0,1))
+
+--Although Themes sync automatically by default you can change it so you can sync manually (the manual sync allows tweening):
+Spice.Theming.getTheme('FakeRedParts').AutoSync = false
+Spice.Theming.setTheme('FakeRedParts',Color3.new(.5,0,0))
+Spice.Theming.sync('FakeRedParts',true,2)

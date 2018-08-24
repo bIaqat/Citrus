@@ -1,4 +1,3 @@
---Needs Properties.lua and Table.lua for most functions to work
 Objects = setmetatable({
 	getAncestors = function(Object)
 		local directory = {game};
@@ -10,7 +9,11 @@ Objects = setmetatable({
 				table.insert(directory,ind)
 			end
 		end
-		return directory
+		local final = {}
+		for i,v in next, directory do
+			final[#directory-i+1] = v
+		end
+		return final
 	end;
 	Classes = setmetatable({},{
 		__index = function(self,index)

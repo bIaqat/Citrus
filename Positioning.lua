@@ -17,12 +17,13 @@ Positioning = {
 		return b and Vector2.new(a,b) or Vector2.new(a,a)
 	end;
 	fromPosition = function(a,b)
-		local x,y
-		local alt, main = {top = 1, mid = 2, bottom = 3, center = 4}, {UDim.new(0,0),UDim.new(.5,0),UDim.new(1,0),UDim2.new(.5,0)}
-		y = (alt[a] and main[alt[a]] or main[a]) or (b ~= 'mid' and b~='center' and (alt[b] and main[alt[b]] or main[b]))
+		a,b = a:lower(), b:lower()
+		local x,y = (a == 'left' or a == 'right') and a or (b == 'left' or b == 'right') and b or nil,( a == 'top' or a == 'bottom') and a or (b == 'top' or b == 'bottom') and b or nil
+		local alt, main = {top = 1, mid = 2, bottom = 3, center = 4}, {UDim.new(0,0),UDim.new(.5,0),UDim.new(1,0),UDim.new(.5,0)}
+		local vy = main[alt[y]] or (b ~= x and (alt[b] and main[alt[b]] or main[b]))
 		alt = {left = 1, mid = 2, right = 3, center = 4}
-		x = (alt[b] and main[alt[b]] or main[b]) or (a ~= 'mid' and a~='center' and (alt[a] and main[alt[a]] or main[a]))
-		return UDim2.new(x or UDim.new(0,0),y or UDim.new(0,0))
+		local vx = main[alt[x]] or (a ~= y and (alt[a] and main[alt[a]] or main[a]))
+		return UDim2.new(vx or UDim.new(0,0),vy or UDim.new(0,0))
 	end;
 	fromOffset = function(a,b)
 		return UDim2.new(0,a,0,b)

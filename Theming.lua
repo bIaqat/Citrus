@@ -23,14 +23,14 @@ Theming = setmetatable({
 						end;
 					});
 					Objects = {};
-					Set = function(self,...)
-						self.setTheme(self,...)
+					Set = function(me,...)
+						self.setTheme(me,...)
 					end;
-					Insert = function(self,...)
-						self.insertObject(self,...)
+					Insert = function(me,...)
+						self.insertObject(me,...)
 					end;
-					Sync = function(self,...)
-						self.sync(self,...)
+					Sync = function(me,...)
+						self.sync(me,...)
 					end;
 				}
 				self.Themes[name] = theme
@@ -72,7 +72,7 @@ Theming = setmetatable({
 							if not lerp then
 								obj[prop] = value
 							else
-								game:GetService('TweenService'):Create(obj,TweenInfo.new(tim or 1,Enum.EasingStyle.Quad,Enum.EasingDirection.Out,...),{prop = value}):Play()
+								game:GetService('TweenService'):Create(obj,TweenInfo.new(tim or 1,Enum.EasingStyle.Quad,Enum.EasingDirection.Out,...),{[prop] = value}):Play()
 							end
 						end
 					end

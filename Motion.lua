@@ -18,7 +18,7 @@ Motion = setmetatable({
 					return self[Name]
 				end;
 				getDirection = function(Style, Type)
-					return self[Style][Type]
+					return self[Style][Type or 'Out']
 				end;
 				fromBezier = function(x1, y1, x2, y2)--function from RoStrap
 					if not (x1 and y1 and x2 and y2) then error("Need 4 numbers to construct a Bezier curve") end
@@ -35,8 +35,9 @@ Motion = setmetatable({
 						local z = a*0.1
 						SampleValues[a] = ((g*z + h)*z + e)*z -- CalcBezier
 					end
-					return function(t)
-						if t == 0 or t == 1 then
+					return function(t, b, c, d)
+						t = (c or 1)*t / (d or 1) + (b or 0)
+						if t == 0 or t == 1 then -- Make sure the endpoints are correct
 							return t
 						end
 						local CurrentSample = 9
@@ -109,7 +110,8 @@ Motion = setmetatable({
 				if cancel then self.cancelTween(Object,table.concat(Property)) end
 				for i = 1,#Property do
 					local v = Property[i]
-					Property[v] = {Object[v],type(EndValue) == 'table' and EndValue[i] or EndValue,self.Lerps[typeof(EndValue)]}
+					local EndValue = type(EndValue) == 'table' and EndValue[i] or EndValue
+					Property[v] = {Object[v],EndValue,self.Lerps[typeof(EndValue)]}
 					Property[i] = nil
 				end
 				local easingFunction = EasingStyle and (type(EasingStyle) == 'function' and EasingStyle or self.Easings.getDirection(EasingStyle, EasingDirection or 'Out'))
@@ -125,7 +127,7 @@ Motion = setmetatable({
 						if rep then
 							Object[i] = v[1]
 						elseif not en then
-							Object[i] = v[3](v[1],v[2], easingFunction and easingFunction(elapsed/Duration) or elapsed/Duration)
+							Object[i] = v[3](v[1],v[2], easingFunction and easingFunction(elapsed, 0, 1, Duration) or elapsed/Duration)
 						else
 							Object[i] = v[2]
 						end
@@ -170,6 +172,9 @@ Motion = setmetatable({
 							playing = false
 							reset()
 						end;
+						Wait = function(self)
+							repeat wait() until playing == false
+						end
 					}
 				})
 				tween:Play()
@@ -208,8 +213,8 @@ Motion = setmetatable({
 			lerp = function(BeginingValue, EndValue, Alpha, EasingStyle, EasingDirection)
 				local Lerps = self.Lerps
 				return Lerps[typeof(BeginingValue)](BeginingValue, EndValue, 
-					EasingStyle and ((type(EasingStyle) == 'string' and self.Easings[EasingStyle][EasingDirection or 'Out'](Alpha) ) or
-						type(EasingStyle) == 'function' and EasingStyle(Alpha) 
+					EasingStyle and ((type(EasingStyle) == 'string' and self.Easings[EasingStyle][EasingDirection or 'Out'](Alpha, 0, 1, 1) ) or
+						type(EasingStyle) == 'function' and EasingStyle(Alpha, 0, 1, 1) 
 					) or
 					Alpha
 				)

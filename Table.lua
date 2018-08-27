@@ -75,6 +75,15 @@ Table = setmetatable({
 		end
 		return count
 	end;
+	concat = function(tabl, seperation, decludeIndex, decludeVariable)
+		local check = table.concat(tabl,seperation) --lol sorry ;-;
+		if #check >= 1 then return check end
+		local con = ''
+		for i,v in next, tabl do
+			con = con..(not decludeIndex and tostring(i) or '')..(not decludeIndex and not decludeVariable and ' = ' or '')..(not decludeVariable and tostring(v) or '')..(next(tabl, i) and seperation or '')
+		end
+		return con
+	end;
 	reverse = function(tabl)
 		local new = {}
 		for i,v in next, tabl do

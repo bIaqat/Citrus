@@ -148,6 +148,7 @@ Properties
 	RobloxAPI
 		:sort					| Sort Function
 		:search					| Index, keepSimilar
+		.search 				| ClassName, Index, keepSimilar
 	-------------------------------
 	
 	.new						| Properties.Custom.new Args
@@ -172,6 +173,7 @@ Table
 	.find						| Table, Value, keepSimilar, ... comparative Functions (returns bool)
 	.mergeClone					| TableA, TableB
 	.search						| Table, Value, skipSavedResults, keepSimilar, returnFirstResult, subStringSearch, capsAlgSearch, ... comparative Functions (returns bool)
+	.concat						| Table, Seperator, Declude Index, Declude Variable
 ___________________________________
 Theming
 

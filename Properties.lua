@@ -110,7 +110,7 @@ Properties = setmetatable({
 					table.sort(self,func)
 				end;
 				search = function(hmm, index, keepSimilar)
-					return Spice.Table.search(type(hmm) == 'String' and getmetatable(self).FullAPI[hmm](true) or self,index,false,keepSimilar, true, false,true)
+					return Spice.Table.search(type(hmm) == 'string' and getmetatable(self).FullAPI[hmm](true) or self,index,false,keepSimilar, true, false,true)
 				end;
 			} do
 				gelf.__index[i] = v

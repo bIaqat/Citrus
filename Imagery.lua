@@ -5,7 +5,31 @@ Imagery = setmetatable({
 			local gelf, ret = getmetatable(self)
 			gelf.__index = {}
 			for i,v in next, {
-				new = function(Name, ImageId, Props, ...) --... Directory
+				new = function(Name, ImageId, Props, ...) --... Index
+					local oldName
+					if type(Name) == 'table' then
+						oldName = Name[2]
+						Name = Name[1]
+					end
+					local dir = ({...})[1]
+					if not self[dir] then self[dir] = setmetatable({},{
+						__index = function(self, ind) 
+							local gelf = getmetatable(self)
+							if gelf[ind] then return gelf[ind] end
+							local maybe = {}
+							for i,v in next, gelf do
+								if i:sub(1,#ind):lower() == ind:lower() then
+									return v
+								end
+								if i:find(ind) then
+									table.insert(maybe,v)
+								end
+							end
+							if #maybe > 0 then
+								return maybe[1]
+							end
+							return nil
+					end, __call = function(self,pic, name) rawset(getmetatable(self),name, pic) end}) end
 					ImageId = type(ImageId) ~= 'string' and 'rbxassetid://'..ImageId or ImageId
 					Props = Props or {}
 					Props.Name, Props.Image, Props.BackgroundTransparency = Name, ImageId, 1
@@ -13,44 +37,78 @@ Imagery = setmetatable({
 					for i,v in next, Props do
 						Image[i] = v
 					end
+					self[dir](Image, oldName or Name)
 					local index = self
 					for i,v in next, {...} do
-						if not index[v] then index[v] = {} 
-						elseif type(index[v]) ~= 'table' then index[v] = {index[v]} end
-						index = index[v]
+						if not index[v] then
+							index[v] = {}
+						end
+						if type(index[v]) == 'userdata' then
+							index = {v = index[v]}
+						else
+							index = index[v]
+						end
 					end
-					table.insert(index,Image)
-					index[Name] = Image
+					if not index[Name] then index[Name] = Image
+					else
+						if type(index[Name]) ~= 'table' then index[Name] = {index[Name]} end
+						for i,v in next, type(Image) == 'table' and Image or {Image}  do
+							if type(i) == 'string' then
+								index[Name][i] = v
+							else
+								table.insert(index[Name],v)
+							end
+						end
+					end
 				end;
-				get = function(...) --... Directory
+				get = function(...) --... Index
+					local index = self
+					local nextup
+					for i,v in next, {...} do
+						index = rawget(index,v) or index[v] or index
+						nextup = next({...},i) or nextup
+					end
+					return index, nextup
+				end;
+				remove = function(Name, ...) --... Index
 					local index = self
 					for i,v in next, {...} do
 						index = index[v]
-					end
-					return index
+					end		
+					index[Name] = nil
 				end;
 				getImage = function(Name, ...)
-					local image = self.get(...)[Name]
-					if type(image) == 'table' then
+					local geta = {...}
+					table.insert(geta,Name)
+					local image, name = self.get(unpack(geta))
+					local rname = geta[#geta]
+					local en = false
+					while not (en or type(image) ~= 'table') do
+						if type(image) == 'table' and not next(image) then en = true end
 						for i,v in next, image do
 							if typeof(v) == 'Instance' then
 								return v:Clone()
 							end
 						end
-					end
-					return image:Clone()
+						_,image = next(image)
+					end 
+					return type(image) ~= 'userdata' and error'Incorrect Image Name or Directory' or image:Clone()
 				end;
 				newFromSheet = function(ImageId, XAmt, YAmt, XSiz, YSiz, Names, ...) --...Directory
 					local namesIndex = 1
 					for y = 0, YAmt - 1 do
 						for x = 0, XAmt - 1 do
 							local index = {}
-							for name in (Names and Names[namesIndex] or string.format('Icon-%.3i', namesIndex)):gsub('_','\0'):gmatch('%Z+') do
+							local oldName = Names and Names[namesIndex] or string.format('Icon-%.3i', namesIndex)
+							for name in (oldName):gsub('_','\0'):gmatch('%Z+') do
 								table.insert(index,name)
 							end
 							local name = index[#index]
 							table.remove(index,#index)
-							self.new(name, ImageId, {ImageRectOffset = Vector2.new(x*XSiz, y*YSiz), ImageRectSize = Vector2.new(XSiz, YSiz)}, ..., unpack(index))
+							for i,v in next, {...} do
+								table.insert(index, i, v)
+							end
+							self.new({name, oldName}, ImageId, {ImageRectOffset = Vector2.new(x*XSiz, y*YSiz), ImageRectSize = Vector2.new(XSiz, YSiz)}, unpack(index))
 							namesIndex = namesIndex + 1
 						end
 					end			

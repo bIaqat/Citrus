@@ -182,4 +182,5 @@ Theming
 	.setTheme					| Name, ... Values
 	.insertObject				| Name, Object, Property, Index
 	.sync						| Name, Tween (bool), Duration, Repeat, Reverse, Delay
+	.setSyncFunction			| Name, Function (Object, Property, newValue)
 ___________________________________

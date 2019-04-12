@@ -502,7 +502,7 @@ for i = 1, 10 do
 		--to insert an Object into a theme we use the Theming.insertObject function
 		Spice.Theming.insertObject('FakeRedParts', part, 'Color')
 	else
-		part.Color = Color3.new(1,0,0)
+		part.Color = Color3.new(1,1,0)
 	end
 end
 

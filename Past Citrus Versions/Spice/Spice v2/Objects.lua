@@ -161,6 +161,7 @@ Objects = setmetatable({
 				for i,v in next, Props or {} do
 					if not pcall(function() return instance[i] and true or false end) then
 						Spice.Properties.setProperties(instance,Props)
+						break;
 					else
 						instance[i] = v
 						Props[i] = nil

@@ -11,7 +11,7 @@ Imagery = setmetatable({
 						oldName = Name[2]
 						Name = Name[1]
 					end
-					local dir = ({...})[1]
+					local dir = ({...})[1] or "SMAIN"
 					if not self[dir] then self[dir] = setmetatable({},{
 						__index = function(self, ind) 
 							local gelf = getmetatable(self)

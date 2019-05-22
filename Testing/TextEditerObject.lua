@@ -1,3 +1,37 @@
+--[[
+local text = "vbnh$asd(q,w,eert,werp,zxcg){zxcv}tyu$yes(){lol}"
+local got = {};
+local t2 = text;
+for c in text:gmatch('$%w+%([%w,]*%)') do
+  local args = {}
+  local t = text:sub(text:find'%(', text:find')')
+
+  local c = 1
+  local m1 = text:match('$%w+%([%w,]*%){%w+}')
+  local m = ""
+ for i in t:gmatch("[%w,]*") do
+    m = t:match('%w+',c)
+    table.insert(args,m)
+    c = c + (m and #m or 0) + 1
+  end
+
+
+  got[text:match('$%w+')] = {text = ('{.+}'):sub(2,#text - 1), ['args'] = args};
+
+  text= text:sub(1,text:find("$%w+%([%w,]*%)")-1)..text:sub(text:find("$%w+%([%w,]*%)")+#m1-1)
+
+end
+
+print(t2)
+for i, v in next, got do
+  print(i,v)
+  print("\tARGS:")
+  for a,s in next,v.args do
+    print("\t\t"..s)
+  end
+end
+
+ ]]
 local TextEditor  = setmetatable({
 	text = "";
 	filteredText = {};

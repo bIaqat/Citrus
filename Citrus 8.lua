@@ -221,36 +221,6 @@ function Color.toHex(Color, includeHash)
 	return (includeHash and '#' or '') .. string.format('%02X',Color.r*255)..string.format('%02X',Color.g*255)..string.format('%02X',Color.b*255);
 end;
 
-function Color.toHSL(Color, returnTable)
-	local h,s,v = Color.toHSV(Color);
-	local tab = {h, (2-s)*v < 1 and s*v/((2-s)*v) or s*v/(2-(2-s)*v, (2-s)*v/2)};
-
-	return unpack(returnTable and {tab} or tab);
-end;
-
-function Color.fromHSL(h, s, l)
-	s = s * l < .5 and l or 1 - l;
-
-	return Color3.fromHSV(h, 2*s/(l+s), l+s);
-end;
-
-function Color.setHSL(Color, newH, newS, newL)
-	local h,s,v = Color.toHSV(Color);
-	local h,s,l = newH or h, newS or ((2-s)*v < 1 and s*v/((2-s)*v) or s*v/(2-(2-s)*v), newL or (2-s)*v/2);
-	s = s * l < .5 and l or 1 - l;
-	
-	return Color3.fromHSV(h, 2*s/(l+s), l+s);
-end;
-
-function Color.editHSL(Color, operation, editH, editS, editL)
-	local op = Spice.misc.operation;
-	local h,s,v = Color.toHSV(Color);
-	local h,s,l = op(h,editH,operation), ((2-s)*v < 1 and s*v/((2-s)*v) or s*v/(2-(2-s)*v), newL or (2-s)*v/2);
-	s,l = op(s,editS,operation), op(l,editL,operation);
-	s = s * l < .5 and l or 1 - l;
-	return Color3.fromHSV(h, 2*s/(l+s), l+s);
-end;
-
 function Color.fromString(String, replaceOldColors, ...)
 	local value = 0
 
@@ -284,90 +254,44 @@ function Color:getColorInfo(Color) -- idea from Citrusv2 Beta
 
 end;
 
-function Color:getMonochromatic(Color, intervals)
-	local percent = 15 / intervals;
-	local tab = {[0] = Color};
+function Color:storeColor(colorName, Color, ...) 
+	local index = getmetatable(self).__index;
 
-	for i = 1, intervals do
-		tab[i] = self.editHSL(Color, "+", 0, 0, percent * i / 100);
-		tab[-i] = self.editHSL(Color, "-", 0, 0, percent * i / 100);
+	for i,v in next, {...} do
+		if not index[v] then
+			rawset(index, v, {})
+		end
+		index = index[v];
 	end
 
-	return tab;
+	rawset(index, colorName, Color);
 end;
 
-function Color.getTriadic(Color)
-	local h0 = Color3.toHSV(Color)
-	local abs = math.abs
+function Color:getColor(colorName, ...)
+	local index = getmetatable(self).__index;
 
-	return {[0] = Color, abs(h0 + 120 - 360), abs(h0 + 250 - 360)};
-end;
-
-function Color.getTetradic(Color)
-	local h0 = Color3.toHSV(Color);
-	local abs = math.abs;
-
-	return {[0] = Color, abs(h0 + 90 - 360), abs(h0 + 180 - 360), abs(h0 + 270 - 360)};
-end;
-
-function Color.getShades(Color, intervals)
-	local h,s,v = Color3.toHSV(Color);
-	local percent = v / (intervals + 1);
-	local tab = {[0] = Color};
-
-	for i = 1, intervals do
-		v = v - percent;
-		tab[i] = Color3.fromHSV(h,s,v);
+	for i,v in next, {...} do
+		if not index[v] then
+			return warn("Index doesn't exist") and false;
+		end
+		index = index[v];
 	end
 
-	return tab;
+	local color = index[colorName];
+	return typeof(color) == 'Color3' and color;
 end;
 
-function Color.getTints(Color, intervals)
-	local h,s,v = Color3.toHSV(Color);
-	local percent = v / (intervals + 1);
-	local tab = {[0] = Color};
+function Color:removeColor(colorName, ...)
+	local index = getmetatable(self).__index;
 
-	for i = 1, intervals do
-		s = s - percent;
-		tab[i] = Color3.fromHSV(h,s,v);
+	for i,v in next, {...} do
+		if not index[v] then
+			return warn("Index doesn't exist") and false;
+		end
+		index = index[v];
 	end
 
-	return tab;
-end;
-
-function Color.getComplementary(Color, split)
-	local h0 = Color3.toHSV(Color);
-	local abs = math.abs
-
-	return {[0] = Color, abs(h0 + (split and 180 or 150) - 360), split and abs((h0 + 210 - 360)) or nil};
-end;
-
-function Color.getAnalogous(Color)
-	local h0 = Color3.toHSV(Color);
-	local abs = math.abs;
-
-	return {[0] = Color, abs(h0 + 30 - 360), abs(h0 + 60 - 360), abs(h0 + 90 - 360)};
-end;
-
-function Color.getInverse(Color)
-	local r,g,b = Color3.toRGB(Color);
-	return Color3.fromHSV(1 - r, 1 - g, 1 - b);
-end;
-
-function Color:storeColor(name, Color, index) 
-	local gelf = getmetatable(self).__index
-
-end;
-
-function Color:getColor(name, index)
-	local gelf = getmetatable(self).__index
-
-end;
-
-function Color:removeColor(name, index)
-	local gelf = getmetatable(self).__index
-
+	rawset(index, colorName, nil);
 end;
 
 
@@ -414,17 +338,20 @@ end;
 --Effects
 Citrus.effect = {};
 Effects = Citrus.effect;
+setmetatable(Effects, {__index = {}});
 
-function Effects:new(name, Function)
-	
+function Effects:new(effectName, Function)
+	local gelf = getmetatable(self).__index;
+	rawset(gelf, effectName, Function);
 end;
 
-function Effects:getEffect(name)
-
+function Effects:getEffect(effectName)
+	return getmetatable(self).__index[effectName] or false;
 end;
 
-function Effects:effect(Object, name, ...)
-
+function Effects:effect(Object, effectName, ...)
+	local effect = getmetatable(self).__index[effectName] or false;
+	return effect and effect(Object,...);
 end;
 
 function Effects:effectChildrenOf(Object, effectName, ...)
@@ -458,6 +385,7 @@ end;
 --Objects
 Citrus.object = {};
 Objects = Citrus.object;
+setmetatable(Objects,{__index = {Objects = {}, Classes = {}})
 
 function Objects.getAncestors(Object)
 	local ancestors = {};
@@ -476,59 +404,196 @@ function Objects.newInstance(className, parent, propertyTable)
 end;
 
 function Objects.clone(Object, parent, propertyTable)
+	local clone = Object:clone();
+	clone.Parent = parent;
 
+	for i,v in next, propertyTable or {} do
+		clone[i] = v;
+	end
+
+	return clone;
 end;
 
 function Objects:newClass(className, functionOnCreated)
+	local gelf = getmetatable(self).__index.Classes;
 
+	local class = setmetatable({Objects = {}, functionOnCreated}, {
+		__call = function(se, ...)
+			local object = se[1](...)
+			table.insert(se.Objects, object)
+			return object;
+		end
+	});
+
+	return class;
 end;
 
 function Objects:isA(Object, className)
+	local gelf = getmetatable(self).__index.Classes[className]
 
+	return Object:isA(className) or gelf and gelf
 end;
 
-function Objects:newCustomObject(className, parent, propertyTable, customPropertyTable)
+function Objects:newCustomObject(className, parent, propertyTable, customPropertyTable, useVanilla, ...)
+	local gelf = getmetatable(self).__index.Objects;
 
+	local object = {
+		Properties = customPropertyTable;
+		['Instance'] = Instance.new(className, parent);
+		
+		newIndex = function(self, index, Function)
+			rawset(getmetatable(self).customIndex.newIndex, index, Function);
+		end;
+
+		index = function(self, index, Function)
+			rawset(getmetatable(self).customIndex.index, index, Function);
+		end;
+
+		clone = function(self, parent, propertyTable)
+			local newObject = Table.clone(self);
+			newObject.Instance.Parent = parent;
+			newObject(propertyTable);
+		end;
+	}
+
+	local objectMeta = {
+		customIndex = {index = {}, newIndex = {}};
+		__index = function(se, index)
+			local ge = getmetatable(se);
+			local indexes = ge.customIndex.index
+			local instanceIndex = pcall(function() return se.Instance[index] or false end)
+
+			if indexes[index] then
+				return indexes[index](se);
+			elseif se.Properties[index] or not instanceIndex then
+				return se.Properties[index];
+			else
+				return instanceIndex or nil;
+			end;
+		end;
+		__newindex = function(se, index, newIndex)
+			local ge = getmetatable(se);
+			local indexes = ge.customIndex.index
+			local instanceIndex = pcall(function() return se.Instance[index] or false end)
+
+			if indexes[index] then
+				indexes[index](se, newIndex);
+			elseif se.Properties[index] or not instanceIndex then
+				rawset(se.Properties, index, newIndex);
+			elseif instanceIndex then
+				se.Instance[index] = newIndex;
+			end;
+		end;
+		__call = function(se, propertyTable, useVanilla, ...)
+			if useVanilla then
+				for i,v in next, propertyTable do
+					se[i] = v;
+				end
+			else
+				Props:setProperties(se.Instance, popertyTable, ...)
+			end
+		end;
+	}
+	rawset(gelf, object.Instance, object);
+	return setmetatable(object, objectMeta)(propertyTable, useVanilla, ...);
 end;
 
 function Objects:isACustomObject(Object)
-
+	return self:getCustomObjectFromInstance(Object) and true or false;
 end;
 
 function Objects:getCustomObjectFromInstance(Object)
-
+	return rawget(getmetatable(self).__index.Objects, Object);
 end;
 
-function Objects:newObject(className, parent, ...)
+function Objects:newObject(className, parent, onCreatedArgs, propertyTable, useVanilla, ...)
+	local gelf = getmetatable(self).__index.Classes;
+	local instance = gelf[className] and gelf[className](unpack(onCreatedArgs)) or Instance.new(className, parent);
+	
+	if useVanilla then
+		for i,v in next, propertyTable do
+			instance[i] = v;
+		end
+	else
+		Props:setProperties(instance, propertyTable, ...)
+	end
 
+	return instance;
 end;
 
-function Objects:newObjectFromDefault(className, parent, ...)
-
+function Objects:newObjectFromDefault(className, parent, onCreatedArgs, propertyTable)
+	return self:newObject(className, parent, onCreatedArgs, propertyTable, false, true, true, true)
 end;
 
+function Objects:newVanillaObject(className, parent, propertyTable)
+	local instance = Instance.new(className, parent)
+
+	for i,v in next, propertyTable or {} do
+		instance[i] = v;
+	end
+
+	return instance;
+end;
 --Properties
 Citrus.property = {};
 Props = Citrs.property;
+setmetatable(Props,{__index = {Default = {}, Custom = {}}})
 
-function Props:setDefaultProperties(className, propertyTable, overlapIndex)
+function Props:newDefaultProperties(className, propertyTable, overlapIndex)
+	local gelf = getmetatable(self).__index.Default;
 
+	if not gelf[className] then
+		gelf[className] = {};
+	end
+
+	rawset(gelf[className], overlapIndex, propertyTable)
 end;
 
-function Props:getDefaultPropeties(className, overlapIndex)
+function Props:getDefaultPropeties(className, specificIndex)
+	local gelf = getmetatable(self).__index.Default;
 
+	if specificIndex then
+		return rawget(gelf[className], specificIndex)
+	else
+		local props = {};
+
+		for i, v in next, gelf[className] do
+			props[i] = v;
+		end
+	end
 end;
 
-function Props:setToDefaultProperties(Object, overlapIndex)
-
+function Props:setToDefaultProperties(Object, specificIndex, ...)
+	self:setProperties(Object, self:getDefaultPropeties(Object.ClassName, specificIndex), ...);
 end;
 
 function Props:newCustomProperty(name, Function, ...) --... Classes that have the property
+	local gelf = getmetatable(self).__index.Custom;
 
+	rawset(gelf, name, setmetatable({Function = Function, Classes = {...},
+		canUse = function(self, Object)
+			local c = self.Classes;
+			if #c == 0 or c[1] == 'all' then
+				return true;
+			else
+				for i,v in next, Classes do
+					if Object:IsA(v) then
+						return true;
+					end
+				end
+			end
+			return false;
+		end;
+
+	},{
+		__call = function(self, Object, ...)
+			return self.canUse(Object) and self.Function(Object,...);
+		end;
+	}));
 end;
 
-function Props:setToCustomProperty(Object, name)
-
+function Props:setToCustomProperty(Object, customProperty, ...)
+	return getmetatable(self).__index.Custom[customProperty](Object, ...);
 end;
 
 function Props:sortRobloxAPI(sortFunction)
@@ -540,14 +605,15 @@ function Props:searchRobloxAPI(value)
 end;
 
 function Props:hasProperty(Object, property)
-
+	local has = pcall(function() return Object.Instance[property] or false end)
+	return has, has and Object[property] or nil;
 end;
 
 function Props:getProperties(Object, classSpecific)
-
+	
 end;
 
-function Props:setProperties(Object, propertyTable, includeShortcuts, includeCustom, includeDefault)
+function Props:setProperties(Object, propertyTable, useVanilla, includeShortcuts, includeCustom, includeDefault)
 
 end;
 

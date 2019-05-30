@@ -14,9 +14,9 @@ local ud = lush.Position.UDim.new --[[ Citrus version of UDim2 functions | ud(XS
 																	| ud(a,"s")				-- [same as] UDim2.new(a,0,a,0)
 																	| ud(a,"o") 				-- [same as] UDim2.new(0,a,0,a)
 																	| ud(a,b,1) or ud(a,b,"s") 	-- [same as] UDim2.new(a,0,b,0)
-																	| ud(a,b,2) or ud(a,b,"o") 	-- [same as] UDim2.new(0,a,0,#2)
-																	| ud(a,b,3) 				-- [same as] UDim2.new(a,b,a,#2)
-																	| ud(a,b,4) 				-- [same as] UDim2.new(a,0,0,#2)
+																	| ud(a,b,2) or ud(a,b,"o") 	-- [same as] UDim2.new(0,a,0,b)
+																	| ud(a,b,3) 				-- [same as] UDim2.new(a,b,a,b)
+																	| ud(a,b,4) 				-- [same as] UDim2.new(a,0,0,b)
 																	| ud(a,b,5) 				-- [same as] UDim2.new(0,a,b,0)
 																	| ud(a,b,c,d)				 -- [same as] UDim2.new(a,b,c,d)																
 --]]

@@ -13,9 +13,9 @@ function Color.setRGB(Color, newR, newG, newB)
 end;
 
 function Color.editRGB(Color, operation, editR, editG, editB)
-	local op = Spice.Misc.operation;
+	local op = Misc.operation;
 
-	return Color3.new(op(Color.r*255,editR,operation), op(Color.r*255,editG,operation), op(Color.r*255,editB,operation));
+	return Color3.new(op(Color.r*255,editR,operation)/255, op(Color.g*255,editG,operation)/255, op(Color.b*255,editB,operation)/255);
 end;
 
 function Color.fromHSV(h, s, v)

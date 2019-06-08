@@ -34,3 +34,4 @@ end;
 
 function UD.newUDim2FromScale(x,y)
 	return UDim2.new(x,0,y,0);
+end;

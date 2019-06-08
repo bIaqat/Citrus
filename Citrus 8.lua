@@ -54,12 +54,12 @@ end;
 
 function Misc.operation(a,b,op)
 	return op == '+' and a + b or
-	op == '-' and a - b or
-	(op == '*' or op == 'x') and a * b or
-	op == '/' and a / b or
-	op == '%' and a % b or
-	(op == 'pow' or op == '^') and a ^ b or
-	(op == 'rt' or op == '^/') and a ^ (1/b);
+		op == '-' and a - b or
+		(op == '*' or op == 'x') and a * b or
+		op == '/' and a / b or
+		op == '%' and a % b or
+		(op == 'pow' or op == '^') and a ^ b or
+		(op == 'rt' or op == '^/') and a ^ (1/b);
 end;
 
 
@@ -132,9 +132,9 @@ function Table:clone(Table)
 end;
 
 function Table.contains(Table, contains)
-	for index, key in next, Table do
+	for index, val in next, Table do
 
-		if (type(i) ~= 'string' and i == contains) or (v == contains) then
+		if (type(index) ~= 'string' and index == contains) or (val == contains) then
 			return true;
 		end
 
@@ -175,7 +175,7 @@ function Table.indexesOf(Table, value, returnNumber)
 	return returnNumber and indexes[returnNumber] or indexes;
 end;
 
-function Table.find(Table, value, returnNumber, ...) --...searchAlgorithms (function(Table, index, value))
+function Table:find(Table, value, returnNumber, ...) --...searchAlgorithms (function(Table, index, value))
 	local found = {};
 
 	for i,v in next, Table do
@@ -221,7 +221,7 @@ function Table:search(Table, value, skipSaved, returnNumber, subStringSearch, ca
 	return saved[value];
 end;
 
-function Table:setCompareAlgorithm(name, Function)
+function Table:storeCompareAlgorithm(name, Function)
 	rawset(getmetatable(self).index, name, Function);
 end
 
@@ -246,7 +246,7 @@ function Color.setRGB(Color, newR, newG, newB)
 end;
 
 function Color.editRGB(Color, operation, editR, editG, editB)
-	local op = Spice.Misc.operation;
+	local op = Misc.operation;
 
 	return Color3.new(op(Color.r*255,editR,operation), op(Color.r*255,editG,operation), op(Color.r*255,editB,operation));
 end;
@@ -338,7 +338,7 @@ function Color:getColor(colorName, ...)
 
 	for i,v in next, {...} do
 		if not index[v] then
-			return warn("Index doesn't exist") and false;
+			return warn("Index ".. v.." doesn't exist") and false;
 		end
 		index = index[v];
 	end
@@ -362,7 +362,7 @@ end;
 
 
 --Location
-Citus.location = {};
+Citrus.location = {};
 UD = Citrus.location;
 
 function UD.newUDim(scale, offset)
@@ -406,7 +406,7 @@ Citrus.effect = {};
 Effects = Citrus.effect;
 setmetatable(Effects, {__index = {}});
 
-function Effects:new(effectName, Function)
+function Effects:storeEffect(effectName, Function)
 	local gelf = getmetatable(self).__index;
 	rawset(gelf, effectName, Function);
 end;
@@ -432,26 +432,21 @@ function Effects:effectDescendantsOf(Object, effectName, ...)
 	end
 end;
 
-function Effects:effectOnChildAdded(Object, effectName, ...)
-	Object.onChildAdded:connect(function(child)
-		self:effect(child, effectName, ...);
-	)
-end;
-
-function Effects:effectOnDescendantAdded(Object, effectName, ...)
-	Object.effectOnDescendantAdded:connect(function(desc)
-		self:effect(desc, effectName, ...);
-	)
-end;
-
 function Effects:effectOnEvent(Object, eventName, effectName, ...)
-	Object.
+	local args = {...};
+	Object[eventName]:connect(function(possibleObject)
+		if typeof(possibleObject) == 'Instance' then 
+			Object = possibleObject;
+		end
+		
+		self:effect(Object, effectName, unpack(args));
+	end)
 end;
 
 --Objects
 Citrus.object = {};
 Objects = Citrus.object;
-setmetatable(Objects,{__index = {Objects = {}, Classes = {}})
+setmetatable(Objects,{__index = {Objects = {}, Classes = {}}});
 
 function Objects.getAncestors(Object)
 	local ancestors = {};
@@ -556,7 +551,7 @@ function Objects:newCustomObject(className, parent, propertyTable, customPropert
 					se[i] = v;
 				end
 			else
-				Props:setProperties(se.Instance, popertyTable, ...)
+				Props:setProperties(se.Instance, propertyTable, ...)
 			end
 		end;
 	}
@@ -633,10 +628,10 @@ Citrus.property = {
 			TextService = setmetatable({},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.Instance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); Pages = setmetatable({'IsFinished'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.Instance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); Beam = setmetatable({'Color', 'CurveSize0', 'CurveSize1', 'Enabled', 'FaceCamera', 'LightEmission', 'LightInfluence', 'Segments', 'Texture', 'TextureLength', 'TextureMode', 'TextureSpeed', 'Transparency', 'Width0', 'Width1', 'ZOffset'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.Instance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); GuiItem = setmetatable({},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.Instance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); ChangeHistoryService = setmetatable({},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.Instance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); ClickDetector = setmetatable({'CursorIcon', 'MaxActivationDistance'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.Instance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); PluginGui = setmetatable({'Title'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.LayerCollector(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); Instance = setmetatable({'Archivable', 'ClassName', 'DataCost', 'Name', 'RobloxLocked'},{__call = function(me) return me end}); Hopper = setmetatable({},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.GuiItem(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); BackpackItem = setmetatable({'TextureId'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.GuiItem(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); Frame = setmetatable({'Style'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.GuiObject(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); SurfaceLight = setmetatable({'Angle', 'Face', 'Range'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.Light(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); Decal = setmetatable({'Color3', 'LocalTransparencyModifier', 'Shiny', 'Specular', 'Texture', 'Transparency'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.FaceInstance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); RotateV = setmetatable({},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.DynamicRotate(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); ContextActionService = setmetatable({},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.Instance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); GuiBase3d = setmetatable({'Color', 'Color3', 'Transparency', 'Visible'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.GuiBase(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); Rotate = setmetatable({},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.JointInstance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); BodyVelocity = setmetatable({'MaxForce', 'P', 'Velocity'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.BodyMover(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end}); Keyframe = setmetatable({'Time'},{AllProps = {},__call = function(me, all) local meta = getmetatable(me) local p = meta.AllProps if all then if not next(p) then for i,v in next, self.Instance(true) do table.insert(p,v) end for i,v in next, me do table.insert(p,v) end end return p end return me end});
 		} do gelf.__index[i] = v if i == index then ret = v end end return ret end});
 };
-Props = Citrs.property;
+Props = Citrus.property;
 setmetatable(Props,{__index = {Default = {}, Custom = {}}})
 
-function Props:newDefaultProperties(className, propertyTable, overlapIndex)
+function Props:storeDefaultProperties(className, propertyTable, overlapIndex)
 	local gelf = getmetatable(self).__index.Default;
 
 	if not gelf[className] then
@@ -673,7 +668,7 @@ function Props:newCustomProperty(name, Function, ...) --... Classes that have th
 			if #c == 0 or c[1] == 'all' then
 				return true;
 			else
-				for i,v in next, Classes do
+				for i,v in next, c do
 					if Object:IsA(v) then
 						return true;
 					end
@@ -808,7 +803,7 @@ function Theming:sync(name, syncFunction)
 		local values = theme.values;
 
 		for object, v in next, theme.objects do
-			for property, index do
+			for property, index in v do
 				(self:getSyncFunction(syncFunction) or theme.syncFunction)(object, property, values[index] or next(values));
 			end
 		end
@@ -826,28 +821,50 @@ end;
 --Motion
 Citrus.motion = {};
 Motion = Citrus.motion;
+setmetatable(Motion,{__index = {Lerps = { 
+	['Color3'] = Color3.new().Lerp;
+	['Vector2'] = Vector2.new().Lerp;
+	['UDim2'] = UDim2.new().Lerp;
+	['CFrame'] = CFrame.new().Lerp;
+	['Vector3'] = Vector3.new().Lerp;
+	['UDim'] = function(a, b, c)
+		local function x(y)
+			return a[y] + c * (b[y] - a[y])
+		end
+		return UDim.new(x'Scale',x'Offset')
+	end;
+	number = function(a,b,c)
+		return a + c * (b - a)
+	end;
+}, Easings = {}}});
 
-function Motion:newEasing(name, directionTable)
+function Motion:storeEasing(directionName, easingName, Function)
+	local gelf = getmetatable(self).__index.Easings;
 
+	if not gelf[easingName] then
+		gelf[easingName] = {};
+	end
+
+	gelf[easingName][directionName] = Function;
 end;
 
-function Motion:newDirection(name, easingName, Function)
+function Motion:getEasing(directionName, easingName)
+	local gelf = getmetatable(self).__index.Easings;
 
+	if not gelf[easingName] then
+		return warn("Easing " .. easingName.. " doesn't exist") and false;
+	end
+
+	return gelf[easingName][directionName];
 end;
 
-function Motion:getEasing(name)
+function Motion:setLerp(typeName, Function)
+	local gelf = getmetatable(self).__index.Lerps;
 
+	rawset(gelf, typeName, Function);
 end;
 
-function Motion:getDirection(name, easingName)
-
-end;
-
-function Motion:newLerp(typeName, Function)
-
-end;
-
-function Motion:lerpFromBezier(x1, y1, x2, y2)--function from RoStrap
+function Motion:newLerpFromBezier(x1, y1, x2, y2)--function from RoStrap
 	if not (x1 and y1 and x2 and y2) then error("Need 4 numbers to construct a Bezier curve") end
 	if not (0 <= x1 and x1 <= 1 and 0 <= x2 and x2 <= 1) then error("The x values must be within range [0, 1]") end
 	if x1 == y1 and x2 == y2 then
@@ -904,20 +921,28 @@ function Motion:lerpFromBezier(x1, y1, x2, y2)--function from RoStrap
 	end
 end;
 
-function Motion:tweenServiceTweenObject(Object, propertyTable, duration, easing, direction, ...)
+function Motion:createTween(Object, propertyTable, duration, directionName, easingName, ...)
+	local tween = game:GetService('TweenService'):Create(Object, TweenInfo.new(
+			duration or 1, 
+			easingName and Enum.EasingStyle[easingName] or Enum.EasingStyle[1], 
+			directionName and Enum.EasingDirection[directionName] or Enum.EasingDirection[1],
+			...
+		));
 
+	return tween;
 end;
 
-function Motion:citrusTweenObject(Object, propertyTable, duration, easing, direction, ...)
+--function Motion:customTweenObject(Object, propertyTable, duration, easingName, directionName, ...)
 
+--end;
+
+function Motion:lerp(beginingValue, endValue, alpha, directionName, easingName)
+    local lerp = getmetatable(self).__index.Lerps[type(beginingValue)] or warn(type(beginingValue) .. " lerping doesn't exist") and false;
+    local easing = self:getEasing(directionName, easingName);
+
+    return lerp and lerp(beginingValue, endValue, easing and easing(alpha, 0, 1, 1) or alpha) or false;
 end;
 
-function Motion:lerp(beginingValue, endValue, alpha, easing, direction)
-
-end;
-
-
---
 
 --[[
 Citrus.misc = {}; half pointless stuff
@@ -931,40 +956,5 @@ Citrus.location = {}; eh half pointless ig but useful
 Citrus.property = {}; Stable ingredient for Citrus at this point
 Citrus.table = {}; TABLE MANIPULATION IS HOT (table.search)
 ]]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 --														𝓒𝔦𝓽𝔯𝓾ş 𝐯➑  - ｂｙ ｒｏｕｇｅ.

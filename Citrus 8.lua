@@ -13,6 +13,23 @@ Y8,            88       88       88    `8b    88        88          `8b     d8" 
 --unpacked version
 local Citrus = {};
 
+--Beta
+Citrus.Beta = {};
+local Beta = Citrus.Beta;
+setmetatable(Beta, {
+	__index = function(self, ind)
+		if Citrus[ind] then
+			rawset(Beta, ind, setmetatable({},{
+				__index = function(self, ind2) 
+					return Citrus[ind][ind2] 
+				end, 
+				__metatable = getmetatable(Citrus[ind]);
+			}));
+		end
+		return Beta[ind];
+	end;
+})
+
 --Misc
 Citrus.misc = {};
 local Misc = Citrus.misc;

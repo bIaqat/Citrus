@@ -272,6 +272,139 @@ function Color.fromHSV(h, s, v)
 	return Color3.fromHSV(h / 360, s / 100, v / 100);
 end;
 
+function Color.fromHSL(h, s, l)
+	l = l > 1 and 1 or l < 0 and 0 or l;
+	s = s * (l < .5 and l or 1 - l);
+
+	return Color3.fromHSV(h, 2*s/(l+s), l+s);
+end;
+
+function Color.toHSL(Color, returnTable)
+	local h,s,v = Color3.toHSV(Color);
+	local h2 = (2-s) * v
+	local tab = {h%1, s*v / (h2 < 1 and h2 or 2 - h2), h2/2};
+
+	return unpack(returnTable and {tab} or tab);
+end;
+
+function Color.toHex(Color, includeHash)
+	return (includeHash and '#' or '') .. string.format('%02X',Color.r*255)..string.format('%02X',Color.g*255)..string.format('%02X',Color.b*255);
+end;
+
+function Color.setHSL(Color, newH, newS, newL)
+	local h,s,v = Color3.toHSV(Color);
+	local h2 = (2-s) * v
+	local h,s,l = newH or h%1, newS or (h2 < 1 and h2 or 2 - h2), newL or h2/2;
+	
+	s = s * (l < .5 and l or 1 - l);
+	
+	return Color3.fromHSV(h, 2*s/(l+s), l+s);
+end;
+
+function Color.editHSL(Color, operation, editH, editS, editL)
+	local h,s,v = Color3.toHSV(Color);
+	local h2 = (2-s) * v
+	local h,s,l = op(h%1,editH,operation), (h2 < 1 and h2 or 2 - h2), editL or h2/2;
+	s,l = op(s,editS,operation), op(l,editL,operation);
+	
+	s = s * (l < .5 and l or 1 - l);
+	
+	return Color3.fromHSV(h, 2*s/(l+s), l+s);
+end;
+function Citrus.Beta.color:getMonochromatic(Color, intervals, limit)
+	limit = 1 - ((limit or 0)/100)
+	intervals = intervals or 5
+	local h,s,l = self.toHSL(Color)
+	local max, min = l + limit, l - limit
+	max,min = max <= 1 and max or 1, min >= 0 and min or 0
+	local afr, afl = (max - l) / intervals, (l - min) / intervals
+	local l1, l2 = l, l
+	local tab = {Color}
+	
+	for i = 1, intervals do
+		l1 = l1 + afr;
+		l2 = l2 - afl;
+		table.insert(tab,1,self.fromHSL(h,s,l2))
+		tab[i+1] = Color;
+		tab[intervals + 3 + i] = self.fromHSL(h,s,l1)
+	end
+	return tab
+end;
+
+
+function Color.getShades(Color, intervals)
+	intervals = intervals or 10
+	local h,s,v = Color3.toHSV(Color);
+	local sp, sv = (1-s) / (intervals), v / intervals;
+	local tab = {Color};
+	local abs = math.abs
+	
+	for i = 1, intervals do
+		s = s + sp;
+		v = v - sv;
+		table.insert(tab,Color3.fromHSV(h,s <= 1 and s or 1,v >= 0 and v or 0));
+	end
+
+	return tab;
+end;
+
+function Color.getTints(Color, intervals)
+	intervals = intervals or 10
+	local h,s,v = Color3.toHSV(Color);
+	local sp, sv = s / (intervals), (1-v) / intervals;
+	local tab = {Color};
+	local abs = math.abs
+	
+	for i = 1, intervals do
+		s = s - sp;
+		v = v + sv;
+		table.insert(tab,Color3.fromHSV(h,s >= 0 and s or 0,v <= 1 and v or 1));
+	end
+
+	return tab;
+end;
+
+function Color.getTriadic(Color)
+	local h0, s, v = Color3.toHSV(Color);
+	h0 = h0 * 360;
+	local abs = math.abs
+	local fh = Color3.fromHSV
+
+	return {Color, fh(abs(((h0 + 120) %360))/360,s,v), fh(abs(((h0 + 240) %360))/360,s,v)};
+end;
+
+function Color.getTetradic(Color)
+	local h0, s, v = Color3.toHSV(Color);
+	h0 = h0 * 360;
+	local abs = math.abs
+	local fh = Color3.fromHSV
+
+	return {Color, fh(abs(((h0 + 90) %360))/360,s,v), fh(abs(((h0 + 180) %360))/360,s,v), fh(abs(((h0 + 270) %360))/360,s,v)};
+end;
+
+
+function Color.getComplementary(Color, split)
+	local h0, s, v = Color3.toHSV(Color);
+	h0 = h0 * 360;
+	local abs = math.abs
+	local fh = Color3.fromHSV
+
+	return {Color, fh(abs(((h0 + (split and 150 or 180)) %360))/360,s,v), split and fh(abs((((h0 + 210) %360)))/360,s,v) or nil};
+end;
+
+function Color.getAnalogous(Color, split)
+	local h0, s, v = Color3.toHSV(Color);
+	h0 = h0 * 360;
+	local abs = math.abs
+	local fh = Color3.fromHSV
+
+	return {Color, fh(abs(((h0 + 30) %360))/360,s,v), fh(abs(((h0 + (split and 60 or 330)) %360))/360,s,v), split and fh(abs(((h0 + 90) %360))/360,s,v) or nil};
+end;
+
+function Color.getInverse(Color)
+	return Color3.new(1 - Color.r, 1 - Color.g, 1 - Color.b);
+end;
+
 function Color.toHSV(Color, returnTable)
 	local h,s,v = Color3.toHSV(Color);
 	local tab = {h * 360, s * 100, v * 100};
@@ -570,6 +703,7 @@ function Objects:newCustomObject(className, parent, propertyTable, customPropert
 			else
 				Props:setProperties(se.Instance, propertyTable, ...)
 			end
+			return se;
 		end;
 	}
 	rawset(gelf, object.Instance, object);
@@ -672,7 +806,7 @@ function Props:getDefaultPropeties(className, specificIndex)
 	end
 end;
 
-function Props:setToDefaultProperties(Object, specificIndex, includeCustom)
+function Props:toDefaultProperties(Object, specificIndex, includeCustom)
 	self:setProperties(Object, self:getDefaultPropeties(Object.ClassName, specificIndex), false, includeCustom, false);
 end;
 
@@ -701,7 +835,7 @@ function Props:newCustomProperty(name, Function, ...) --... Classes that have th
 	}));
 end;
 
-function Props:setToCustomProperty(Object, customProperty, ...)
+function Props:toCustomProperty(Object, customProperty, ...)
 	return getmetatable(self).__index.Custom[customProperty](Object, ...);
 end;
 
@@ -734,7 +868,7 @@ end;
 
 function Props:setProperties(Object, propertyTable, useVanilla, includeShortcuts, includeCustom, includeDefault)
 	if includeDefault then
-		self:setToDefaultProperties(Object, type(includeDefault) == 'number' and includeDefault or nil, includeCustom);
+		self:toDefaultProperties(Object, type(includeDefault) == 'number' and includeDefault or nil, includeCustom);
 	end
 
 	if useVanilla then
@@ -749,7 +883,7 @@ function Props:setProperties(Object, propertyTable, useVanilla, includeShortcuts
 			end
 
 			if includeCustom and self:isACustomProperty(i) then
-				self:setToCustomProperty(Object, i, type(v) == 'table' and unpack(v) or v)
+				self:toCustomProperty(Object, i, type(v) == 'table' and unpack(v) or v)
 			elseif self:hasProperty(Object, i) then
 				Object[i] = v;
 			end;
@@ -949,9 +1083,164 @@ function Motion:createTween(Object, propertyTable, duration, directionName, easi
 	return tween;
 end;
 
---function Motion:customTweenObject(Object, propertyTable, duration, easingName, directionName, ...)
-
---end;
+function Motion:createCustomTween(Object, propertyTable, duration, direction, easing, repeating, reverses, delayDuration)
+	local bez = type(direction) == 'function' and '𝓒ustomEasingFunction'..math.random(999,99999)
+	if bez then
+		self:storeEasing(bez, bez, direction)
+		direction = bez
+		easing = bez
+	end
+	local gelf = getmetatable(self).__index;
+	local lerps = gelf.Lerps;
+	local heart = game:GetService('RunService').Heartbeat
+	local elapsed = 0;
+	
+	local startingValues = {}
+	for i,v in next, propertyTable do
+		startingValues[i] = Object[i];
+	end
+	
+	local tween = {
+		Cancel = function(self)
+			self.playbackState = 'cancelled';
+		end;
+		Pause = function(self)
+			self.playbackState = 'paused';
+		end;
+		Play = function(self)
+			if self.playbackState == 'paused' then
+				self.playbackState = 'playing'
+			else
+				self.playbackState = 'delayed';
+			end
+		end;
+		onPlaybackChanged = function(self, func)
+			local e = getmetatable(self).playbackChanged
+			local t = {id = #e, disconnect = function(self)
+				e[self.id] = nil
+			end, connect = function(self)
+				table.insert(e, func)
+			end
+			}		
+			return t;
+		end;
+		onCompletion = function(self, func)
+			local e = getmetatable(self).completion
+			local t = {id = #e, disconnect = function(self)
+				e[self.id] = nil
+			end, connect = function(self)
+				table.insert(e, func)
+			end
+			}		
+			return t;	
+		end;	
+	}
+	
+	local metaTween = {
+		playbackChanged = {};
+		completion = {};
+		tweenInfo = {
+			startingValues = startingValues;
+			endingValues = propertyTable;
+			duration = duration or 1;
+			direction = direction or 'Out';
+			style = easing or 'Linear';
+			repeating = repeating or 0;
+			reverse = reverses or false;
+			['delay'] = delayDuration or 0;
+		};
+		liveInfo = {
+			playbackState = 'unused';
+			connection = false;
+			elapsed = 0;
+			repeated = 0;
+			reversing = false;
+			reversed = false;
+		};
+		__index = function(self, ind)
+			local gelf = getmetatable(self)
+			return gelf.tweenInfo[ind] or gelf.liveInfo[ind] or nil;
+		end;
+		__newindex = function(self, ind, new)
+			local g = getmetatable(self)
+			local l = g.liveInfo
+			if g.tweenInfo[ind] then
+				error(ind..' cannot be assigned to');
+			elseif ind == 'playbackState' then
+				local state = new
+				if (l.playbackState == 'unused' or l.playbackState == 'cancelled' or l.playbackState == 'completed') and new == 'delayed' then
+					state = 'begin'
+					g.play(self);
+				end
+				for i,v in next, g.playbackChanged do
+					coroutine.wrap(v)(state);
+				end
+				g.liveInfo.playbackState = new;	
+			else
+				error('readonly table')
+			end
+		end;
+		play = function(tw)
+			local g = getmetatable(tw)
+			local info, live = g.tweenInfo, g.liveInfo
+			live.connection = heart:connect(function(step)
+				local state, reverse = live.playbackState, info.reverse
+				if state == 'playing' then
+					live.elapsed = live.elapsed + step;
+					local elapsed = live.elapsed
+					if elapsed >= duration then
+						if reverse and not live.reversed then
+							live.reversed = true;
+							live.reversing = reverse and not live.reversing;
+							live.elapsed = 0;
+						else
+							if info.repeating > live.repeated then
+								live.repeated = live.repeated + 1;
+								tw.playbackState = 'delayed'
+							elseif live.connection then
+								live.connection:disconnect()
+								live.repeated = 0;
+								tw.playbackState = 'completed'
+							end			
+							live.elapsed = 0;
+							live.reversing = false;
+							live.reversed = false;
+							for i,v in next, g.completion do
+								v('completed');
+							end
+							
+							for i,v in next, reverse and startingValues or propertyTable do
+								Object[i] = v
+							end
+						end
+					else
+						for i,v in next, propertyTable do
+							if live.reversing then
+								Object[i] = lerps[typeof(Object[i])](v, startingValues[i], self:getEasing(info.direction, info.style)(elapsed, 0, 1, duration))
+							else
+								Object[i] = lerps[typeof(Object[i])](startingValues[i], v, self:getEasing(info.direction, info.style)(elapsed, 0, 1, duration))
+							end
+						end
+					end
+				elseif state == 'delayed' then
+					live.elapsed = live.elapsed + step;
+					if live.elapsed >= info.delay then
+						tw.playbackState = 'playing'
+						live.elapsed = 0;
+					end
+				elseif state == 'cancelled'  then
+					live.connection:disconnect()
+					live.elapsed = 0;
+					live.repeated = 0;
+					live.reversing = false;
+				end
+				
+			end)
+		end
+	}
+	
+	return setmetatable(tween, metaTween);
+end
 
 function Motion:lerp(beginingValue, endValue, alpha, directionName, easingName)
     local lerp = getmetatable(self).__index.Lerps[type(beginingValue)] or warn(type(beginingValue) .. " lerping doesn't exist") and false;
@@ -974,4 +1263,4 @@ Citrus.property = {}; Stable ingredient for Citrus at this point
 Citrus.table = {}; TABLE MANIPULATION IS HOT (table.search)
 ]]
 
---														𝓒𝔦𝓽𝔯𝓾ş 𝐯➑  - ｂｙ ｒｏｕｇｅ.
+--𝓒𝔦𝓽𝔯𝓾ş 𝐯➑  - ｂｙ ｒｏｕｇｅ.

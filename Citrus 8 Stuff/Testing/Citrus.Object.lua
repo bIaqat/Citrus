@@ -106,8 +106,11 @@ function Objects:newCustomObject(className, parent, propertyTable, customPropert
 			else
 				Props:setProperties(se.Instance, popertyTable, ...)
 			end
+
+			return se;
 		end;
 	}
+	
 	rawset(gelf, object.Instance, object);
 	return setmetatable(object, objectMeta)(propertyTable, useVanilla, ...);
 end;

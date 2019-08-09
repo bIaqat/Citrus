@@ -1,4 +1,4 @@
-local Color = {};
+local Color = Citrus.color;
 local function op(a,b,op)
 	return op == '+' and a + b or
 		op == '-' and a - b or
@@ -11,6 +11,7 @@ end;
 
 
 function Color.fromHSL(h, s, l)
+	l = l > 1 and 1 or l < 0 and 0 or l;
 	s = s * (l < .5 and l or 1 - l);
 
 	return Color3.fromHSV(h, 2*s/(l+s), l+s);
@@ -48,7 +49,7 @@ function Color.editHSL(Color, operation, editH, editS, editL)
 	
 	return Color3.fromHSV(h, 2*s/(l+s), l+s);
 end;
-function Color:getMonochromatic(Color, intervals, limit)
+function Citrus.Beta.color:getMonochromatic(Color, intervals, limit)
 	limit = 1 - ((limit or 0)/100)
 	intervals = intervals or 5
 	local h,s,l = self.toHSL(Color)
@@ -68,23 +69,6 @@ function Color:getMonochromatic(Color, intervals, limit)
 	return tab
 end;
 
-function Color.getTriadic(Color)
-	local h0, s, v = Color3.toHSV(Color);
-	h0 = h0 * 360;
-	local abs = math.abs
-	local fh = Color3.fromHSV
-
-	return {Color, fh(abs(((h0 + 120) %360))/360,s,v), fh(abs(((h0 + 240) %360))/360,s,v)};
-end;
-
-function Color.getTetradic(Color)
-	local h0, s, v = Color3.toHSV(Color);
-	h0 = h0 * 360;
-	local abs = math.abs
-	local fh = Color3.fromHSV
-
-	return {Color, fh(abs(((h0 + 90) %360))/360,s,v), fh(abs(((h0 + 180) %360))/360,s,v), fh(abs(((h0 + 270) %360))/360,s,v)};
-end;
 
 function Color.getShades(Color, intervals)
 	intervals = intervals or 10
@@ -117,6 +101,25 @@ function Color.getTints(Color, intervals)
 
 	return tab;
 end;
+
+function Color.getTriadic(Color)
+	local h0, s, v = Color3.toHSV(Color);
+	h0 = h0 * 360;
+	local abs = math.abs
+	local fh = Color3.fromHSV
+
+	return {Color, fh(abs(((h0 + 120) %360))/360,s,v), fh(abs(((h0 + 240) %360))/360,s,v)};
+end;
+
+function Color.getTetradic(Color)
+	local h0, s, v = Color3.toHSV(Color);
+	h0 = h0 * 360;
+	local abs = math.abs
+	local fh = Color3.fromHSV
+
+	return {Color, fh(abs(((h0 + 90) %360))/360,s,v), fh(abs(((h0 + 180) %360))/360,s,v), fh(abs(((h0 + 270) %360))/360,s,v)};
+end;
+
 
 function Color.getComplementary(Color, split)
 	local h0, s, v = Color3.toHSV(Color);
@@ -154,9 +157,9 @@ textBox.BackgroundTransparency = 1
 textBox.Font = Enum.Font.GothamSemibold
 textBox.TextSize = 17
 
-
+local sg = Instance.new("ScreenGui",script.Parent)
 function newBase(colors, ti)
-	local head = Instance.new("Frame", script.Parent)
+	local head = Instance.new("Frame", sg)
 	head.Draggable = true
 	head.Active = true
 	head.Position = UDim2.new(math.random(2,8)/10,math.random(0,100),math.random(2,8)/10,math.random(0,100))
@@ -272,4 +275,4 @@ newBase(Color.getTriadic(color), "Triadic")
 newBase(Color.getAnalogous(color), "Analogous")
 newBase(Color.getTints(color), "Tints")
 newBase(Color.getShades(color), "Shades")
-newBase(Color:getMonochromatic(color,2,50), "Monochromatic 50%")
+newBase(Citrus.Beta.color:getMonochromatic(color,2,50), "Monochromatic 50%")

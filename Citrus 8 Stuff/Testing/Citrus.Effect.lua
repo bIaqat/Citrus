@@ -33,12 +33,12 @@ function Effects:effectOnChildAdded(Object, effectName, ...)
 	)
 end;
 
-function Effects:effectOnDescendantAdded(Object, effectName, ...)
-	Object.effectOnDescendantAdded:connect(function(desc)
-		self:effect(desc, effectName, ...);
-	)
-end;
-
 function Effects:effectOnEvent(Object, eventName, effectName, ...)
-	Object.
+	local args = {...};
+	Object[eventName]:connect(function(possibleObject)
+		if typeof(possibleObject) == 'Instance' then 
+			Object = possibleObject;
+		end
+		self:effect(Object, effectName, unpack(args));
+	end)
 end;

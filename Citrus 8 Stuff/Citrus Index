@@ -1,0 +1,126 @@
+Citrus Index
+___________________________________
+.color
+	.getShades [table] 						| (Color3), *(number) intervals
+	.getTints [table] 						| (Color3), *(number) intervals
+	.getTriadic [table] 					| (Color3)
+	.getTetradic [table] 					| (Color3)
+	.getComplementary [table] 				| (Color3), *(number) split
+	.getAnalogous [table] 					| (Color3), *(number) split
+	.getInverse [table] 					| (Color3)
+	
+	.fromHex [Color3]						| (string) hexadecimal
+	.fromString [Color3]					| (string), *(boolean) replaceOldColors, (Color3)...
+	.fromHSV [Color3]						| (number) h, (number) s, (number) v
+	.fromHSL [Color3] 						| (number) h, (number) s, (number) l
+	.toHSV [table/ number, number, number]	| (Color3), *(boolean) returnTable
+	.toHex [string]							| (Color3), *(boolean) includeHashtag
+	.toHSL [table / number, number, number]	| (Color3), *(boolean) returnTable
+	.toRGB [table / number, number, number]	| (Color3), *(boolean) returnTable
+	.setHSV [Color3]						| (Color3), *(number) newH, *(number) newS, *(number) newV
+	.setHSL [Color3] 						| (Color3), *(number) newH, *(number) newS, *(number) newL
+	.setRGB [Color3]						| (Color3), *(number) newR, *(number) newG, *(number) newB
+	.editHSL [Color3]						| (Color3), (string) operation, (number) byH, (number) byS, (number) byL
+	.editRGB [Color3]						| (Color3), (string) operation, (number) byR, (number) byG, (number) byB
+	
+	:storeColor 							| (string) name, (Color3), *(string)... colorTables
+	:getColor [Color3]						| (string) name, *(string)... colorTables
+	:removeColor							| (string) name, *(string)... colorTables
+
+___________________________________
+.effect
+	:storeEffect					| (string) name, (function)
+	:getEffect [function]			| (string) name
+	
+	:effect [value]					| (Instance), (string) name, (value)... effectParamaters
+	:effectChildrenOf [table]		| (Instance), (string) name, (value)... effectParamaters
+	:effectDescendantsOf [table]	| (Instance), (string) name, (value)... effectParamaters
+	:effectOnEvent					| (Instance), (string) eventName, (string) effectName, (value)... effectParamaters
+
+___________________________________
+.location
+	.newUDim [UDim]					| (number) scale, *(number) offset
+	.newVector2 [Vector2]			| (number) x, *(number) y
+	.fromPosition [UDim2]			| *(string) yPos, *(string) xPos, *(number) xOffset, *(number) yOffset
+	.newUDim2 [UDim2] 				| *(number), *(number), *(number), *(number)
+
+___________________________________
+.misc
+	.round [number]					| (number), *(number) decimalPoint
+	.destroyIn 						| (Instance), (number) duration
+	.getAssetId	[string]			| (string/number) AssetId
+	.getTextSize [number]			| (string) text, (number) textSize, (string/EnumItem) font, (number) absoluteSize
+	.getTextSizeFromObject [number]	| (instance), (library) testProperties
+	.operation [number]				| (number) a, (number) b, (string) operation
+
+___________________________________
+.motion
+	:storeEasing					| (string) direction, (string) name, (function(number, number, number, number))
+	:getEasing [function] 			| (string) direction, (string) name
+	
+	:setLerp						| (string) datatype, (function(number, number, number))
+	:newBezierEasing [function]		| (number) x1, (number) y1, (number) x2, (number) y2
+	:lerp [value]					| (value) beginingValue, (value) endValue, (number) alpha, *(string) direction, *(string) easing
+	
+	:createTween [Tween]			| (Instance), (library) endValues, (number) duration, *(string) direction, *(string) easing, *(number) repeating, *(boolean) reverses, *(number) delayDuration
+	:createCustomTween [𝓒Tween]		| (Instance), (library) endValues, *(number) duration, *(string/function(number,number,number,number)) direction, *(string) easing, *(number) repeating, *(boolean) reverses, *(number) delayDuration
+
+___________________________________
+.object
+	.getAncestors [table]				| (Instance)
+	.clone [Instance/Object]			| (Instance/Object), *(Instance) parent, *(library) newProperties
+	
+	:newClass [Class]					| (string) name, (function) onCreated
+	:isA [boolean]						| (Instance/Object), (string) className
+	:newObject [Object]					| (string) className, *(Instance) parent, *(libary) properties, *(libary) customProperties, *(boolean) useVanillaProperties, [^SEE property.setProperties^]...
+	:isAnObject [boolean]				| (Instance)
+	:getObjectFromInstance [Object] 	| (Instance)
+	
+	:newInstance [Instance]				| (string) className, *(Instance) parent, *(table) onCreatedArgs, *(library) properties, *(boolean) useVanillaProperties, [^SEE property.setProperties^]...
+	:newDefaultInstance [Instance]		| (string) className, *(Instance) parent, *(table) onCreatedArgs, *(library) properties
+	:newVanillaInstance [Instance]		| (string) className, *(Instance) parent, (library) properties
+
+___________________________________
+.property
+	.RobloxAPI (table)
+	:sortRobloxAPI					| (function) sortFunction
+	:searchRobloxAPI [table]		| [^^SEE table.search ^^]...
+
+	:storeDefaultProperties 		| (string) className, (library) properties, *(number) priorityIndex
+	:getDefaultProperties [library]	| (string) className, *(number) index
+	:toDefaultProperties			| (Instance), *(number) index, *(boolean) includeCustomProperties
+	
+	:newCustomProperty				| (string) name, (function(Instance)), (string)... classNames
+	:toCustomProperty [value]		| (Instance), (string) propertyName, (value)... customPropertyArgs
+	:isACustomProperty [boolean]	| (string) propertyName
+	
+	:hasProperty [boolean, value]	| (Instance), (string) property
+	:getProperties [library]		| (Instance), *(boolean) includeAllProperties
+	:setProperties 					| (Instance), (library) properties, *(boolean) useVanilla, ^ *(boolean) includeShortcuts, *(boolean) includeCustom, *(boolean) includeDefault ^
+
+___________________________________
+.table
+	.mergeTo [table]				| (table) baseTable, (table) newTable
+	:clone [table]					| (table)
+	.contains [boolean]				| (table), value
+	.length [number]				| (table)
+	
+	.firstIndexOf [value]			| (table), value
+	.indexesOf [table/value]		| (table), value, *(boolean) returnNumber
+	:find [table]					| (table), value, *(boolean) returnNumber, *(string/function(table, index, value)... compareAlgorithms
+	:search [table]					| (table), ^^ value, *(boolean) skipStored, *(boolean) returnNumber, *(boolean) subStringSearch, *(boolean) searchByCaps,  *(string/function(table, index, value)... compareAlgorithms ^^
+	
+	:storeCompareAlgorithm			| (string) name, (function(table, index, value))
+	:getCompareAlgorithm			| (string) name
+
+___________________________________
+.theme
+	:getTheme [Theme]				| (string) name, *(string) index
+	:setTheme						| (string) name, *(table) values, *(function(Instance, string, value)/string) syncFunction, *(boolean) autoSync, *(library) objectTable
+	
+	:insertObjectToTheme			| (string) name, *(value) themeValuesIndex, (Instance), (string) property
+	:insertObjectsToTheme 			| (string) name, (library) objectTable
+	
+	:sync 							| (string) name, *(function(Instance, string, value)/string) syncFunction
+	:setSyncFunction 				| (string) name, (function(Instance, string, value))
+	:getSyncFunction [function]		| (string) name

@@ -311,6 +311,7 @@ function Color.editHSL(Color, operation, editH, editS, editL)
 	
 	return Color3.fromHSV(h, 2*s/(l+s), l+s);
 end;
+
 function Citrus.Beta.color:getMonochromatic(Color, intervals, limit)
 	limit = 1 - ((limit or 0)/100)
 	intervals = intervals or 5
@@ -330,7 +331,6 @@ function Citrus.Beta.color:getMonochromatic(Color, intervals, limit)
 	end
 	return tab
 end;
-
 
 function Color.getShades(Color, intervals)
 	intervals = intervals or 10
@@ -382,7 +382,6 @@ function Color.getTetradic(Color)
 	return {Color, fh(abs(((h0 + 90) %360))/360,s,v), fh(abs(((h0 + 180) %360))/360,s,v), fh(abs(((h0 + 270) %360))/360,s,v)};
 end;
 
-
 function Color.getComplementary(Color, split)
 	local h0, s, v = Color3.toHSV(Color);
 	h0 = h0 * 360;
@@ -418,9 +417,9 @@ function Color.setHSV(Color, newH, newS, newV)
 	return Color3.fromHSV(newH and newH / 360 or h, newS and newS/100 or s, newV and newV/100 or v);
 end;
 
-function Color.editHSV(Color, operation, editH, editS, editV)
+--function Color.editHSV(Color, operation, editH, editS, editV)
 
-end;
+--end;
 
 function Color.fromHex(hex)
 	local hex = hex:sub(1,1) == '#' and hex:sub(2) or hex;
@@ -464,10 +463,6 @@ function Color.fromString(String, replaceOldColors, ...)
 
 	end
 	return colors[value % #colors + 1]
-end;
-
-function Color:getColorInfo(Color) -- idea from Citrusv2 Beta
-
 end;
 
 function Color:storeColor(colorName, Color, ...) 
@@ -649,7 +644,7 @@ function Objects:newCustomObject(className, parent, propertyTable, customPropert
 	local gelf = getmetatable(self).__index.Objects;
 
 	local object = {
-		Properties = customPropertyTable;
+		Properties = customPropertyTable or {};
 		['Instance'] = Instance.new(className, parent);
 		
 		newIndex = function(self, index, Function)
@@ -689,6 +684,7 @@ function Objects:newCustomObject(className, parent, propertyTable, customPropert
 
 			if indexes[index] then
 				indexes[index](se, newIndex);
+				rawset(se.Properties, index, newIndex);
 			elseif se.Properties[index] or not instanceIndex then
 				rawset(se.Properties, index, newIndex);
 			elseif instanceIndex then
@@ -1250,6 +1246,35 @@ function Motion:lerp(beginingValue, endValue, alpha, directionName, easingName)
 end;
 
 
+
+Citrus.local = {
+	start = function(self)
+		local emptyFunc = function(a) end
+		for i,v in next, Citrus do
+			emptyFunc(self[i])
+		end
+		self.start = nil;
+	end
+};
+local loc = Citrus.local;
+setmetatable(loc,{
+	__index = function(self, ind)
+		if Citrus[ind] and ind ~= 'Beta' then
+			getmetatable(Citrus[ind]).__newindex = function(self, ind, new)
+				loc[i][ind] = new
+			end
+			rawset(loc, ind, setmetatable({},{
+				__index = function(self, ind2) 
+					return Citrus[ind][ind2] 
+				end, 
+				__metatable = getmetatable(Citrus[ind]);
+			}));
+		end
+		return Beta[ind];
+	end;
+})
+
+
 --[[
 Citrus.misc = {}; half pointless stuff
 Citrus.sound = {}; cute audio manipulation
@@ -1263,4 +1288,4 @@ Citrus.property = {}; Stable ingredient for Citrus at this point
 Citrus.table = {}; TABLE MANIPULATION IS HOT (table.search)
 ]]
 
---𝓒𝔦𝓽𝔯𝓾ş 𝐯➑  - ｂｙ ｒｏｕｇｅ.
+--															𝓒𝔦𝓽𝔯𝓾ş 𝐯➑  - ｂｙ ｒｏｕｇｅ.

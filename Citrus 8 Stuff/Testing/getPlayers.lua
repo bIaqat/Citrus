@@ -44,5 +44,5 @@ for _,v in next, plrs do
 end
 
 plrs(function(plr)
-	print(plr.Name,"has the gay")
+	print(plr.Name,"has the lol")
 end)

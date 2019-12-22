@@ -1,6 +1,5 @@
 Objects = {};
 setmetatable(Objects,{__index = {Objects = {}, Classes = {}})
-
 function Objects.getAncestors(Object)
 	local ancestors = {};
 	local last = Object;

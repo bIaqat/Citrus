@@ -35,7 +35,8 @@ ___________________________________
 	:effect [value]					| (Instance), (string) name, (value)... effectParamaters
 	:effectChildrenOf [table]		| (Instance), (string) name, (value)... effectParamaters
 	:effectDescendantsOf [table]	| (Instance), (string) name, (value)... effectParamaters
-	:effectOnEvent					| (Instance), (string) eventName, (string) effectName, (value)... effectParamaters
+	:effectOnEvent					| (Insta
+	nce), (string) eventName, (string) effectName, (value)... effectParamaters
 
 ___________________________________
 .location

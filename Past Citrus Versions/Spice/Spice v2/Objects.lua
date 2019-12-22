@@ -1,20 +1,20 @@
 Objects = setmetatable({
-	getAncestors = function(Object)
-		local directory = {game};
-		local ind = game
-		for name in Object:GetFullName():gsub('%.','\0'):gmatch('%Z+') do
-			local temp = ind[name]
-			if not name == 'game' and game:GetService(name) or temp:IsAncestorOf(Object) then
-				ind = temp
-				table.insert(directory,ind)
-			end
+getAncestors = function(Object)
+	local directory = {game};
+	local ind = game
+	for name in Object:GetFullName():gsub('%.','\0'):gmatch('%Z+') do
+		local temp = ind[name]
+		if not name == 'game' and game:GetService(name) or temp:IsAncestorOf(Object) then
+			ind = temp
+			table.insert(directory,ind)
 		end
-		local final = {}
-		for i,v in next, directory do
-			final[#directory-i+1] = v
-		end
-		return final
-	end;
+	end
+	local final = {}
+	for i,v in next, directory do
+		final[#directory-i+1] = v
+	end
+	return final
+end;
 	Classes = setmetatable({},{
 		__index = function(self,index)
 			local gelf, ret = getmetatable(self)

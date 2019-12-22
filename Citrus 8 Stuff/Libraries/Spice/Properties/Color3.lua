@@ -26,3 +26,7 @@ Citrus.properties:newCustomProperty("ImageColor3",function(who, to, i)
 		who.ImageColor3 = to
 	end
 end)
+
+Properties:newCustomProperty("Position",function(who, to, ...)
+	Motion:tween(who, "Position", to, ...)
+end)

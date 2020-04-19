@@ -36,21 +36,19 @@ function Citrus.motion:fullAsymetricTween(Object, Property, duration, UDimX, UDi
 		duration2 = duration[2]
 		duration = duration[1]
 	end
-	connection = heart:connect(function(step)
-		elapsed = elapsed + step;
-		if elapsed >= (duration > duration2 and duration or duration2) and connection then
-			connection:disconnect()
-			Object[Property] = UDim2.new(UDimX, UDimY);
-		else
-			if elapsed < duration then
-				x = lerpUDim(startX, UDimX, d1 and self:getEasing(d1,e1)(elapsed, 0, 1, duration) or elapsed/duration)
-			end
-			if elapsed < duration2 then
-				y = lerpUDim(startY, UDimY, d2 and self:getEasing(d2,e2)(elapsed, 0, 1, duration2) or elapsed/duration2)
-			end
-			Object[Property] = UDim2.new(x, y);
-		end
-	end)
+	
+connection = heart:connect(function(step)
+	elapsed = elapsed + step;
+	if elapsed >= (duration > duration2 and duration or duration2) and connection then
+		connection:disconnect()
+		Object[Property] = UDim2.new(UDimX, UDimY);
+	else
+		x = elapsed < duration  and lerpUDim(startX, UDimX, d1 and self:getEasing(d1,e1)(elapsed, 0, 1, duration) or elapsed/duration) or nil
+		y = elapsed < duration2 and lerpUDim(startY, UDimY, d2 and self:getEasing(d2,e2)(elapsed, 0, 1, duration2) or elapsed/duration2) or nil
+		
+		Object[Property] = UDim2.new(x, y);
+	end
+end)
 
 	return connection;
 end
